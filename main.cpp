@@ -106,7 +106,7 @@ VectorXi decoder(VectorXi &input, VectorXi &u_Ac){
 //    VectorXd w_n_i(N);
 //    VectorXd w_n = VectorXd::Constant(N,e);
 //    VectorXd h_i(N);
-//    VectorXi u_n_est(N);
+    VectorXi u_n_est(N);
 //
 //    //h_i計算
 //    for (int i = 0; i < N; i++) {
@@ -164,12 +164,6 @@ int main(void) {
     srand((int) time(NULL));
 
     VectorXi x_n = encoder(N, u_n);
-//    cout << calcW(1,0) << endl;
-//    cout << calcW(0,1) << endl;
-//    cout << calcW(1,1) << endl;
-//    cout << calcW(0,0) << endl;
-//    cout << calcW(2,1) << endl;
-//    cout << calcW(2,0) << endl;
     VectorXi y_n = channel(x_n);
     //VectorXf W_i_n = W_i_n(2, N, u_n,);
 
