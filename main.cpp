@@ -27,22 +27,58 @@ float calcW(int y, int x) {
     return retVal;
 }
 
-//float W_i(int i, int n, VectorXi &u, VectorXi &y) {
-//    float W_i;
-//    //初期化
-//    if ( n == 2 ){
-////        if ( i == 1 ) {
-////            W_i = 0.5 * (calcW(y[0] ,(u[0]+0) % 2) * calcW(y[1],0)
-////                    + calcW(y[0] ,(u[0]+1) % 2) * calcW(y[1],1));
-////        } else {
-////            W_i = 0.5 * calcW(y[0] ,(u[0]+u[1]) % 2) * calcW(y[1],u[1]);
-////        }
-//    } else {
+VectorXi index_o(int n, VectorXi &x){
+    VectorXi ret(n/2);
+    for(int i = 0; i < n; i++){
+        if ( i % 2 == 0) {
+            ret[i/2] = x[i];
+        }
+    }
+    return ret;
+}
+
+VectorXi index_e(int n, VectorXi &x){
+    VectorXi ret(n/2);
+    for(int i = 0; i < n; i++){
+        if (!(i % 2 == 0)) {
+            ret[(i-1)/2] = x[i];
+        }
+    }
+    return ret;
+}
+
+float calcW_i(int i, int n, VectorXi &u, VectorXi &y) {
+    float W_i = 0.0f;
+    //初期化
+    if ( n == 2 ){
+        if ( i == 1 ) {
+            W_i = 0.5 * (calcW(y[0] ,(u[0]+0) % 2) * calcW(y[1],0)
+                    + calcW(y[0] ,(u[0]+1) % 2) * calcW(y[1],1));
+        } else {
+            W_i = 0.5 * calcW(y[0] ,(u[0]+u[1]) % 2) * calcW(y[1],u[1]);
+        }
+    } else {
+        if ( i % 2 == 0 ) {
+
+
+        } else {
+            VectorXi tempY1;
+            VectorXi tempY2;
+            for (int j = 0; j < n ; j++) {
+                if(i < n/2){
+                    tempY1[j]= y[j];
+                } else {
+                    tempY2[j - n/2] = y[j];
+                }
+            }
 //
-//    }
-//    return W_i;
-//}
-//
+//            W_i = 0.5 * calcW_i(i/2, n/2, tempY1 ,(u[0]+u[1]) % 2)
+//                  * calcW_i(i/2, n/2, y[1], u[1]);
+        }
+    }
+    return W_i;
+}
+
 
 VectorXi encoder(int n, VectorXi &input){
     VectorXi x_n(n);
@@ -156,22 +192,24 @@ VectorXi decoder(VectorXi &input, VectorXi &u_Ac){
 int main(void) {
     VectorXi u_Ac(K);
     u_Ac << 1, 0;
-    VectorXi u_n(N);
-    u_n << 1, 0, 0, 1;  //input
+    VectorXi u_n(10);
+    u_n << 1,2,3,4,5,6,7,8,9,0;  //input
     cout << "u_n" << endl;
     cout << u_n << endl;
 
     srand((int) time(NULL));
 
-    VectorXi x_n = encoder(N, u_n);
-    VectorXi y_n = channel(x_n);
-    //VectorXf W_i_n = W_i_n(2, N, u_n,);
+//    VectorXi x_n = encoder(N, u_n);
+//    VectorXi y_n = channel(x_n);
+//    float W_i = calcW_i(1, 2, u_n, y_n);
 
     //VectorXi u_n_est = decoder(y_n,u_Ac);
-    cout << "x_n" << endl;
-    cout << x_n << endl;
-    cout << "y_n" << endl;
-    cout << y_n << endl;
+//    cout << "x_n" << endl;
+//    cout << x_n << endl;
+//    cout << "y_n" << endl;
+//    cout << y_n << endl;
+//    cout << "W_i" << endl;
+//    cout << W_i << endl;
 //    cout << "u_n_est" << endl;
     //cout << u_n_est << endl;
 
