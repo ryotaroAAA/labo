@@ -60,35 +60,6 @@ VectorXf W_i_n(int i, int n, int u_i, VectorXf &y){
 //    }
 }
 
-void get_gn_coset(MatrixXi &input){
-    //G-N coset code generate
-    MatrixXi F_N;
-    Matrix2i F;
-    F << 1,0,
-         1,1;
-
-    //kronecher power
-    for (int i = 1; i <= log2(N); i++) {
-        if( i == 1 ){
-            F_N = F;
-        } else {
-            F_N = kroneckerProduct(F_N,F).eval();
-        }
-    }
-
-    //bit-reversal permutation
-    input = F_N;
-    for (int i = 0; i < N/2; i++) {
-        input.col(i+1).swap(input.col(N/2));
-    }
-}
-
-//void get_uA(MatrixXi &input){
-//
-//}
-//void get_g_nA(MatrixXi &input){
-//
-//}
 
 VectorXi encoder(int tempN, VectorXi &input){
     cout << "////////////////////////////////" << endl;
