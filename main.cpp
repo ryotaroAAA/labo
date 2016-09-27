@@ -47,6 +47,14 @@ VectorXi index_e(int n, VectorXi &x){
     return ret;
 }
 
+VectorXi retBinary(int n, VectorXi &x) {
+    VectorXi ret(n);
+    for(int i = 0; i < n ; i++){
+        ret[i] = x[i] % 2;
+    }
+    return ret;
+}
+
 float calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y) {
     float W_i = 0.0f;
     //初期化
@@ -68,8 +76,8 @@ float calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y) {
             }
         }
         if ( i % 2 == 0 ) {    //odd index
-            W_i = 0.5 * calcW_i(i/2, n/2, index_e(i-1,u)+index_o(i-1,u) ,(u[i]+u[i+1]) % 2,tempY1)
-                  * calcW_i(i/2, n/2, index_e(i-1,u), u[i], tempY2);
+            W_i = 0.5 * calcW_i(i/2, n/2, retBinary(index_e(i-1,u)+index_o(i-1,u)) ,(u[i]+u[i+1]) % 2,tempY1)
+                  * calcW_i(i/2, n/2, retBinary(index_e(i-1,u)+index_o(i-1,u)), u[i], tempY2);
         } else {    //even index
             W_i = 0.5 * calcW_i(i/2, n/2, index_e(i-2,u)+index_o(i-2,u) ,(u[i]+u[i-1]) % 2,tempY1)
                   * calcW_i(i/2, n/2, index_e(i-2,u), u[i], tempY2);
@@ -194,7 +202,7 @@ int main(void) {
     VectorXi u_n(10);
     u_n << 1,2,3,4,5,6,7,8,9,0;  //input
     cout << "u_n" << endl;
-    cout << u_n << endl;
+    cout << binary(10,u_n) << endl;
 
     srand((int) time(NULL));
 
