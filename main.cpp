@@ -47,7 +47,7 @@ VectorXi index_e(int n, VectorXi &x){
     return ret;
 }
 
-float calcW_i(int i, int n, VectorXi &u, VectorXi &y) {
+float calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y) {
     float W_i = 0.0f;
     //初期化
     if ( n == 2 ){
@@ -58,22 +58,21 @@ float calcW_i(int i, int n, VectorXi &u, VectorXi &y) {
             W_i = 0.5 * calcW(y[0] ,(u[0]+u[1]) % 2) * calcW(y[1],u[1]);
         }
     } else {
-        if ( i % 2 == 0 ) {
-
-
-        } else {
-            VectorXi tempY1;
-            VectorXi tempY2;
-            for (int j = 0; j < n ; j++) {
-                if(i < n/2){
-                    tempY1[j]= y[j];
-                } else {
-                    tempY2[j - n/2] = y[j];
-                }
+        VectorXi tempY1;
+        VectorXi tempY2;
+        for (int j = 0; j < n ; j++) {
+            if(i < n/2){
+                tempY1[j]= y[j];
+            } else {
+                tempY2[j - n/2] = y[j];
             }
-//
-//            W_i = 0.5 * calcW_i(i/2, n/2, tempY1 ,(u[0]+u[1]) % 2)
-//                  * calcW_i(i/2, n/2, y[1], u[1]);
+        }
+        if ( i % 2 == 0 ) {    //odd index
+            W_i = 0.5 * calcW_i(i/2, n/2, index_e(i-1,u)+index_o(i-1,u) ,(u[i]+u[i+1]) % 2,tempY1)
+                  * calcW_i(i/2, n/2, index_e(i-1,u), u[i], tempY2);
+        } else {    //even index
+            W_i = 0.5 * calcW_i(i/2, n/2, index_e(i-2,u)+index_o(i-2,u) ,(u[i]+u[i-1]) % 2,tempY1)
+                  * calcW_i(i/2, n/2, index_e(i-2,u), u[i], tempY2);
         }
     }
     return W_i;
