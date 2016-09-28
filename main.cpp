@@ -12,17 +12,17 @@ using namespace Eigen;
 #define PRINT(X) cout << #X << ":\n" << X << endl << endl;
 
 //params
-const int  N=8;
+const int  N=1024;
 const int  K=2;
-const float e = 0.5f;
+const double e = 0.5f;
 const int A[] ={2,4};
 
 int vsize(VectorXi &x);
-float calcW(int y, int x);
+double calcW(int y, int x);
 VectorXi index_o(VectorXi &x);
 VectorXi index_e(VectorXi &x);
 VectorXi retBinary(VectorXi &x);
-float calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y);
+double calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y);
 VectorXi encoder(int n, VectorXi &input);
 VectorXi channel(VectorXi &input);
 VectorXi decoder(VectorXi &input, VectorXi &u_Ac);
@@ -31,8 +31,8 @@ int vsize(VectorXi &x){
     return (x.array() >= 0).count();
 }
 
-float calcW(int y, int x) {
-    float retVal = 0.0f;
+double calcW(int y, int x) {
+    double retVal = 0.0f;
     if (x == y) {
         retVal = 1 - e;
     } else if (y == 2) {
@@ -71,9 +71,9 @@ VectorXi retBinary(VectorXi &x) {
     return ret;
 }
 
-float calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
-    float W_i = 0.0f;
-    //初期化
+double calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
+    double W_i = 0.0;
+
     if ( n == 2 ){
         if ( i == 1 ) {
             W_i = 0.5 * (calcW(y[0] ,(u[0]+0) % 2) * calcW(y[1],0)
@@ -92,30 +92,24 @@ float calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
             }
         }
 
-
         VectorXi tempU;
         VectorXi tempU_bin;
         VectorXi u_e;
-        VectorXi u_o;
 
         tempU = index_e(u)+index_o(u);
         u_e = index_e(u);
-        u_o = index_o(u);
         tempU_bin = retBinary(tempU);
 
-//        PRINT(tempU);
-//        PRINT(retBinary(tempU));
-//        PRINT(index_e(u));
-
-        W_i =1.0f;
-        if ( i % 2 == 0 ) {    //odd index
-            W_i = 0.5 * calcW_i(i/2, n/2, tempU_bin ,(u[i]+u[i+1]) % 2,tempY1)
-                  * calcW_i(i/2, n/2, u_e, u[i], tempY2);
-        } else {    //even index
-            W_i = 0.5 * calcW_i((i-1)/2, n/2, tempU_bin ,(u[i]+u[i-1]) % 2,tempY1)
-                  * calcW_i(i/2, n/2, u_e, u[i], tempY2);
+        if ( i % 2 == 0 ) {
+            W_i = 0.5 * (calcW_i(i/2, n/2, tempU_bin ,(1 + u_i) % 2,tempY1) * calcW_i(i/2, n/2, u_e, 1, tempY2)
+                         + calcW_i(i/2, n/2, tempU_bin ,(0 + u_i) % 2,tempY1) * calcW_i(i/2, n/2, u_e, 0, tempY2));
+        } else {
+            W_i = 0.5 * calcW_i((i-1)/2, n/2, tempU_bin ,(u_i+u[i-1]) % 2, tempY1)
+                      * calcW_i( i/2   , n/2, u_e       , u_i            , tempY2);
         }
     }
+    cout << "W_" << "n:" << n << ",i:" << i << endl;
+//    PRINT(W_i);
     return W_i;
 }
 
@@ -170,7 +164,7 @@ VectorXi channel(VectorXi &input){
 
     for (int i = 0; i < N; i++) {
         y[i] = input[i];
-        if((float)rand() / RAND_MAX < e){
+        if((double)rand() / RAND_MAX < e){
             y[i] = 2;
         }
     }
@@ -193,7 +187,7 @@ VectorXi decoder(VectorXi &input, VectorXi &u_Ac){
 //            }
 //        }
 //        w_n_i =  count * w_n / (pow(2, N-1));
-//        float llr = 1; //w_n_i[i]  / w_n_i[i];
+//        double llr = 1; //w_n_i[i]  / w_n_i[i];
 //        if (llr >= 1) {
 //            h_i[i] = 0;
 //        } else {
@@ -229,25 +223,26 @@ VectorXi decoder(VectorXi &input, VectorXi &u_Ac){
 }
 
 int main(void) {
-    VectorXi u_Ac(K);
-    u_Ac << 1, 0;
-    VectorXi u_n(N);
-    u_n << 1,1,0,0,1,1,0,1;  //input
-    PRINT(u_n);
-    cout << vsize(u_n) << endl;
     srand((int) time(NULL));
+//    VectorXi u_Ac(K);
+//    u_Ac << 1, 0;
+    VectorXi u_n(N);
+    for(int i=0; i<N;i++){
+        u_n[i] = rand() % 2;
+    }
+//    u_n << 1,1,1,0,1,1,1,0;  //input
+    PRINT(u_n);
+
 
     VectorXi x_n = encoder(N, u_n);
     VectorXi y_n = channel(x_n);
     PRINT(x_n);
     PRINT(y_n);
 
-    int i = 1;
-    int n = 4;
-    float W_i = calcW_i(i, n, u_n, u_n[i], y_n);
+    int i = 1024;
+    double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
     PRINT(W_i);
     //VectorXi u_n_est = decoder(y_n,u_Ac);
-
-
+    
     return 0;
 }
