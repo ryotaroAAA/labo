@@ -9,11 +9,27 @@
 using namespace std;
 using namespace Eigen;
 
+#define PRINT(X) cout << #X << ":\n" << X << endl << endl;
+
 //params
-const int  N=4;
+const int  N=8;
 const int  K=2;
 const float e = 0.5f;
 const int A[] ={2,4};
+
+int vsize(VectorXi &x);
+float calcW(int y, int x);
+VectorXi index_o(VectorXi &x);
+VectorXi index_e(VectorXi &x);
+VectorXi retBinary(VectorXi &x);
+float calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y);
+VectorXi encoder(int n, VectorXi &input);
+VectorXi channel(VectorXi &input);
+VectorXi decoder(VectorXi &input, VectorXi &u_Ac);
+
+int vsize(VectorXi &x){
+    return (x.array() >= 0).count();
+}
 
 float calcW(int y, int x) {
     float retVal = 0.0f;
@@ -27,9 +43,9 @@ float calcW(int y, int x) {
     return retVal;
 }
 
-VectorXi index_o(int n, VectorXi &x){
-    VectorXi ret(n/2);
-    for(int i = 0; i < n; i++){
+VectorXi index_o(VectorXi &x){
+    VectorXi ret(vsize(x)/2);
+    for(int i = 0; i < vsize(x); i++){
         if ( i % 2 == 0) {
             ret[i/2] = x[i];
         }
@@ -37,9 +53,9 @@ VectorXi index_o(int n, VectorXi &x){
     return ret;
 }
 
-VectorXi index_e(int n, VectorXi &x){
-    VectorXi ret(n/2);
-    for(int i = 0; i < n; i++){
+VectorXi index_e(VectorXi &x){
+    VectorXi ret(vsize(x)/2);
+    for(int i = 0; i < vsize(x); i++){
         if (!(i % 2 == 0)) {
             ret[(i-1)/2] = x[i];
         }
@@ -47,15 +63,15 @@ VectorXi index_e(int n, VectorXi &x){
     return ret;
 }
 
-VectorXi retBinary(int n, VectorXi &x) {
-    VectorXi ret(n);
-    for(int i = 0; i < n ; i++){
+VectorXi retBinary(VectorXi &x) {
+    VectorXi ret(vsize(x));
+    for(int i = 0; i < vsize(x) ; i++){
         ret[i] = x[i] % 2;
     }
     return ret;
 }
 
-float calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y) {
+float calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
     float W_i = 0.0f;
     //初期化
     if ( n == 2 ){
@@ -66,26 +82,42 @@ float calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y) {
             W_i = 0.5 * calcW(y[0] ,(u[0]+u[1]) % 2) * calcW(y[1],u[1]);
         }
     } else {
-        VectorXi tempY1;
-        VectorXi tempY2;
-        for (int j = 0; j < n ; j++) {
-            if(i < n/2){
+        VectorXi tempY1(vsize(y)/2);
+        VectorXi tempY2(vsize(y)/2);
+        for (int j = 0; j < vsize(y) ; j++) {
+            if(j < vsize(y)/2){
                 tempY1[j]= y[j];
             } else {
-                tempY2[j - n/2] = y[j];
+                tempY2[j - vsize(y)/2] = y[j];
             }
         }
+
+
+        VectorXi tempU;
+        VectorXi tempU_bin;
+        VectorXi u_e;
+        VectorXi u_o;
+
+        tempU = index_e(u)+index_o(u);
+        u_e = index_e(u);
+        u_o = index_o(u);
+        tempU_bin = retBinary(tempU);
+
+//        PRINT(tempU);
+//        PRINT(retBinary(tempU));
+//        PRINT(index_e(u));
+
+        W_i =1.0f;
         if ( i % 2 == 0 ) {    //odd index
-            W_i = 0.5 * calcW_i(i/2, n/2, retBinary(index_e(i-1,u)+index_o(i-1,u)) ,(u[i]+u[i+1]) % 2,tempY1)
-                  * calcW_i(i/2, n/2, retBinary(index_e(i-1,u)+index_o(i-1,u)), u[i], tempY2);
+            W_i = 0.5 * calcW_i(i/2, n/2, tempU_bin ,(u[i]+u[i+1]) % 2,tempY1)
+                  * calcW_i(i/2, n/2, u_e, u[i], tempY2);
         } else {    //even index
-            W_i = 0.5 * calcW_i(i/2, n/2, index_e(i-2,u)+index_o(i-2,u) ,(u[i]+u[i-1]) % 2,tempY1)
-                  * calcW_i(i/2, n/2, index_e(i-2,u), u[i], tempY2);
+            W_i = 0.5 * calcW_i((i-1)/2, n/2, tempU_bin ,(u[i]+u[i-1]) % 2,tempY1)
+                  * calcW_i(i/2, n/2, u_e, u[i], tempY2);
         }
     }
     return W_i;
 }
-
 
 VectorXi encoder(int n, VectorXi &input){
     VectorXi x_n(n);
@@ -199,26 +231,23 @@ VectorXi decoder(VectorXi &input, VectorXi &u_Ac){
 int main(void) {
     VectorXi u_Ac(K);
     u_Ac << 1, 0;
-    VectorXi u_n(10);
-    u_n << 1,2,3,4,5,6,7,8,9,0;  //input
-    cout << "u_n" << endl;
-    cout << binary(10,u_n) << endl;
-
+    VectorXi u_n(N);
+    u_n << 1,1,0,0,1,1,0,1;  //input
+    PRINT(u_n);
+    cout << vsize(u_n) << endl;
     srand((int) time(NULL));
 
-//    VectorXi x_n = encoder(N, u_n);
-//    VectorXi y_n = channel(x_n);
-//    float W_i = calcW_i(1, 2, u_n, y_n);
+    VectorXi x_n = encoder(N, u_n);
+    VectorXi y_n = channel(x_n);
+    PRINT(x_n);
+    PRINT(y_n);
 
+    int i = 1;
+    int n = 4;
+    float W_i = calcW_i(i, n, u_n, u_n[i], y_n);
+    PRINT(W_i);
     //VectorXi u_n_est = decoder(y_n,u_Ac);
-//    cout << "x_n" << endl;
-//    cout << x_n << endl;
-//    cout << "y_n" << endl;
-//    cout << y_n << endl;
-//    cout << "W_i" << endl;
-//    cout << W_i << endl;
-//    cout << "u_n_est" << endl;
-    //cout << u_n_est << endl;
+
 
     return 0;
 }
