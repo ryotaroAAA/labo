@@ -7,6 +7,8 @@
 #include "time.h"
 #include <chrono>
 #include <iomanip>
+#include <string>    // useful for reading and writing
+#include <fstream>   // ifstream, ofstream
 
 using namespace std;
 using namespace Eigen;
@@ -14,25 +16,92 @@ using namespace Eigen;
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 
 //params
-const int  N=2;
+const int  N=1024;
 const int  K=2;
 const float e = 0.5f;
 const int A[] ={2,4};
 
+void dispArray(long double *x);
+void outputArray(long double *x);
 int vsize(VectorXi &x);
 long double calcW(int y, int x);
 VectorXi index_o(VectorXi &x);
 VectorXi index_e(VectorXi &x);
 VectorXi retBinary(VectorXi &x);
+VectorXi generateUi(VectorXi &x,VectorXi &u_Ac);
 long double calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y);
 VectorXi encoder(int n, VectorXi &input);
 VectorXi channel(VectorXi &input);
 VectorXi decoder(VectorXi &input, VectorXi &u_Ac);
-VectorXi generateUi(VectorXi &x,VectorXi &u_Ac);
+long double calcCapacityForBec(int i, int n);
+void makeArrayCapacityForBec(long double *array);
 
+
+void dispArray(long double *x){
+    for(int i = 0; i < N; i++){
+        printf("x[%d] = %Lf\n",i, x[i]);
+    }
+}
+
+void outputArray(long double *x){
+    string filename = "/Users/ryotaro/labo/symmetric_capacity";
+    ofstream w_file;
+    w_file.open(filename, ios::out);
+    for (int i = 0; i<N; i++)
+    {
+        w_file << i << " " << x[i]<< endl;
+    }
+}
 
 int vsize(VectorXi &x){
     return (x.array() >= 0).count();
+}
+
+VectorXi index_o(VectorXi &x){
+    VectorXi ret(vsize(x)/2);
+    for(int i = 0; i < vsize(x); i++){
+        if ( i % 2 == 0) {
+            ret[i/2] = x[i];
+        }
+    }
+    return ret;
+}
+VectorXi index_e(VectorXi &x){
+    VectorXi ret(vsize(x)/2);
+    for(int i = 0; i < vsize(x); i++){
+        if (!(i % 2 == 0)) {
+            ret[(i-1)/2] = x[i];
+        }
+    }
+    return ret;
+}
+VectorXi retBinary(VectorXi &x) {
+    VectorXi ret(vsize(x));
+    for(int i = 0; i < vsize(x) ; i++){
+        ret[i] = x[i] % 2;
+    }
+    return ret;
+}
+VectorXi generateUi(VectorXi &x,VectorXi &u_Ac){
+    VectorXi ret(N);
+    srand((int) time(NULL));
+    for (int i = 0; i < N; i++) {
+        int in_A = 0;
+        int index = 0;
+        for (int j = 0; j < K; j++) {
+            if ( i+1 == A[j]) {
+                in_A = 1;
+                index = j;
+            }
+        }
+        // Aに含まれるindexなら既知
+        if (in_A == 1) {
+            ret[i] = u_Ac[index];
+        } else {
+            ret[i] = rand() % 2;
+        }
+    }
+    return ret;
 }
 
 long double calcW(int y, int x) {
@@ -46,35 +115,6 @@ long double calcW(int y, int x) {
     }
     return retVal;
 }
-
-VectorXi index_o(VectorXi &x){
-    VectorXi ret(vsize(x)/2);
-    for(int i = 0; i < vsize(x); i++){
-        if ( i % 2 == 0) {
-            ret[i/2] = x[i];
-        }
-    }
-    return ret;
-}
-
-VectorXi index_e(VectorXi &x){
-    VectorXi ret(vsize(x)/2);
-    for(int i = 0; i < vsize(x); i++){
-        if (!(i % 2 == 0)) {
-            ret[(i-1)/2] = x[i];
-        }
-    }
-    return ret;
-}
-
-VectorXi retBinary(VectorXi &x) {
-    VectorXi ret(vsize(x));
-    for(int i = 0; i < vsize(x) ; i++){
-        ret[i] = x[i] % 2;
-    }
-    return ret;
-}
-
 long double calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
     long double W_i = 0.0;
 
@@ -116,7 +156,6 @@ long double calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
 //    PRINT(W_i);
     return W_i;
 }
-
 VectorXi encoder(int n, VectorXi &input){
     VectorXi x_n(n);
     VectorXi s_n(n);
@@ -162,7 +201,6 @@ VectorXi encoder(int n, VectorXi &input){
     }
     return x_n;
 }
-
 VectorXi channel(VectorXi &input){
     VectorXi y(N);
 
@@ -174,7 +212,6 @@ VectorXi channel(VectorXi &input){
     }
     return y;
 }
-
 VectorXi decoder(VectorXi &input, VectorXi &u, VectorXi &u_Ac){
 
     VectorXd h_i(N);
@@ -222,52 +259,74 @@ VectorXi decoder(VectorXi &input, VectorXi &u, VectorXi &u_Ac){
     return u_n_est;
 }
 
-VectorXi generateUi(VectorXi &x,VectorXi &u_Ac){
-    VectorXi ret(N);
-    srand((int) time(NULL));
-    for (int i = 0; i < N; i++) {
-        int in_A = 0;
-        int index = 0;
-        for (int j = 0; j < K; j++) {
-            if ( i+1 == A[j]) {
-                in_A = 1;
-                index = j;
-            }
-        }
-        // Aに含まれるindexなら既知
-        if (in_A == 1) {
-            ret[i] = u_Ac[index];
+long double calcCapacityForBec(int i, int n) {
+    long double cap =0.0;
+    if ( i == 0 && n == 1 ) {
+        cap = 1 - e;
+    } else {
+        if ( i % 2 == 0) {
+            cap = pow(calcCapacityForBec(i/2, n/2),2);
         } else {
-            ret[i] = rand() % 2;
+            long double tempCap = calcCapacityForBec((i-1)/2, n/2);
+            cap = 2 * tempCap - pow(tempCap,2);
         }
     }
-    return ret;
+//    PRINT(i);
+//    PRINT(n);
+    PRINT(cap);
+    return cap;
 }
 
+void makeArrayCapacityForBec(long double *array) {
+    for(int i = 0; i < N; i++){
+        array[i] = calcCapacityForBec(i,N);
+//        if( i == 0 ){
+//            array[i] = 1 - e;
+//        } else {
+//            if ( i % 2 == 0) {
+//                array[i] = pow(array[i/2],2);
+//            } else {
+//                long double tempCap = array[(i-1)/2];
+//                array[i] = 2 * tempCap - pow(tempCap,2);
+//            }
+//        }
+    }
+}
+
+
 int main(void) {
+    int i = 512;
     VectorXi u_Ac(K);
     u_Ac << 1, 0;
     VectorXi u_n(N);
-    u_n = generateUi(u_n, u_Ac);
-    PRINT(u_n);
-    VectorXi x_n = encoder(N, u_n);
-    VectorXi y_n = channel(x_n);
-    PRINT(x_n);
-    PRINT(y_n);
 
+    //calc exec time
     const auto startTime = chrono::system_clock::now();
 
-    int i = 1;
+    u_n = generateUi(u_n, u_Ac);
+//    PRINT(u_n);
+    VectorXi x_n = encoder(N, u_n);
+    VectorXi y_n = channel(x_n);
+//    PRINT(x_n);
+//    PRINT(y_n);
+
+    PRINT(calcCapacityForBec(i-1, N));
+
+    long double cap[N] = {0};
+    makeArrayCapacityForBec(cap);
+    dispArray(cap);
+    outputArray(cap);
+
 //    long double W_i = calcW_i(i, N, x_n, x_n[i-1], y_n);
 //    PRINT(W_i);
 
-    long double llr_0 = calcW_i(i, N, u_n, 0, y_n);
-    long double llr_1 = calcW_i(i, N, u_n, 1, y_n);
-    PRINT(llr_0);
-    PRINT(llr_1);
-
-    VectorXi u_n_est = decoder(y_n, x_n, u_Ac);
-    PRINT(u_n_est);
+//    long double llr_0 = calcW_i(i, N, u_n, 0, y_n);
+//    long double llr_1 = calcW_i(i, N, u_n, 1, y_n);
+//    PRINT(llr_0);
+//    PRINT(llr_1);
+//
+//    VectorXi u_n_est = decoder(y_n, x_n, u_Ac);
+//    PRINT(u_n_est);
 
     const auto endTime = chrono::system_clock::now();
     const auto timeSpan = endTime - startTime;
