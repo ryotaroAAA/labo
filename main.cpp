@@ -16,9 +16,9 @@ using namespace Eigen;
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 
 //params
-const int  N=1024;
+const int  N=2048;
 const int  K=2;
-const float e = 0.5f;
+const float e = 0.4f;
 const int A[] ={2,4};
 
 void dispArray(long double *x);
@@ -35,6 +35,7 @@ VectorXi channel(VectorXi &input);
 VectorXi decoder(VectorXi &input, VectorXi &u_Ac);
 long double calcCapacityForBec(int i, int n);
 void makeArrayCapacityForBec(long double *array);
+long double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est);
 
 
 void dispArray(long double *x){
@@ -225,8 +226,10 @@ VectorXi decoder(VectorXi &input, VectorXi &u, VectorXi &u_Ac){
                 count++;
             }
         }
-        long double llr = calcW_i(i, N, u, 0, input)
-                   / calcW_i(i, N, u, 1, input);
+        long double llr = calcW_i(i, N, u, 0, input) / calcW_i(i, N, u, 1, input);
+        if (isinf(llr)) {
+            llr = 1;
+        }
         PRINT(calcW_i(i, N, u, 0, input));
         PRINT(calcW_i(i, N, u, 1, input));
         if (llr >= 1) {
@@ -259,6 +262,47 @@ VectorXi decoder(VectorXi &input, VectorXi &u, VectorXi &u_Ac){
     return u_n_est;
 }
 
+long double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est) {
+    long double llr =0.0;
+    if ( n == 1 ) {
+        llr = calcW(y[0],0) / calcW(y[0],1);
+    } else {
+        VectorXi tempY1(vsize(y)/2);
+        VectorXi tempY2(vsize(y)/2);
+        for (int j = 0; j < vsize(y) ; j++) {
+            if(j < vsize(y)/2){
+                tempY1[j]= y[j];
+            } else {
+                tempY2[j - vsize(y)/2] = y[j];
+            }
+        }
+
+        VectorXi tempU;
+        VectorXi tempU_bin;
+        VectorXi u_e;
+
+        tempU = index_e(u)+index_o(u);
+        u_e = index_e(u);
+        tempU_bin = retBinary(tempU);
+        double temp1 = calcL_i(i/2, n/2, tempY1, tempU_bin, u_i_est);
+        double temp2 = calcL_i(i/2, n/2, tempY2, u_e, u_i_est);
+        if ( i % 2 == 0) {
+            llr = ( 1 + temp1 * temp2 ) / ( temp1 + temp2 );
+        } else {
+            llr = pow(temp1, 1-2*u_i_est) * temp2;
+        }
+    }
+    if (isinf(llr) || isnan(llr)) {
+        llr = 1;
+    }
+
+//    PRINT(i);
+//    PRINT(n);
+//    PRINT(llr);
+    cout << i << " " << n << " " << llr << endl;
+    return llr;
+}
+
 long double calcCapacityForBec(int i, int n) {
     long double cap =0.0;
     if ( i == 0 && n == 1 ) {
@@ -280,22 +324,12 @@ long double calcCapacityForBec(int i, int n) {
 void makeArrayCapacityForBec(long double *array) {
     for(int i = 0; i < N; i++){
         array[i] = calcCapacityForBec(i,N);
-//        if( i == 0 ){
-//            array[i] = 1 - e;
-//        } else {
-//            if ( i % 2 == 0) {
-//                array[i] = pow(array[i/2],2);
-//            } else {
-//                long double tempCap = array[(i-1)/2];
-//                array[i] = 2 * tempCap - pow(tempCap,2);
-//            }
-//        }
     }
 }
 
 
 int main(void) {
-    int i = 512;
+    int i = 1;
     VectorXi u_Ac(K);
     u_Ac << 1, 0;
     VectorXi u_n(N);
@@ -310,27 +344,31 @@ int main(void) {
 //    PRINT(x_n);
 //    PRINT(y_n);
 
-    PRINT(calcCapacityForBec(i-1, N));
+//    PRINT(calcCapacityForBec(i-1, N));
 
-    long double cap[N] = {0};
-    makeArrayCapacityForBec(cap);
-    dispArray(cap);
-    outputArray(cap);
-
-//    long double W_i = calcW_i(i, N, x_n, x_n[i-1], y_n);
+    //long double cap[N] = {0};
+    //makeArrayCapacityForBec(cap);
+    //dispArray(cap);
+    //outputArray(cap);
+    calcL_i(i, N, y_n, u_n, x_n(i));
+    const auto endTime = chrono::system_clock::now();
+    const auto timeSpan = endTime - startTime;
+    cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
+    const auto astartTime = chrono::system_clock::now();
+//    long double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
 //    PRINT(W_i);
 
-//    long double llr_0 = calcW_i(i, N, u_n, 0, y_n);
-//    long double llr_1 = calcW_i(i, N, u_n, 1, y_n);
-//    PRINT(llr_0);
-//    PRINT(llr_1);
+    long double llr_0 = calcW_i(i, N, u_n, 0, y_n);
+    long double llr_1 = calcW_i(i, N, u_n, 1, y_n);
+    PRINT(llr_0);
+    PRINT(llr_1);
 //
 //    VectorXi u_n_est = decoder(y_n, x_n, u_Ac);
 //    PRINT(u_n_est);
 
-    const auto endTime = chrono::system_clock::now();
-    const auto timeSpan = endTime - startTime;
-    cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
+    const auto aendTime = chrono::system_clock::now();
+    const auto atimeSpan = aendTime - astartTime;
+    cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(atimeSpan).count() << "[ms]" << endl;
     
     return 0;
 }
