@@ -50,7 +50,7 @@ VectorXi channel(VectorXi &input){
 
     for (int i = 0; i < N; i++) {
         y[i] = input[i];
-        if((long double)rand() / RAND_MAX < e){
+        if((double)rand() / RAND_MAX < e){
             y[i] = 2;
         }
     }
@@ -69,14 +69,13 @@ VectorXi decoder(VectorXi &y, VectorXi &u, VectorXi &u_Ac){
                 count++;
             }
         }
-        long double llr = calcL_i(i, N, y, u, u[i]);
-        if (llr >= 1) {
+        double lr = calcL_i(i, N, y, u, u[i]);
+        if (lr >= 1) {
             h_i[i] = 0;
         } else {
             h_i[i] = 1;
         }
     }
-    PRINT(h_i);
 
     //u_n_est計算
     for (int i = 0; i < N; i++) {
@@ -101,7 +100,7 @@ VectorXi decoder(VectorXi &y, VectorXi &u, VectorXi &u_Ac){
 }
 
 int main(void) {
-    int i = 1;
+    int i = 100;
     VectorXi u_Ac(K);
     u_Ac << 1, 0;
     VectorXi u_n(N);
@@ -109,26 +108,31 @@ int main(void) {
     //calc exec time
     const auto startTime = chrono::system_clock::now();
 
-    u_n = generateUi(u_n, u_Ac);
+//    u_n = generateUi(2, u_n, u_Ac);
 //    PRINT(u_n);
-    VectorXi x_n = encoder(N, u_n);
-    VectorXi y_n = channel(x_n);
+//    VectorXi x_n = encoder(N, u_n);
+//    VectorXi y_n = channel(x_n);
+
+    double arr[N];
+    probErrBound(arr);
 //    PRINT(x_n);
 //    PRINT(y_n);
 
+//    PRINT(calcBhatForBec(i-1,N));
+//
 //    PRINT(calcCapacityForBec(i-1, N));
 
-    //long double cap[N] = {0};
+    //double cap[N] = {0};
     //makeArrayCapacityForBec(cap);
     //dispArray(cap);
     //outputArray(cap);
-    calcL_i(i, N, y_n, u_n, x_n(i));
+    //calcL_i(i, N, y_n, u_n, x_n(i));
 
-//    long double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
+//    double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
 //    PRINT(W_i);
 //
-    VectorXi u_n_est = decoder(y_n, x_n, u_Ac);
-    PRINT(u_n_est);
+//    VectorXi u_n_est = decoder(y_n, u_n, u_Ac);
+//    PRINT(u_n_est);
     const auto endTime = chrono::system_clock::now();
     const auto timeSpan = endTime - startTime;
     cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
