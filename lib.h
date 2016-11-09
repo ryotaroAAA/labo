@@ -57,6 +57,8 @@ VectorXi decoder(VectorXi &input, int *u_Ac, int *A);
 double calcBhatForBec(int i, int n);
 void probErrBound(double *array);
 void defineFixedAndFree(int *fixed, int *free);
+int ithIndexDesc(int i, double *array, double *descArray);
+bool containNumInArray(int i, int n, int *array);;
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -132,21 +134,7 @@ VectorXi generateUi(int set, VectorXi &x,int *u_Ac, int *A){
     VectorXi ret(N);
     srand((int) time(NULL));
     for (int i = 0; i < N; i++) {
-        int in_A = 0;
-        int index = 0;
-        for (int j = 0; j < K; j++) {
-            if ( i+1 == A[j]) {
-                in_A = 1;
-                index = j;
-            }
-        }
-        // Aに含まれるindexなら既知
-        if (in_A == 1) {
-            ret[i] = u_Ac[index];
-        } else {
-            ret[i] = rand() % 2;
-        }
-
+        ret[i] = rand() % 2;
         if (set == 0) {
             ret[i] = 0;
         } else if (set == 1) {
@@ -243,7 +231,7 @@ double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est) {
     if (isinf(lr) || isnan(lr)) {
         lr = 1;
     }
-    cout << i << " " << n << " " << lr  << endl;
+//    cout << i << " " << n << " " << lr  << endl;
     return lr;
 }
 double calcCapacityForBec(int i, int n) {
@@ -319,13 +307,40 @@ void probErrBound(double *array) {
     }
 }
 
+int ithIndexDesc(int i, double *array, double *descArray){
+    for (int j=0; j<N; j++) {
+        if(descArray[i] == array[j]){
+            return j;
+        }
+    }
+    return 0;
+}
+
 void defineFixedAndFree(int *fixed, int *free){
     double cap[N] = {0};
+    double cap_desc[N] = {0};
     makeArrayCapacityForBec(cap);
-    qsort(cap, N, sizeof(double), compare_desc);
-    dispArray(cap);
+    makeArrayCapacityForBec(cap_desc);
+    qsort(cap_desc, N, sizeof(double), compare_desc);
+    //dispArray(cap);
 
-    
+    for (int i=0; i<N; i++) {
+        //cout << i << " " << ithIndexDesc(i, cap, cap_desc) <<endl;
+        if(i<K){
+            free[i] = ithIndexDesc(i, cap, cap_desc);
+        }else{
+            fixed[i-K] = ithIndexDesc(i, cap, cap_desc);
+        }
+    }
+}
+
+bool containNumInArray(int i, int n, int *array){
+    for(int j=0; j<n; j++){
+        if(i == array[j]){
+            return true;
+        }
+    }
+    return false;
 }
 
 //////////////////////////////////////////////////////////////////////////////////

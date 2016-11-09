@@ -61,7 +61,7 @@ VectorXi channel(VectorXi &input){
     }
     return y;
 }
-VectorXi decoder(VectorXi &y, VectorXi &u, int *u_Ac, int *A){
+VectorXi decoder(VectorXi &y, VectorXi &u, int *Ac, int *A){
 
     VectorXd h_i(N);
     VectorXi u_n_est(N);
@@ -86,18 +86,9 @@ VectorXi decoder(VectorXi &y, VectorXi &u, int *u_Ac, int *A){
 
     //u_n_est計算
     for (int i = 0; i < N; i++) {
-        int in_A = 0;
-        int index = 0;
-        for (int j = 0; j < K; j++) {
-            if ( i+1 == A[j]) {
-                in_A = 1;
-                index = j;
-            }
-        }
-
         // Aに含まれるindexなら既知
-        if (in_A == 1) {
-            u_n_est[i] = u_Ac[index];
+        if (containNumInArray(i, N-K, Ac)) {
+            u_n_est[i] = u[i];
         } else {
             u_n_est[i] = h_i[i];
         }
@@ -111,7 +102,11 @@ int main(void) {
     int u_Ac[N-K] = {0};
     int u_A[K] = {0};
     int A[K] = {0};
-
+    defineFixedAndFree(u_Ac, u_A);
+    cout << "free_variable(A)" << endl;
+    dispArray(K,u_A);
+    cout << "fixed_variable(Ac)" << endl;
+    dispArray(N-K,u_Ac);
     VectorXi u_n(N);
 
     //処理時間計測//
@@ -130,17 +125,17 @@ int main(void) {
 
 //    PRINT(calcBhatForBec(i-1,N));
 //    PRINT(calcCapacityForBec(i-1, N));
-    double cap[N] = {0};
-    makeArrayCapacityForBec(cap);
-    dispArray(cap);
+//    double cap[N] = {0};
+//    makeArrayCapacityForBec(cap);
+//    dispArray(cap);
     //outputArray(cap);
     //calcL_i(i, N, y_n, u_n, x_n(i));
 
 //    double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
 //    PRINT(W_i);
-    defineFixedAndFree(u_Ac, u_A);
-//    VectorXi u_n_est = decoder(y_n, u_n, u_Ac);
-//    PRINT(u_n_est);
+    VectorXi u_n_est = decoder(y_n, u_n, u_Ac, u_A);
+    PRINT(u_n_est);
+    cout << "rate:" << (double)K/N << endl;
 
     //処理時間計測//
     const auto endTime = chrono::system_clock::now();
