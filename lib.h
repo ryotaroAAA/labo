@@ -26,10 +26,10 @@ using namespace Eigen;
 using namespace std;
 
 //params
-const int  N=1024;
+const int  N=8;
 const int  K=2;
 const float e = 0.5f;
-const int A[] ={};
+
 
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 #define ARR(array)     (sizeof(array) / sizeof(array[0]));
@@ -46,26 +46,36 @@ double calcW(int y, int x);
 VectorXi index_o(VectorXi &x);
 VectorXi index_e(VectorXi &x);
 VectorXi retBinary(VectorXi &x);
-VectorXi generateUi(VectorXi &x,VectorXi &u_Ac);
+VectorXi generateUi(VectorXi &x,int *u_Ac, int *A);
 double calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y);
 double calcCapacityForBec(int i, int n);
 void makeArrayCapacityForBec(double *array);
 double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est);
 VectorXi encoder(int n, VectorXi &input);
 VectorXi channel(VectorXi &input);
-VectorXi decoder(VectorXi &input, VectorXi &u_Ac);
+VectorXi decoder(VectorXi &input, int *u_Ac, int *A);
 double calcBhatForBec(int i, int n);
 void probErrBound(double *array);
+void defineFixedAndFree(int *fixed, int *free);
 
 //////////////////////////////////////////////////////////////////////////////////
 
-int compare_int(const void *x, const void *y) {
+int compare_asc(const void *x, const void *y) {
     const double* a=(const double*)x;
     const double* b=(const double*)y;
     if(*a>*b)return 1;
     if(*a<*b)return -1;
     return 0;
 }
+
+int compare_desc(const void *x, const void *y) {
+    const double* a=(const double*)x;
+    const double* b=(const double*)y;
+    if(*a>*b)return -1;
+    if(*a<*b)return 1;
+    return 0;
+}
+
 void dispArray(double *x){
     for(int i = 0; i < N; i++){
         printf("x[%d] = %f\n",i, x[i]);
@@ -118,7 +128,7 @@ VectorXi retBinary(VectorXi &x) {
     }
     return ret;
 }
-VectorXi generateUi(int set, VectorXi &x,VectorXi &u_Ac){
+VectorXi generateUi(int set, VectorXi &x,int *u_Ac, int *A){
     VectorXi ret(N);
     srand((int) time(NULL));
     for (int i = 0; i < N; i++) {
@@ -201,7 +211,9 @@ double calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
 double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est) {
     double lr = 0.0;
     if ( n == 1 ) {
-        lr = calcW(y[0],0) / calcW(y[0],1);
+        double wc = calcW(y[0],0);
+        double wp = calcW(y[0],1);
+        lr = wc / wp;
     } else {
         VectorXi tempY1(vsize(y)/2);
         VectorXi tempY2(vsize(y)/2);
@@ -231,7 +243,7 @@ double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est) {
     if (isinf(lr) || isnan(lr)) {
         lr = 1;
     }
-    //cout << i << " " << n << " " << lr << endl;
+    cout << i << " " << n << " " << lr  << endl;
     return lr;
 }
 double calcCapacityForBec(int i, int n) {
@@ -247,7 +259,7 @@ double calcCapacityForBec(int i, int n) {
         }
     }
     //cout << "i:" << i << ", n:" << n <<endl;
-    PRINT(cap);
+//    PRINT(cap);
     return cap;
 }
 double calcBhatForBec(int i, int n){
@@ -283,7 +295,7 @@ void probErrBound(double *array) {
     }
     //double bhatArr[N];
 //    memcpy(bhatArr, tempArr, sizeof(double) * N);
-    qsort(tempArr, N, sizeof(double), compare_int);
+    qsort(tempArr, N, sizeof(double), compare_asc);
 //    dispArray(tempArr);
 
 //    for(int i = 0; i < j; i++) {
@@ -307,6 +319,14 @@ void probErrBound(double *array) {
     }
 }
 
+void defineFixedAndFree(int *fixed, int *free){
+    double cap[N] = {0};
+    makeArrayCapacityForBec(cap);
+    qsort(cap, N, sizeof(double), compare_desc);
+    dispArray(cap);
+
+    
+}
 
 //////////////////////////////////////////////////////////////////////////////////
 

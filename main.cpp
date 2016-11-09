@@ -12,24 +12,28 @@ VectorXi encoder(int n, VectorXi &input){
 
     for (int i = 0; i < n/2 ; i++) {
         v_n[i] = s_n[2*i];
-        v_n[n/2 + i] = s_n[2*i +1];
+        v_n[n/2 + i] = s_n[2*i + 1];
     }
+//    PRINT(s_n);
+//    PRINT(v_n);
 
     if (n == 2) {
-        x_n[0] = (v_n[0] + v_n[1]) % 2;
-        x_n[1] = v_n[1];
+        x_n[0] = (input[0] + input[1]) % 2;
+        x_n[1] = input[1];
 
     } else {
         VectorXi tempV_n1(n/2);
         VectorXi tempV_n2(n/2);
 
         for (int i = 0; i < n ; i++) {
-            if(i < n/2){
+            if (i < n/2) {
                 tempV_n1[i]= v_n[i];
             } else {
                 tempV_n2[i - n/2] = v_n[i];
             }
         }
+//        PRINT(tempV_n1);
+//        PRINT(tempV_n2);
 
         VectorXi tempX_n1 = encoder(n/2, tempV_n1);
         VectorXi tempX_n2 = encoder(n/2, tempV_n2);
@@ -41,7 +45,8 @@ VectorXi encoder(int n, VectorXi &input){
                 x_n[i] = tempX_n2[i - n/2];
             }
         }
-
+//        PRINT(tempX_n1);
+//        PRINT(tempX_n2);
     }
     return x_n;
 }
@@ -56,7 +61,7 @@ VectorXi channel(VectorXi &input){
     }
     return y;
 }
-VectorXi decoder(VectorXi &y, VectorXi &u, VectorXi &u_Ac){
+VectorXi decoder(VectorXi &y, VectorXi &u, int *u_Ac, int *A){
 
     VectorXd h_i(N);
     VectorXi u_n_est(N);
@@ -70,6 +75,8 @@ VectorXi decoder(VectorXi &y, VectorXi &u, VectorXi &u_Ac){
             }
         }
         double lr = calcL_i(i, N, y, u, u[i]);
+//        cout << "i:" << i << ",N:" << N << endl;
+//        PRINT(lr);
         if (lr >= 1) {
             h_i[i] = 0;
         } else {
@@ -100,39 +107,42 @@ VectorXi decoder(VectorXi &y, VectorXi &u, VectorXi &u_Ac){
 }
 
 int main(void) {
-    int i = 100;
-    VectorXi u_Ac(K);
-    u_Ac << 1, 0;
+    int i = 1;
+    int u_Ac[N-K] = {0};
+    int u_A[K] = {0};
+    int A[K] = {0};
+
     VectorXi u_n(N);
 
-    //calc exec time
+    //処理時間計測//
     const auto startTime = chrono::system_clock::now();
 
-//    u_n = generateUi(2, u_n, u_Ac);
-//    PRINT(u_n);
-//    VectorXi x_n = encoder(N, u_n);
-//    VectorXi y_n = channel(x_n);
+    u_n = generateUi(2, u_n, u_Ac, A);
+//    u_n << 1,1,0,1;
+    PRINT(u_n);
+    VectorXi x_n = encoder(N, u_n);
+    VectorXi y_n = channel(x_n);
 
-    double arr[N];
-    probErrBound(arr);
-//    PRINT(x_n);
-//    PRINT(y_n);
+//    double arr[N];
+//    probErrBound(arr);
+    PRINT(x_n);
+    PRINT(y_n);
 
 //    PRINT(calcBhatForBec(i-1,N));
-//
 //    PRINT(calcCapacityForBec(i-1, N));
-
-    //double cap[N] = {0};
-    //makeArrayCapacityForBec(cap);
-    //dispArray(cap);
+    double cap[N] = {0};
+    makeArrayCapacityForBec(cap);
+    dispArray(cap);
     //outputArray(cap);
     //calcL_i(i, N, y_n, u_n, x_n(i));
 
 //    double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
 //    PRINT(W_i);
-//
+    defineFixedAndFree(u_Ac, u_A);
 //    VectorXi u_n_est = decoder(y_n, u_n, u_Ac);
 //    PRINT(u_n_est);
+
+    //処理時間計測//
     const auto endTime = chrono::system_clock::now();
     const auto timeSpan = endTime - startTime;
     cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
