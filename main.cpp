@@ -102,6 +102,11 @@ int main(void) {
     int u_Ac[N-K] = {0};
     int u_A[K] = {0};
     int A[K] = {0};
+
+    double cap[N] = {0};
+    makeArrayCapacityForBec(cap);
+    dispArray(cap);
+
     defineFixedAndFree(u_Ac, u_A);
     cout << "free_variable(A)" << endl;
     dispArray(K,u_A);
@@ -125,8 +130,7 @@ int main(void) {
 
 //    PRINT(calcBhatForBec(i-1,N));
 //    PRINT(calcCapacityForBec(i-1, N));
-//    double cap[N] = {0};
-//    makeArrayCapacityForBec(cap);
+
 //    dispArray(cap);
     //outputArray(cap);
     //calcL_i(i, N, y_n, u_n, x_n(i));
@@ -135,6 +139,8 @@ int main(void) {
 //    PRINT(W_i);
     VectorXi u_n_est = decoder(y_n, u_n, u_Ac, u_A);
     PRINT(u_n_est);
+
+    cout << "error rate:" << errorRate(u_n,u_n_est) << endl;
     cout << "rate:" << (double)K/N << endl;
 
     //処理時間計測//

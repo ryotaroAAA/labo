@@ -26,8 +26,8 @@ using namespace Eigen;
 using namespace std;
 
 //params
-const int  N=8;
-const int  K=2;
+const int  N=16;
+const int  K=10;
 const float e = 0.5f;
 
 
@@ -58,7 +58,8 @@ double calcBhatForBec(int i, int n);
 void probErrBound(double *array);
 void defineFixedAndFree(int *fixed, int *free);
 int ithIndexDesc(int i, double *array, double *descArray);
-bool containNumInArray(int i, int n, int *array);;
+bool containNumInArray(int i, int n, int *array);
+double errorRate(VectorXi &u, VectorXi &u_est);
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -341,6 +342,16 @@ bool containNumInArray(int i, int n, int *array){
         }
     }
     return false;
+}
+
+double errorRate(VectorXi &u, VectorXi &u_est){
+    int error_count = 0;
+    for(int i=0; i<N; i++){
+        if(u[i] != u_est[i]){
+            error_count++;
+        }
+    }
+    return (double)error_count/N;
 }
 
 //////////////////////////////////////////////////////////////////////////////////
