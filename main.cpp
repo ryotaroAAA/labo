@@ -105,7 +105,7 @@ int main(void) {
 
     double cap[N] = {0};
     makeArrayCapacityForBec(cap);
-    dispArray(cap);
+//    dispArray(cap);
 
     defineFixedAndFree(u_Ac, u_A);
     cout << "free_variable(A)" << endl;
@@ -119,14 +119,14 @@ int main(void) {
 
     u_n = generateUi(2, u_n, u_Ac, A);
 //    u_n << 1,1,0,1;
-    PRINT(u_n);
+    //PRINT(u_n);
     VectorXi x_n = encoder(N, u_n);
     VectorXi y_n = channel(x_n);
 
 //    double arr[N];
 //    probErrBound(arr);
-    PRINT(x_n);
-    PRINT(y_n);
+//    PRINT(x_n);
+//    PRINT(y_n);
 
 //    PRINT(calcBhatForBec(i-1,N));
 //    PRINT(calcCapacityForBec(i-1, N));
@@ -138,9 +138,9 @@ int main(void) {
 //    double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
 //    PRINT(W_i);
     VectorXi u_n_est = decoder(y_n, u_n, u_Ac, u_A);
-    PRINT(u_n_est);
+    //PRINT(u_n_est);
 
-    cout << "error rate:" << errorRate(u_n,u_n_est) << endl;
+    cout << "error　probability:" << errorRate(u_n,u_n_est) << endl;
     cout << "rate:" << (double)K/N << endl;
 
     //処理時間計測//

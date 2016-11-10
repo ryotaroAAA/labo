@@ -16,6 +16,7 @@
 #include "time.h"
 #include <chrono>
 #include <iomanip>
+#include <map>
 #include <string>    // useful for reading and writing
 #include <fstream>   // ifstream, ofstream
 
@@ -26,8 +27,8 @@ using namespace Eigen;
 using namespace std;
 
 //params
-const int  N=16;
-const int  K=10;
+const int  N=256;
+const int  K=150;
 const float e = 0.5f;
 
 
@@ -310,7 +311,7 @@ void probErrBound(double *array) {
 
 int ithIndexDesc(int i, double *array, double *descArray){
     for (int j=0; j<N; j++) {
-        if(descArray[i] == array[j]){
+        if(array[j] == descArray[i]){
             return j;
         }
     }
@@ -323,10 +324,10 @@ void defineFixedAndFree(int *fixed, int *free){
     makeArrayCapacityForBec(cap);
     makeArrayCapacityForBec(cap_desc);
     qsort(cap_desc, N, sizeof(double), compare_desc);
-    //dispArray(cap);
+    //dispArray(cap_desc);
 
     for (int i=0; i<N; i++) {
-        //cout << i << " " << ithIndexDesc(i, cap, cap_desc) <<endl;
+//        cout << i << " " << ithIndexDesc(i, cap, cap_desc) <<endl;
         if(i<K){
             free[i] = ithIndexDesc(i, cap, cap_desc);
         }else{
