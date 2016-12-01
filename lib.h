@@ -27,7 +27,7 @@ using namespace Eigen;
 using namespace std;
 
 //params
-const int  N=1024;      //number of
+const int  N=256;   //number of
 const int  K=50;     //number of data bits
 const double e = 0.5f;
 static int hoge = 0;
@@ -254,40 +254,8 @@ double calcL_i(int i, int n ,int level ,VectorXi &y ,VectorXi &u, int u_i_est, v
         tempU_bin = retBinary(tempU);
         hoge2++;
 
-        double temp1 = 1.0;
-        double temp2 = 1.0;
-
-        if (isCache[level][i]) {
-            if(i <= n/2){
-                temp1 = cache[level][i];
-            } else {
-                temp2 = cache[level][i];
-            }
-        } else {
-            temp1 = calcL_i(i/2, n/2, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
-            cache[level][i] = temp1;
-            if(i <= n/2){
-                cache[level][i] = temp1;
-            } else {
-                cache[level][(i+(n/2))%N] = temp1;
-            }
-        }
-
-        if (isCache[level][(i+(n/2))%N]) {
-            if(i <= n/2){
-                temp1 = cache[level][(i+(n/2))%N];
-            } else {
-                temp2 = cache[level][(i+(n/2))%N];
-            }
-        } else {
-            temp2 = calcL_i(i/2, n/2, level+1, tempY2, u_e, u_i_est, isCache, cache);
-            cache[level][i] = temp2;
-            if(i <= n/2){
-                cache[level][i] = temp1;
-            } else {
-                cache[level][(i+(n/2))%N] = temp1;
-            }
-        }
+        double temp1 = calcL_i(i/2, n/2, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+        double temp2 = calcL_i(i/2, n/2, level+1, tempY2, u_e, u_i_est, isCache, cache);
 
         if ( i % 2 == 0) {
             lr = ( 1 + temp1 * temp2 ) / ( temp1 + temp2 );
