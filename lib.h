@@ -16,10 +16,10 @@
 #include "time.h"
 #include <chrono>
 #include <iomanip>
-#include <map>
 #include <string>    // useful for reading and writing
 #include <fstream>   // ifstream, ofstream
-
+#include <vector>            //<-vector用
+#include <algorithm>         //<-sort用
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -27,21 +27,28 @@ using namespace Eigen;
 using namespace std;
 
 //params
-const int  N=256;
-const int  K=150;
-const float e = 0.5f;
+const int  N=1024;      //number of
+const int  K=50;     //number of data bits
+const double e = 0.5f;
+static int hoge = 0;
+static int hoge2 = 0;
+static double hogetime = 0.0;
 
+typedef pair<int, double> ass_arr;
 
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 #define ARR(array)     (sizeof(array) / sizeof(array[0]));
 
 ////////////////////////////////////////////////////////////////////////////////
 
+void outputArray(double *x);
+void makeArrayCapacityForBec(double *array);
+bool sort_less(const ass_arr& left,const ass_arr& right);
+bool sort_greater(const ass_arr& left,const ass_arr& right);
 int compare_int(const void *a, const void *b);
 void dispArray(double *x);
 void dispArray(int n,int *x);
 void dispArray(int n,double *x);
-void outputArray(double *x);
 int vsize(VectorXi &x);
 double calcW(int y, int x);
 VectorXi index_o(VectorXi &x);
@@ -50,8 +57,8 @@ VectorXi retBinary(VectorXi &x);
 VectorXi generateUi(VectorXi &x,int *u_Ac, int *A);
 double calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y);
 double calcCapacityForBec(int i, int n);
-void makeArrayCapacityForBec(double *array);
-double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est);
+
+double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est, vector<vector<bool>> &isCache, vector<vector<double>> &cache);
 VectorXi encoder(int n, VectorXi &input);
 VectorXi channel(VectorXi &input);
 VectorXi decoder(VectorXi &input, int *u_Ac, int *A);
@@ -63,6 +70,23 @@ bool containNumInArray(int i, int n, int *array);
 double errorRate(VectorXi &u, VectorXi &u_est);
 
 //////////////////////////////////////////////////////////////////////////////////
+
+bool containVal(int value, vector<int> m_array) {
+    auto it = find(begin(m_array), m_array.end(), value);
+    size_t index = distance(begin(m_array), it);
+    if(index == m_array.size()) {
+        return false;
+    }
+    return true;
+}
+
+bool sort_less(const ass_arr& left,const ass_arr& right){
+    return left.second < right.second;
+}
+
+bool sort_greater(const ass_arr& left,const ass_arr& right){
+    return left.second > right.second;
+}
 
 int compare_asc(const void *x, const void *y) {
     const double* a=(const double*)x;
@@ -116,6 +140,7 @@ VectorXi index_o(VectorXi &x){
     }
     return ret;
 }
+
 VectorXi index_e(VectorXi &x){
     VectorXi ret(vsize(x)/2);
     for(int i = 0; i < vsize(x); i++){
@@ -125,6 +150,7 @@ VectorXi index_e(VectorXi &x){
     }
     return ret;
 }
+
 VectorXi retBinary(VectorXi &x) {
     VectorXi ret(vsize(x));
     for(int i = 0; i < vsize(x) ; i++){
@@ -132,6 +158,7 @@ VectorXi retBinary(VectorXi &x) {
     }
     return ret;
 }
+
 VectorXi generateUi(int set, VectorXi &x,int *u_Ac, int *A){
     VectorXi ret(N);
     srand((int) time(NULL));
@@ -146,8 +173,9 @@ VectorXi generateUi(int set, VectorXi &x,int *u_Ac, int *A){
     }
     return ret;
 }
+
 double calcW(int y, int x) {
-    double retVal = 0.0f;
+    double retVal = 0.0;
     if (x == y) {
         retVal = 1 - e;
     } else if (y == 2) {
@@ -157,6 +185,7 @@ double calcW(int y, int x) {
     }
     return retVal;
 }
+
 double calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
     double W_i = 0.0;
 
@@ -198,7 +227,8 @@ double calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
 //    PRINT(W_i);
     return W_i;
 }
-double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est) {
+
+double calcL_i(int i, int n ,int level ,VectorXi &y ,VectorXi &u, int u_i_est, vector<vector<bool>> &isCache , vector<vector<double>> &cache) {
     double lr = 0.0;
     if ( n == 1 ) {
         double wc = calcW(y[0],0);
@@ -222,8 +252,43 @@ double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est) {
         tempU = index_e(u)+index_o(u);
         u_e = index_e(u);
         tempU_bin = retBinary(tempU);
-        double temp1 = calcL_i(i/2, n/2, tempY1, tempU_bin, u_i_est);
-        double temp2 = calcL_i(i/2, n/2, tempY2, u_e, u_i_est);
+        hoge2++;
+
+        double temp1 = 1.0;
+        double temp2 = 1.0;
+
+        if (isCache[level][i]) {
+            if(i <= n/2){
+                temp1 = cache[level][i];
+            } else {
+                temp2 = cache[level][i];
+            }
+        } else {
+            temp1 = calcL_i(i/2, n/2, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+            cache[level][i] = temp1;
+            if(i <= n/2){
+                cache[level][i] = temp1;
+            } else {
+                cache[level][(i+(n/2))%N] = temp1;
+            }
+        }
+
+        if (isCache[level][(i+(n/2))%N]) {
+            if(i <= n/2){
+                temp1 = cache[level][(i+(n/2))%N];
+            } else {
+                temp2 = cache[level][(i+(n/2))%N];
+            }
+        } else {
+            temp2 = calcL_i(i/2, n/2, level+1, tempY2, u_e, u_i_est, isCache, cache);
+            cache[level][i] = temp2;
+            if(i <= n/2){
+                cache[level][i] = temp1;
+            } else {
+                cache[level][(i+(n/2))%N] = temp1;
+            }
+        }
+
         if ( i % 2 == 0) {
             lr = ( 1 + temp1 * temp2 ) / ( temp1 + temp2 );
         } else {
@@ -236,6 +301,19 @@ double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est) {
 //    cout << i << " " << n << " " << lr  << endl;
     return lr;
 }
+
+
+// double errorRate(VectorXi &u, VectorXi &u_est){
+//     int error_count = 0;
+//     for(int i=0; i<N; i++){
+//         if(u[i] != u_est[i]){
+//             error_count++;
+//         }
+//     }
+//     return (double)error_count/N;
+// }
+
+
 double calcCapacityForBec(int i, int n) {
     double cap =0.0;
     if ( i == 0 && n == 1 ) {
@@ -252,6 +330,7 @@ double calcCapacityForBec(int i, int n) {
 //    PRINT(cap);
     return cap;
 }
+
 double calcBhatForBec(int i, int n){
     double bha =0.0;
     if ( i == 0 && n == 1 ) {
@@ -268,13 +347,15 @@ double calcBhatForBec(int i, int n){
 //    PRINT(bha);
     return bha;
 }
+
 void makeArrayCapacityForBec(double *array) {
     for(int i = 0; i < N; i++){
         array[i] = calcCapacityForBec(i,N);
     }
 }
+
 void probErrBound(double *array) {
-    int N = pow(2,20);
+    int N = pow(2,18);
     int count = 0;
     double tempArr[N];
     double sumArr[N];
@@ -283,24 +364,15 @@ void probErrBound(double *array) {
     for(int i = 0; i < N; i++) {
         tempArr[i] = calcBhatForBec(i, N);
     }
-    //double bhatArr[N];
-//    memcpy(bhatArr, tempArr, sizeof(double) * N);
-    qsort(tempArr, N, sizeof(double), compare_asc);
-//    dispArray(tempArr);
 
-//    for(int i = 0; i < j; i++) {
-//        array[i] = tempArr[i];
-//    }
+    qsort(tempArr, N, sizeof(double), compare_asc);
 
     for(int i=0; i < N; i++){
         sum += tempArr[i];
         sumArr[i] = sum;
     }
-//    for(int i=0; i < N; i++){
-//        cout << (double)i/N << " " << sumArr[i] << " " << tempArr[i] << endl;
-//    }
 
-    string filename = "/Users/ryotaro/labo/err_bound3";
+    string filename = "/Users/ryotaro/labo/e18";
     ofstream w_file;
     w_file.open(filename, ios::out);
     for (int i = 0; i < N; i++)
@@ -311,7 +383,7 @@ void probErrBound(double *array) {
 
 int ithIndexDesc(int i, double *array, double *descArray){
     for (int j=0; j<N; j++) {
-        if(array[j] == descArray[i]){
+        if(descArray[i] == array[j]){
             return j;
         }
     }
@@ -322,17 +394,22 @@ void defineFixedAndFree(int *fixed, int *free){
     double cap[N] = {0};
     double cap_desc[N] = {0};
     makeArrayCapacityForBec(cap);
-    makeArrayCapacityForBec(cap_desc);
-    qsort(cap_desc, N, sizeof(double), compare_desc);
-    //dispArray(cap_desc);
 
-    for (int i=0; i<N; i++) {
-//        cout << i << " " << ithIndexDesc(i, cap, cap_desc) <<endl;
+    vector<pair<int, double> > cap_map;
+    for(int i=0; i<N; i++){
+        cap_map.push_back(pair<int, double>(i, cap[i]));
+    }
+
+    //昇順ソート
+    sort(begin(cap_map), end(cap_map), sort_greater);
+    int i = 0;
+    for(auto val : cap_map){
         if(i<K){
-            free[i] = ithIndexDesc(i, cap, cap_desc);
+            free[i] = val.first;
         }else{
-            fixed[i-K] = ithIndexDesc(i, cap, cap_desc);
+            fixed[i-K] = val.first;
         }
+        i++;
     }
 }
 

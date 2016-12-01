@@ -1,5 +1,6 @@
 #include "lib.h"
 
+
 VectorXi encoder(int n, VectorXi &input){
     VectorXi x_n(n);
     VectorXi s_n(n);
@@ -14,8 +15,6 @@ VectorXi encoder(int n, VectorXi &input){
         v_n[i] = s_n[2*i];
         v_n[n/2 + i] = s_n[2*i + 1];
     }
-//    PRINT(s_n);
-//    PRINT(v_n);
 
     if (n == 2) {
         x_n[0] = (input[0] + input[1]) % 2;
@@ -32,9 +31,8 @@ VectorXi encoder(int n, VectorXi &input){
                 tempV_n2[i - n/2] = v_n[i];
             }
         }
-//        PRINT(tempV_n1);
-//        PRINT(tempV_n2);
-
+        hoge++;
+//        cout << "encoder size:: " << vsize(tempV_n1) << endl;
         VectorXi tempX_n1 = encoder(n/2, tempV_n1);
         VectorXi tempX_n2 = encoder(n/2, tempV_n2);
 
@@ -45,11 +43,10 @@ VectorXi encoder(int n, VectorXi &input){
                 x_n[i] = tempX_n2[i - n/2];
             }
         }
-//        PRINT(tempX_n1);
-//        PRINT(tempX_n2);
     }
     return x_n;
 }
+
 VectorXi channel(VectorXi &input){
     VectorXi y(N);
 
@@ -61,35 +58,40 @@ VectorXi channel(VectorXi &input){
     }
     return y;
 }
-VectorXi decoder(VectorXi &y, VectorXi &u, int *Ac, int *A){
 
+VectorXi decoder(VectorXi &y, VectorXi &u, int *Ac, int *A){
     VectorXd h_i(N);
     VectorXi u_n_est(N);
+    int size = log2(N);
 
-    //h_i計算
-    for (int i = 0; i < N; i++) {
-        int count = 0;
-        for (int j = i; j < N; j++) {
-            if( y[j] == 0 || y[j] == 1 ) {
-                count++;
-            }
-        }
-        double lr = calcL_i(i, N, y, u, u[i]);
-//        cout << "i:" << i << ",N:" << N << endl;
-//        PRINT(lr);
-        if (lr >= 1) {
-            h_i[i] = 0;
-        } else {
-            h_i[i] = 1;
-        }
-    }
+    vector<vector<bool>> isCache (size, vector<bool>(N,false));
+    vector<vector<double>> cache (size, vector<double>(N,0.0));
+//    bool isCache[3][N] = {{false}};
+//    double cache[3][N] = {{0.0}};
 
     //u_n_est計算
     for (int i = 0; i < N; i++) {
-        // Aに含まれるindexなら既知
+        // Acに含まれるindexなら既知
         if (containNumInArray(i, N-K, Ac)) {
             u_n_est[i] = u[i];
         } else {
+            cout << i << endl;
+            //処理時間計測//
+            const auto startTime = chrono::system_clock::now();
+
+            double lr = calcL_i(i, N, 0, y, u, u[i], isCache, cache);
+
+            const auto endTime = chrono::system_clock::now();
+            const auto timeSpan = endTime - startTime;
+            cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
+            hogetime += chrono::duration_cast<chrono::milliseconds>(timeSpan).count();
+            const auto astartTime = chrono::system_clock::now();
+
+            if (lr >= 1) {
+                h_i[i] = 0;
+            } else {
+                h_i[i] = 1;
+            }
             u_n_est[i] = h_i[i];
         }
     }
@@ -103,21 +105,16 @@ int main(void) {
     int u_A[K] = {0};
     int A[K] = {0};
 
-    double cap[N] = {0};
-    makeArrayCapacityForBec(cap);
-//    dispArray(cap);
-
-    defineFixedAndFree(u_Ac, u_A);
-    cout << "free_variable(A)" << endl;
-    dispArray(K,u_A);
-    cout << "fixed_variable(Ac)" << endl;
-    dispArray(N-K,u_Ac);
+    double temp[N] = {0.0};
+    probErrBound(temp);
+//    makeArrayCapacityForBec(cap);
+//    outputArray(cap);defineFixedAndFree(u_Ac, u_A);
     VectorXi u_n(N);
 
     //処理時間計測//
     const auto startTime = chrono::system_clock::now();
-
     u_n = generateUi(2, u_n, u_Ac, A);
+
 //    u_n << 1,1,0,1;
     //PRINT(u_n);
     VectorXi x_n = encoder(N, u_n);
@@ -146,8 +143,12 @@ int main(void) {
     //処理時間計測//
     const auto endTime = chrono::system_clock::now();
     const auto timeSpan = endTime - startTime;
+    cout << "総LR計算時間:" << hogetime << "[ms]" << endl;
     cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
     const auto astartTime = chrono::system_clock::now();
+
+     cout << hoge << endl;
+     cout << hoge2 << endl;
     
     return 0;
 }
