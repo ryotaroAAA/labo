@@ -270,7 +270,6 @@ double calcL_i(int i, int n ,int level ,VectorXi &y ,VectorXi &u, int u_i_est, v
     return lr;
 }
 
-
 // double errorRate(VectorXi &u, VectorXi &u_est){
 //     int error_count = 0;
 //     for(int i=0; i<N; i++){

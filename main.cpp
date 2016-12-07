@@ -108,7 +108,8 @@ int main(void) {
     double temp[N] = {0.0};
     probErrBound(temp);
 //    makeArrayCapacityForBec(cap);
-//    outputArray(cap);defineFixedAndFree(u_Ac, u_A);
+//    outputArray(cap);
+    defineFixedAndFree(u_Ac, u_A);
     VectorXi u_n(N);
 
     //処理時間計測//
