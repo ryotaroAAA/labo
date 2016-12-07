@@ -27,8 +27,8 @@ using namespace Eigen;
 using namespace std;
 
 //params
-const int  N=256;   //number of
-const int  K=50;     //number of data bits
+const int  N=1024;   //number of
+const int  K=1000;     //number of data bits
 const double e = 0.5f;
 static int hoge = 0;
 static int hoge2 = 0;
