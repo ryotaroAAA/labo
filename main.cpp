@@ -1,4 +1,4 @@
-#include "lib.h"
+#include "main.h"
 
 
 VectorXi encoder(int n, VectorXi &input){
