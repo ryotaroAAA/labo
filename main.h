@@ -27,8 +27,8 @@ using namespace Eigen;
 using namespace std;
 
 //params
-const int  N=1024;    //number of
-const int  K=1000;     //number of data bits
+static int  N=1024;    //number of
+static int  K=1000;     //number of data bits
 const double e = 0.5f;
 static int hoge = 0;
 static int hoge2 = 0;
@@ -54,20 +54,28 @@ double calcW(int y, int x);
 VectorXi index_o(VectorXi &x);
 VectorXi index_e(VectorXi &x);
 VectorXi retBinary(VectorXi &x);
-VectorXi generateUi(VectorXi &x,int *u_Ac, int *A);
+VectorXi generateUi(int set, VectorXi &x, vector<int> &u_Ac, vector<int> &A);
 double calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y);
 double calcCapacityForBec(int i, int n);
 
-double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est, vector<vector<bool>> &isCache, vector<vector<double>> &cache);
+double calcL_i(int i, int n ,VectorXi &y ,VectorXi &u, int u_i_est, vector<vector<bool> > &isCache, vector<vector<double> > &cache);
 VectorXi encoder(int n, VectorXi &input);
-VectorXi channel(VectorXi &input);
-VectorXi decoder(VectorXi &input, int *u_Ac, int *A);
+VectorXi channel(int n, VectorXi &input);
+VectorXi decoder(VectorXi &y, VectorXi &u, vector<int> &Ac, vector<int> &A);
 double calcBhatForBec(int i, int n);
 void probErrBound(double *array);
-void defineFixedAndFree(int *fixed, int *free);
+void defineFixedAndFree(vector<int> &fixed, vector<int> &free);
 int ithIndexDesc(int i, double *array, double *descArray);
 bool containNumInArray(int i, int n, int *array);
 double errorRate(VectorXi &u, VectorXi &u_est);
+void calcBlockErrorRate();
+
+template <typename TYPE, typename TYPE2> void disp(TYPE n, TYPE2 x) {
+    for(int i = 0; i < n; i++){
+        cout << "x[" << i <<  "] = " << x[i] << endl;
+    }
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 
@@ -159,7 +167,7 @@ VectorXi retBinary(VectorXi &x) {
     return ret;
 }
 
-VectorXi generateUi(int set, VectorXi &x,int *u_Ac, int *A){
+VectorXi generateUi(int set, VectorXi &x, vector<int> &u_Ac, vector<int> &A){
     VectorXi ret(N);
     srand((int) time(NULL));
     for (int i = 0; i < N; i++) {
@@ -228,7 +236,7 @@ double calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
     return W_i;
 }
 
-double calcL_i(int i, int n ,int cache_i,int level ,VectorXi &y ,VectorXi &u, int u_i_est, vector<vector<bool>> &isCache , vector<vector<double>> &cache) {
+double calcL_i(int i, int n ,int cache_i,int level ,VectorXi &y ,VectorXi &u, int u_i_est, vector<vector<bool> > &isCache , vector<vector<double> > &cache) {
     double lr = 0.0;
     if ( n == 1 ) {
         double wc = calcW(y[0],0);
@@ -352,9 +360,11 @@ double calcBhatForBec(int i, int n){
     return bha;
 }
 
-void makeArrayCapacityForBec(double *array) {
-    for(int i = 0; i < N; i++){
+void makeArrayCapacityForBec(vector<double> &array) {
+    int i = 0;
+    for(auto val : array){
         array[i] = calcCapacityForBec(i,N);
+        i++;
     }
 }
 
@@ -394,9 +404,9 @@ int ithIndexDesc(int i, double *array, double *descArray){
     return 0;
 }
 
-void defineFixedAndFree(int *fixed, int *free){
-    double cap[N] = {0};
-    double cap_desc[N] = {0};
+void defineFixedAndFree(int n, vector<int> &fixed, vector<int> &free){
+    vector<double> cap(0);
+    vector<double> cap_desc(0);
     makeArrayCapacityForBec(cap);
 
     vector<pair<int, double> > cap_map;
@@ -435,6 +445,59 @@ double errorRate(VectorXi &u, VectorXi &u_est){
     }
     return (double)error_count/N;
 }
+
+void calcBlockErrorRate(int n, int a){
+    for (int k = 0; k < n; k += a) {
+        N = n;
+        K = k;
+        int i = 1;
+        vector<int> u_Ac(0);
+        vector<int> u_A(0);
+        vector<int> A(0);
+
+//        double temp[n] = {0.0};
+//        probErrBound(temp);
+        defineFixedAndFree(u_Ac, u_A);
+        VectorXi u_n(N);
+
+        //処理時間計測//
+        const auto startTime = chrono::system_clock::now();
+        u_n = generateUi(2, u_n, u_Ac, A);
+        VectorXi x_n = encoder(n, u_n);
+        VectorXi y_n = channel(n, x_n);
+        VectorXi u_n_est = decoder(y_n, u_n, u_Ac, u_A);
+
+        string filename = "/Users/ryotaro/labo/log";
+        ofstream log;
+        log.open(filename, ios::app);
+
+        string rate_vs_error = "/Users/ryotaro/labo/log_blockerr_vs_rate";
+        ofstream rve;
+        rve.open(rate_vs_error, ios::app);
+
+        cout << "error　probability:" << errorRate(u_n,u_n_est) << endl;
+        cout << "rate:" << (double)k/n << endl;
+        log << "==================================================" << endl;
+        log << "(N,K) = (" << n << "," << k << ")" << endl;
+        log << "error　probability:" << errorRate(u_n,u_n_est) << endl;
+        log << "rate:" << (double)k/n << endl;
+        rve << (double)k/n << " " << errorRate(u_n,u_n_est) << endl;
+        //処理時間計測//
+        const auto endTime = chrono::system_clock::now();
+        const auto timeSpan = endTime - startTime;
+        cout << "総LR計算時間:" << hogetime << "[ms]" << endl;
+        cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
+        log << "総LR計算時間:" << hogetime << "[ms]" << endl;
+        log << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
+        const auto astartTime = chrono::system_clock::now();
+        cout << hoge << endl;
+        cout << hoge2 << endl;
+        log << hoge << endl;
+        log << hoge2 << endl;
+        log << "==================================================" << endl;
+    }
+}
+
 
 //////////////////////////////////////////////////////////////////////////////////
 

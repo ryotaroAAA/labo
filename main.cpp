@@ -47,10 +47,10 @@ VectorXi encoder(int n, VectorXi &input){
     return x_n;
 }
 
-VectorXi channel(VectorXi &input){
-    VectorXi y(N);
+VectorXi channel(int n, VectorXi &input){
+    VectorXi y(n);
 
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < n; i++) {
         y[i] = input[i];
         if((double)rand() / RAND_MAX < e){
             y[i] = 2;
@@ -103,50 +103,52 @@ VectorXi decoder(VectorXi &y, VectorXi &u, int *Ac, int *A){
 }
 
 int main(void) {
-    int i = 1;
-    int u_Ac[N-K] = {0};
-    int u_A[K] = {0};
-    int A[K] = {0};
+//    int i = 1;
+//    int u_Ac[N-K] = {0};
+//    int u_A[K] = {0};
+//    int A[K] = {0};
+//
+//    double temp[N] = {0.0};
+//    probErrBound(temp);
+//    defineFixedAndFree(u_Ac, u_A);
+//    VectorXi u_n(N);
 
-    double temp[N] = {0.0};
-    probErrBound(temp);
-    defineFixedAndFree(u_Ac, u_A);
-    VectorXi u_n(N);
-
+    int n = pow(2,10);
+    calcBlockErrorRate(n, 20);
     //処理時間計測//
-    const auto startTime = chrono::system_clock::now();
-    u_n = generateUi(2, u_n, u_Ac, A);
-
-    VectorXi x_n = encoder(N, u_n);
-    VectorXi y_n = channel(x_n);
+//    const auto startTime = chrono::system_clock::now();
+//    u_n = generateUi(2, u_n, u_Ac, A);
+//
+//    VectorXi x_n = encoder(N, u_n);
+//    VectorXi y_n = channel(x_n);
 
 
 //    double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
-    VectorXi u_n_est = decoder(y_n, u_n, u_Ac, u_A);
-    string filename = "/Users/ryotaro/labo/log";
-    ofstream log;
-    log.open(filename, ios::app);
-
-    cout << "error　probability:" << errorRate(u_n,u_n_est) << endl;
-    cout << "rate:" << (double)K/N << endl;
-    log << "==================================================" << endl;
-    log << "(N,K) = (" << N << "," << K << ")" << endl;
-    log << "error　probability:" << errorRate(u_n,u_n_est) << endl;
-    log << "rate:" << (double)K/N << endl;
+//    VectorXi u_n_est = decoder(y_n, u_n, u_Ac, u_A);
+//    string filename = "/Users/ryotaro/labo/log";
+//    ofstream log;
+//    log.open(filename, ios::app);
+//
+//    cout << "error　probability:" << errorRate(u_n,u_n_est) << endl;
+//    cout << "rate:" << (double)K/N << endl;
+//    log << "==================================================" << endl;
+//    log << "(N,K) = (" << N << "," << K << ")" << endl;
+//    log << "error　probability:" << errorRate(u_n,u_n_est) << endl;
+//    log << "rate:" << (double)K/N << endl;
 
     //処理時間計測//
-    const auto endTime = chrono::system_clock::now();
-    const auto timeSpan = endTime - startTime;
-    cout << "総LR計算時間:" << hogetime << "[ms]" << endl;
-    cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
-    log << "総LR計算時間:" << hogetime << "[ms]" << endl;
-    log << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
-    const auto astartTime = chrono::system_clock::now();
-    cout << hoge << endl;
-    cout << hoge2 << endl;
-    log << hoge << endl;
-    log << hoge2 << endl;
-    log << "==================================================" << endl;
+//    const auto endTime = chrono::system_clock::now();
+//    const auto timeSpan = endTime - startTime;
+//    cout << "総LR計算時間:" << hogetime << "[ms]" << endl;
+//    cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
+//    log << "総LR計算時間:" << hogetime << "[ms]" << endl;
+//    log << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
+//    const auto astartTime = chrono::system_clock::now();
+//    cout << hoge << endl;
+//    cout << hoge2 << endl;
+//    log << hoge << endl;
+//    log << hoge2 << endl;
+//    log << "==================================================" << endl;
 
     return 0;
 }
