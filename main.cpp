@@ -1,64 +1,4 @@
 #include "main.h"
-
-
-VectorXi encoder(int n, VectorXi &input){
-    VectorXi x_n(n);
-    VectorXi s_n(n);
-    VectorXi v_n(n);
-
-    for (int i = 0; i < n/2 ; i++) {
-        s_n[2*i]   = (input[2*i+1] + input[2*i]) % 2;
-        s_n[2*i+1] = input[2*i+1];
-    }
-
-    for (int i = 0; i < n/2 ; i++) {
-        v_n[i] = s_n[2*i];
-        v_n[n/2 + i] = s_n[2*i + 1];
-    }
-
-    if (n == 2) {
-        x_n[0] = (input[0] + input[1]) % 2;
-        x_n[1] = input[1];
-
-    } else {
-        VectorXi tempV_n1(n/2);
-        VectorXi tempV_n2(n/2);
-
-        for (int i = 0; i < n ; i++) {
-            if (i < n/2) {
-                tempV_n1[i]= v_n[i];
-            } else {
-                tempV_n2[i - n/2] = v_n[i];
-            }
-        }
-        hoge++;
-//        cout << "encoder size:: " << vsize(tempV_n1) << endl;
-        VectorXi tempX_n1 = encoder(n/2, tempV_n1);
-        VectorXi tempX_n2 = encoder(n/2, tempV_n2);
-
-        for (int i = 0; i < n ; i++) {
-            if(i < n/2){
-                x_n[i] = tempX_n1[i];
-            } else {
-                x_n[i] = tempX_n2[i - n/2];
-            }
-        }
-    }
-    return x_n;
-}
-
-VectorXi channel(int n, VectorXi &input){
-    VectorXi y(n);
-
-    for (int i = 0; i < n; i++) {
-        y[i] = input[i];
-        if((double)rand() / RAND_MAX < e){
-            y[i] = 2;
-        }
-    }
-    return y;
-}
-
 VectorXi decoder(VectorXi &y, VectorXi &u, vector<int> &Ac, vector<int> &A){
     VectorXd h_i(N);
     VectorXi u_n_est(N);
@@ -66,6 +6,8 @@ VectorXi decoder(VectorXi &y, VectorXi &u, vector<int> &Ac, vector<int> &A){
 
     vector<vector<bool> > isCache (size, vector<bool>(N,false));
     vector<vector<double> > cache (size, vector<double>(N,0.0));
+    double lr = 1.0;
+    int cache_i = 0;
 
     //u_n_est計算
     for (int i = 0; i < N; i++) {
@@ -76,16 +18,14 @@ VectorXi decoder(VectorXi &y, VectorXi &u, vector<int> &Ac, vector<int> &A){
             cout << i << endl;
             //処理時間計測//
             const auto startTime = chrono::system_clock::now();
-
-            int cache_i = i;// == 7 ? 7 : (4*i) % 7;
-            double lr = calcL_i(i, N, cache_i, 0, y, u, u[i], isCache, cache);
+            cache_i = i; //
+            lr = calcL_i(i, N, cache_i, 0, y, u, u[i], isCache, cache);
 
             const auto endTime = chrono::system_clock::now();
             const auto timeSpan = endTime - startTime;
             cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
             hogetime += chrono::duration_cast<chrono::milliseconds>(timeSpan).count();
             const auto astartTime = chrono::system_clock::now();
-
             if (lr >= 1) {
                 h_i[i] = 0;
             } else {
@@ -102,42 +42,87 @@ VectorXi decoder(VectorXi &y, VectorXi &u, vector<int> &Ac, vector<int> &A){
     return u_n_est;
 }
 
-int main(void) {
-    int i = 1;
-    vector<int> u_Ac(0);
-    vector<int> u_A(0);
-    vector<int> A(0);
+double calcL_i(int i, int n ,int cache_i,int level ,VectorXi &y ,VectorXi &u, int u_i_est, vector<vector<bool> > &isCache , vector<vector<double> > &cache) {
+    double lr = 0.0;
+    if ( n == 1 ) {
+        double wc = calcW(y[0],0);
+        double wp = calcW(y[0],1);
+        lr = wc / wp;
+    } else {
+        VectorXi tempY1(vsize(y)/2);
+        VectorXi tempY2(vsize(y)/2);
+        for (int j = 0; j < vsize(y) ; j++) {
+            if(j < vsize(y)/2){
+                tempY1[j]= y[j];
+            } else {
+                tempY2[j - vsize(y)/2] = y[j];
+            }
+        }
 
-    defineFixedAndFree(N, u_Ac, u_A);
-    VectorXi u_n(N);
-    for(auto val :u_A){
-        cout << val << endl;
+        VectorXi tempU;
+        VectorXi tempU_bin;
+        VectorXi u_e;
+
+        tempU = index_e(u)+index_o(u);
+        u_e = index_e(u);
+        tempU_bin = retBinary(tempU);
+        hoge2++;
+        double temp1 = 1.0;
+        double temp2 = 1.0;
+
+        if(((cache_i >> (int)(log2(n)-1))%2) != 1){
+            //横の辺を作る
+            if (isCache[level][cache_i]) {
+                temp1 = cache[level][cache_i];
+            } else {
+                temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+                isCache[level][cache_i] = true;
+                cache[level][cache_i] = temp1;
+            }
+            //斜め下の辺を作る
+            if (isCache[level][cache_i+(n/2)]) {
+                temp2 = cache[level][cache_i+(n/2)];
+            } else {
+                temp2 = calcL_i(i/2, n/2, cache_i+(n/2), level+1, tempY2, u_e, u_i_est, isCache, cache);
+                isCache[level][cache_i+(n/2)] = true;
+                cache[level][cache_i+(n/2)] = temp2;
+            }
+        } else {
+            //斜め上の辺を作る
+            if (isCache[level][cache_i-(n/2)]) {
+                temp1 = cache[level][cache_i-(n/2)];
+            } else {
+                temp1 = calcL_i(i/2, n/2, cache_i-(n/2), level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+                isCache[level][cache_i-(n/2)] = true;
+                cache[level][cache_i-(n/2)] = temp1;
+            }
+            //横の辺を作る
+            if (isCache[level][cache_i]) {
+                temp2 = cache[level][cache_i];
+            } else {
+                temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
+                isCache[level][cache_i] = true;
+                cache[level][cache_i] = temp2;
+            }
+        }
+
+        if ( i % 2 == 0) {
+            lr = ( 1 + temp1 * temp2 ) / ( temp1 + temp2 );
+        } else {
+            lr = pow(temp1, 1-2*u[i-1]) * temp2;
+        }
     }
-//    int n = pow(2,10);
-//    calcBlockErrorRate(n, 20);
+    if (isinf(lr) || isnan(lr)) {
+        lr = 1;
+    }
+//    cout << i << " " << n << " " << lr  << endl;
+    return lr;
+}
 
-    //処理時間計測//
-    const auto startTime = chrono::system_clock::now();
-//    u_n = generateUi(2, u_n, u_Ac, A);
-//    PRINT(u_n);
 
-//    VectorXi x_n = encoder(N, u_n);
-//    VectorXi y_n = channel(N, x_n);
-
-//    double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
-//    VectorXi u_n_est = decoder(y_n, u_n, u_Ac, u_A);
-    string filename = "/Users/ryotaro/labo/log";
-//    cout << "error　probability:" << errorRate(u_n,u_n_est) << endl;
-    cout << "rate:" << (double)K/N << endl;
-
-    //処理時間計測//
-    const auto endTime = chrono::system_clock::now();
-    const auto timeSpan = endTime - startTime;
-    cout << "総LR計算時間:" << hogetime << "[ms]" << endl;
-    cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
-    const auto astartTime = chrono::system_clock::now();
-    cout << hoge << endl;
-    cout << hoge2 << endl;
+int main(void) {
+    long int n = pow(2,10);
+    calcBlockErrorRate("ord", n, 1);
 
     return 0;
 }
