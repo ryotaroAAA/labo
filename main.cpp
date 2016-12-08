@@ -66,8 +66,6 @@ VectorXi decoder(VectorXi &y, VectorXi &u, int *Ac, int *A){
 
     vector<vector<bool>> isCache (size, vector<bool>(N,false));
     vector<vector<double>> cache (size, vector<double>(N,0.0));
-//    bool isCache[3][N] = {{false}};
-//    double cache[3][N] = {{0.0}};
 
     //u_n_est計算
     for (int i = 0; i < N; i++) {
@@ -79,7 +77,8 @@ VectorXi decoder(VectorXi &y, VectorXi &u, int *Ac, int *A){
             //処理時間計測//
             const auto startTime = chrono::system_clock::now();
 
-            double lr = calcL_i(i, N, 0, y, u, u[i], isCache, cache);
+            int cache_i = i;// == 7 ? 7 : (4*i) % 7;
+            double lr = calcL_i(i, N, cache_i, 0, y, u, u[i], isCache, cache);
 
             const auto endTime = chrono::system_clock::now();
             const auto timeSpan = endTime - startTime;
@@ -95,7 +94,11 @@ VectorXi decoder(VectorXi &y, VectorXi &u, int *Ac, int *A){
             u_n_est[i] = h_i[i];
         }
     }
-
+//    for (int j = 0; j < size; j++) {
+//        for (int k = 0; k < N; k++) {
+//            cout << "level:" << j << " ,i:" << k << " = " << cache[j][k] << "," << (isCache[j][k] ? "true" : "false")<< endl;
+//        }
+//    }
     return u_n_est;
 }
 
@@ -107,8 +110,6 @@ int main(void) {
 
     double temp[N] = {0.0};
     probErrBound(temp);
-//    makeArrayCapacityForBec(cap);
-//    outputArray(cap);
     defineFixedAndFree(u_Ac, u_A);
     VectorXi u_n(N);
 
@@ -116,28 +117,12 @@ int main(void) {
     const auto startTime = chrono::system_clock::now();
     u_n = generateUi(2, u_n, u_Ac, A);
 
-//    u_n << 1,1,0,1;
-    //PRINT(u_n);
     VectorXi x_n = encoder(N, u_n);
     VectorXi y_n = channel(x_n);
 
-//    double arr[N];
-//    probErrBound(arr);
-//    PRINT(x_n);
-//    PRINT(y_n);
-
-//    PRINT(calcBhatForBec(i-1,N));
-//    PRINT(calcCapacityForBec(i-1, N));
-
-//    dispArray(cap);
-    //outputArray(cap);
-    //calcL_i(i, N, y_n, u_n, x_n(i));
 
 //    double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
-//    PRINT(W_i);
     VectorXi u_n_est = decoder(y_n, u_n, u_Ac, u_A);
-    //PRINT(u_n_est);
-
     string filename = "/Users/ryotaro/labo/log";
     ofstream log;
     log.open(filename, ios::app);
@@ -163,6 +148,5 @@ int main(void) {
     log << hoge2 << endl;
     log << "==================================================" << endl;
 
-    
     return 0;
 }
