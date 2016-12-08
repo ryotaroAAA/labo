@@ -27,8 +27,8 @@ using namespace Eigen;
 using namespace std;
 
 //params
-static int  N=1024;    //number of
-static int  K=1000;     //number of data bits
+static int  N=16;    //number of
+static int  K=10;     //number of data bits
 const double e = 0.5f;
 static int hoge = 0;
 static int hoge2 = 0;
@@ -42,7 +42,7 @@ typedef pair<int, double> ass_arr;
 ////////////////////////////////////////////////////////////////////////////////
 
 void outputArray(double *x);
-void makeArrayCapacityForBec(double *array);
+void makeArrayCapacityForBec(vector<double> &array);
 bool sort_less(const ass_arr& left,const ass_arr& right);
 bool sort_greater(const ass_arr& left,const ass_arr& right);
 int compare_int(const void *a, const void *b);
@@ -63,10 +63,10 @@ VectorXi encoder(int n, VectorXi &input);
 VectorXi channel(int n, VectorXi &input);
 VectorXi decoder(VectorXi &y, VectorXi &u, vector<int> &Ac, vector<int> &A);
 double calcBhatForBec(int i, int n);
-void probErrBound(double *array);
-void defineFixedAndFree(vector<int> &fixed, vector<int> &free);
+void probErrBound(vector<double> &array);
+void defineFixedAndFree(int n, vector<int> &fixed, vector<int> &free);
 int ithIndexDesc(int i, double *array, double *descArray);
-bool containNumInArray(int i, int n, int *array);
+bool containNumInArray(int i, int n, vector<int> &array);
 double errorRate(VectorXi &u, VectorXi &u_est);
 void calcBlockErrorRate();
 
@@ -361,14 +361,12 @@ double calcBhatForBec(int i, int n){
 }
 
 void makeArrayCapacityForBec(vector<double> &array) {
-    int i = 0;
-    for(auto val : array){
-        array[i] = calcCapacityForBec(i,N);
-        i++;
+    for(int i = 0; i < N; i++) {
+        array.push_back(calcCapacityForBec(i, N));
     }
 }
 
-void probErrBound(double *array) {
+void probErrBound(vector<double> &array) {
     int N = pow(2,18);
     int count = 0;
     double tempArr[N];
@@ -416,20 +414,17 @@ void defineFixedAndFree(int n, vector<int> &fixed, vector<int> &free){
 
     //昇順ソート
     sort(begin(cap_map), end(cap_map), sort_greater);
+
     int i = 0;
     for(auto val : cap_map){
-        if(i<K){
-            free[i] = val.first;
-        }else{
-            fixed[i-K] = val.first;
-        }
+        i < K ? free.push_back(val.first) : fixed.push_back(val.first);
         i++;
     }
 }
 
-bool containNumInArray(int i, int n, int *array){
-    for(int j=0; j<n; j++){
-        if(i == array[j]){
+bool containNumInArray(int i, int n, vector<int> &array){
+    for(auto val: array ){
+        if(i == val){
             return true;
         }
     }
@@ -457,7 +452,7 @@ void calcBlockErrorRate(int n, int a){
 
 //        double temp[n] = {0.0};
 //        probErrBound(temp);
-        defineFixedAndFree(u_Ac, u_A);
+        defineFixedAndFree(n, u_Ac, u_A);
         VectorXi u_n(N);
 
         //処理時間計測//
