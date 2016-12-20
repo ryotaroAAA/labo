@@ -1,7 +1,8 @@
 cmake_minimum_required(VERSION 3.5)
-project(channel_polarization)
+project(Polar_Code)
 
+include_directories("lib")
+set(sources GLOB "src/*.cpp")
+message(STATUS ${sources})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
-
-set(SOURCE_FILES main.cpp main.h Encoder.cpp)
-add_executable(channel_polarization ${SOURCE_FILES})
+add_executable(Polar_Code sources)
