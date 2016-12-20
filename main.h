@@ -27,8 +27,8 @@ using namespace Eigen;
 using namespace std;
 
 //params
-static int  N=1024;    //number of
-static int  K=100;     //number of data bits
+static int  N=2048;    //number of
+static int  K=1400;     //number of data bits
 const double e = 0.5f;
 static int hoge = 0;
 static int hoge2 = 0;
@@ -49,25 +49,24 @@ int compare_int(const void *a, const void *b);
 void dispArray(double *x);
 void dispArray(int n,int *x);
 void dispArray(int n,double *x);
-int vsize(VectorXi &x);
 double calcW(int y, int x);
-VectorXi index_o(VectorXi &x);
-VectorXi index_e(VectorXi &x);
-VectorXi retBinary(VectorXi &x);
-VectorXi generateUi(int set, VectorXi &x, vector<int> &u_Ac, vector<int> &A);
-double calcW_i(int i, int n, VectorXi &u, VectorXi &u_i, VectorXi &y);
+vector<int> index_o(vector<int> &x);
+vector<int> index_e(vector<int> &x);
+vector<int> retBinary(vector<int> &x);
+vector<int> generateUi(int set, vector<int> &x, vector<int> &u_Ac, vector<int> &A);
+double calcW_i(int i, int n, vector<int> &u, vector<int> &u_i, vector<int> &y);
 double calcCapacityForBec(int i, int n);
 
-double calcL_i(int i, int n ,int cache_i,int level ,VectorXi &y ,VectorXi &u, int u_i_est, vector<vector<bool> > &isCache , vector<vector<double> > &cache);
-VectorXi encoder(int n, VectorXi &input);
-VectorXi channel(int n, VectorXi &input);
-VectorXi decoder(VectorXi &y, VectorXi &u, vector<int> &Ac, vector<int> &A);
+double calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vector<int> &u, int u_i_est, vector<vector<bool> > &isCache , vector<vector<double> > &cache);
+vector<int> encoder(int n, vector<int> &input);
+vector<int> channel(vector<int> &input);
+vector<int> decoder(vector<int> &y, vector<int> &u, vector<int> &Ac, vector<int> &A);
 double calcBhatForBec(int i, int n);
 void probErrBound(vector<double> &array);
 void defineFixedAndFree(int n, vector<int> &fixed, vector<int> &free);
 int ithIndexDesc(int i, double *array, double *descArray);
 bool containNumInArray(int i, int n, vector<int> &array);
-double errorRate(VectorXi &u, VectorXi &u_est);
+double errorRate(vector<int> &u, vector<int> &u_est);
 void calcBlockErrorRate(string mode, int n, int a);
 
 template <typename TYPE, typename TYPE2> void disp(TYPE n, TYPE2 x) {
@@ -136,48 +135,50 @@ void outputArray(double *x){
         w_file << i << " " << x[i]<< endl;
     }
 }
-int vsize(VectorXi &x){
-    return (x.array() >= 0).count();
-}
-VectorXi index_o(VectorXi &x){
-    VectorXi ret(vsize(x)/2);
-    for(int i = 0; i < vsize(x); i++){
-        if ( i % 2 == 0) {
-            ret[i/2] = x[i];
+
+vector<int> index_o(vector<int> &x){
+    vector<int> ret;
+    int i = 0;
+    for(auto val : x){
+        if (i % 2 == 0) {
+            ret.push_back(val);
         }
+        i++;
     }
     return ret;
 }
 
-VectorXi index_e(VectorXi &x){
-    VectorXi ret(vsize(x)/2);
-    for(int i = 0; i < vsize(x); i++){
+vector<int> index_e(vector<int> &x){
+    vector<int> ret;
+    int i = 0;
+    for(auto val : x){
         if (!(i % 2 == 0)) {
-            ret[(i-1)/2] = x[i];
+            ret.push_back(val);
         }
+        i++;
     }
     return ret;
 }
 
-VectorXi retBinary(VectorXi &x) {
-    VectorXi ret(vsize(x));
-    for(int i = 0; i < vsize(x) ; i++){
-        ret[i] = x[i] % 2;
+vector<int> retBinary(vector<int> &x) {
+    vector<int> ret;
+    for(auto val : x){
+        ret.push_back(val % 2);
     }
     return ret;
 }
 
-VectorXi generateUi(int set, VectorXi &x, vector<int> &u_Ac, vector<int> &A){
-    VectorXi ret(N);
+vector<int> generateUi(int set, vector<int> &x, vector<int> &u_Ac, vector<int> &A){
+    vector<int> ret(0);
     srand((int) time(NULL));
     for (int i = 0; i < N; i++) {
-        ret[i] = rand() % 2;
         if (set == 0) {
-            ret[i] = 0;
+            ret.push_back(0);
         } else if (set == 1) {
-            ret[i] = 1;
+            ret.push_back(1);
+        } else {
+            ret.push_back(rand() % 2);
         }
-
     }
     return ret;
 }
@@ -194,7 +195,7 @@ double calcW(int y, int x) {
     return retVal;
 }
 
-double calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
+double calcW_i(int i, int n, vector<int> &u, int u_i, vector<int> &y) {
     double W_i = 0.0;
 
     if ( n == 2 ){
@@ -205,22 +206,23 @@ double calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
             W_i = 0.5 * calcW(y[0] ,(u[0]+u_i) % 2) * calcW(y[1],u_i);
         }
     } else {
-        VectorXi tempY1(vsize(y)/2);
-        VectorXi tempY2(vsize(y)/2);
-        for (int j = 0; j < vsize(y) ; j++) {
-            if(j < vsize(y)/2){
-                tempY1[j]= y[j];
-            } else {
-                tempY2[j - vsize(y)/2] = y[j];
-            }
+        vector<int> tempY1(0);
+        vector<int> tempY2(0);
+
+        for (int j = 0; j < n ; j++) {
+            (j < n/2) ? tempY1.push_back(y[j]) : tempY2.push_back(y[j]);
         }
 
-        VectorXi tempU;
-        VectorXi tempU_bin;
-        VectorXi u_e;
+        vector<int> tempU;
+        vector<int> tempU_bin;
+        vector<int> u_e = index_e(u);
+        vector<int> u_o = index_o(u);
 
-        tempU = index_e(u)+index_o(u);
-        u_e = index_e(u);
+        int k = 0;
+        for(auto val : u_e){
+            tempU[k] = u_e[k] + u_o[k];
+            k++;
+        }
         tempU_bin = retBinary(tempU);
 
         if ( i % 2 == 0 ) {
@@ -237,7 +239,7 @@ double calcW_i(int i, int n, VectorXi &u, int u_i, VectorXi &y) {
 }
 
 
-// double errorRate(VectorXi &u, VectorXi &u_est){
+// double errorRate(vector<int> &u, vector<int> &u_est){
 //     int error_count = 0;
 //     for(int i=0; i<N; i++){
 //         if(u[i] != u_est[i]){
@@ -353,7 +355,7 @@ bool containNumInArray(int i, int n, vector<int> &array){
     return false;
 }
 
-double errorRate(VectorXi &u, VectorXi &u_est){
+double errorRate(vector<int> &u, vector<int> &u_est){
     int error_count = 0;
     for(int i=0; i<N; i++){
         if(u[i] != u_est[i]){
@@ -363,68 +365,14 @@ double errorRate(VectorXi &u, VectorXi &u_est){
     return (double)error_count/N;
 }
 
-
-
-VectorXi encoder(int n, VectorXi &input){
-    VectorXi x_n(n);
-    VectorXi s_n(n);
-    VectorXi v_n(n);
-
-    for (int i = 0; i < n/2 ; i++) {
-        s_n[2*i]   = (input[2*i+1] + input[2*i]) % 2;
-        s_n[2*i+1] = input[2*i+1];
-    }
-
-    for (int i = 0; i < n/2 ; i++) {
-        v_n[i] = s_n[2*i];
-        v_n[n/2 + i] = s_n[2*i + 1];
-    }
-
-    if (n == 2) {
-        x_n[0] = (input[0] + input[1]) % 2;
-        x_n[1] = input[1];
-
-    } else {
-        VectorXi tempV_n1(n/2);
-        VectorXi tempV_n2(n/2);
-
-        for (int i = 0; i < n ; i++) {
-            if (i < n/2) {
-                tempV_n1[i]= v_n[i];
-            } else {
-                tempV_n2[i - n/2] = v_n[i];
-            }
-        }
-        hoge++;
-//        cout << "encoder size:: " << vsize(tempV_n1) << endl;
-        VectorXi tempX_n1 = encoder(n/2, tempV_n1);
-        VectorXi tempX_n2 = encoder(n/2, tempV_n2);
-
-        for (int i = 0; i < n ; i++) {
-            if(i < n/2){
-                x_n[i] = tempX_n1[i];
-            } else {
-                x_n[i] = tempX_n2[i - n/2];
-            }
-        }
-    }
-    return x_n;
-}
-
-VectorXi channel(int n, VectorXi &input){
-    VectorXi y(n);
-
-    for (int i = 0; i < n; i++) {
-        y[i] = input[i];
-        if((double)rand() / RAND_MAX < e){
-            y[i] = 2;
-        }
-    }
-    return y;
-}
-
-
 void calcBlockErrorRate(string mode, int n, int a){
+    vector<int> u_Ac(0);
+    vector<int> u_A(0);
+    vector<int> A(0);
+    vector<int> x_n;
+    vector<int> y_n;
+    vector<int> u_n_est;
+
     for (int k = 0; k < n; k += a) {
         hoge =0;
         hoge2 =0;
@@ -443,14 +391,14 @@ void calcBlockErrorRate(string mode, int n, int a){
 //        double temp[n] = {0.0};
 //        probErrBound(temp);
         defineFixedAndFree(n, u_Ac, u_A);
-        VectorXi u_n(N);
+        vector<int> u_n(n);
 
         //処理時間計測//
         const auto startTime = chrono::system_clock::now();
         u_n = generateUi(2, u_n, u_Ac, A);
-        VectorXi x_n = encoder(n, u_n);
-        VectorXi y_n = channel(n, x_n);
-        VectorXi u_n_est = decoder(y_n, u_n, u_Ac, u_A);
+        x_n = encoder(n,u_n);
+        y_n = channel(x_n);
+        u_n_est = decoder(y_n, u_n, u_Ac, u_A);
 
         string filename = "/Users/ryotaro/labo/log";
         ofstream log;
@@ -462,24 +410,24 @@ void calcBlockErrorRate(string mode, int n, int a){
 
         cout << "error　probability:" << errorRate(u_n,u_n_est) << endl;
         cout << "rate:" << (double)k/n << endl;
-        log << "==================================================" << endl;
-        log << "(N,K) = (" << n << "," << k << ")" << endl;
-        log << "error　probability:" << errorRate(u_n,u_n_est) << endl;
-        log << "rate:" << (double)k/n << endl;
-        rve << (double)k/n << " " << errorRate(u_n,u_n_est) << endl;
+//        log << "==================================================" << endl;
+//        log << "(N,K) = (" << n << "," << k << ")" << endl;
+//        log << "error　probability:" << errorRate(u_n,u_n_est) << endl;
+//        log << "rate:" << (double)k/n << endl;
+//        rve << (double)k/n << " " << errorRate(u_n,u_n_est) << endl;
         //処理時間計測//
         const auto endTime = chrono::system_clock::now();
         const auto timeSpan = endTime - startTime;
         cout << "総LR計算時間:" << hogetime << "[ms]" << endl;
         cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
-        log << "総LR計算時間:" << hogetime << "[ms]" << endl;
-        log << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
+//        log << "総LR計算時間:" << hogetime << "[ms]" << endl;
+//        log << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
         const auto astartTime = chrono::system_clock::now();
         cout << hoge << endl;
         cout << hoge2 << endl;
-        log << hoge << endl;
-        log << hoge2 << endl;
-        log << "==================================================" << endl;
+//        log << hoge << endl;
+//        log << hoge2 << endl;
+//        log << "==================================================" << endl;
 
         if(mode != "eval") break;
     }
