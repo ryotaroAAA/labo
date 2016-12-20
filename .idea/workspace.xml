@@ -1,0 +1,1243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeRunConfigurationManager" shouldGenerate="true" assignedExecutableTargets="true" buildAllGenerated="true">
+    <generated>
+      <config projectName="channel_polarization" targetName="channel_polarization" />
+    </generated>
+  </component>
+  <component name="CMakeSettings" AUTO_RELOAD="false" GENERATION_PASS_SYSTEM_ENVIRONMENT="true">
+    <ADDITIONAL_GENERATION_ENVIRONMENT>
+      <envs />
+    </ADDITIONAL_GENERATION_ENVIRONMENT>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="256614b4-f8c7-4ec7-8831-74faf4a7ce5b" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$USER_HOME$/sample/.idea/encodings.xml" />
+      <change type="NEW" beforePath="" afterPath="$USER_HOME$/sample/.idea/misc.xml" />
+      <change type="NEW" beforePath="" afterPath="$USER_HOME$/sample/.idea/modules.xml" />
+      <change type="NEW" beforePath="" afterPath="$USER_HOME$/sample/.idea/sample.iml" />
+      <change type="NEW" beforePath="" afterPath="$USER_HOME$/sample/.idea/workspace.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Array" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Cholesky" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/CholmodSupport" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Core" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Dense" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Eigen" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Eigen2Support" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Eigenvalues" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Geometry" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Householder" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/IterativeLinearSolvers" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Jacobi" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/LU" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/LeastSquares" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/MetisSupport" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/OrderingMethods" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/PaStiXSupport" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/PardisoSupport" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/QR" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/QtAlignedMalloc" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/SPQRSupport" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/SVD" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/Sparse" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/SparseCholesky" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/SparseCore" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/SparseLU" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/SparseQR" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/StdDeque" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/StdList" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/StdVector" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/SuperLUSupport" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/UmfPackSupport" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Cholesky/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Cholesky/LDLT.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Cholesky/LLT.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Cholesky/LLT_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/CholmodSupport/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/CholmodSupport/CholmodSupport.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Array.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/ArrayBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/ArrayWrapper.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Assign.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Assign_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/BandMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Block.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/BooleanRedux.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/CommaInitializer.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/CoreIterators.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/CwiseBinaryOp.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/CwiseNullaryOp.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/CwiseUnaryOp.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/CwiseUnaryView.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/DenseBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/DenseCoeffsBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/DenseStorage.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Diagonal.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/DiagonalMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/DiagonalProduct.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Dot.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/EigenBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Flagged.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/ForceAlignedAccess.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Functors.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Fuzzy.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/GeneralProduct.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/GenericPacketMath.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/GlobalFunctions.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/IO.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Map.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/MapBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/MathFunctions.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Matrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/MatrixBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/NestByValue.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/NoAlias.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/NumTraits.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/PermutationMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/PlainObjectBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/ProductBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Random.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Redux.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Ref.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Replicate.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/ReturnByValue.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Reverse.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Select.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/SelfAdjointView.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/SelfCwiseBinaryOp.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/SolveTriangular.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/StableNorm.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Stride.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Swap.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Transpose.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Transpositions.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/TriangularMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/VectorBlock.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/VectorwiseOp.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/Visitor.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/AltiVec/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/AltiVec/Complex.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/AltiVec/PacketMath.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/Default/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/Default/Settings.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/NEON/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/NEON/Complex.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/NEON/PacketMath.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/SSE/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/SSE/Complex.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/SSE/MathFunctions.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/arch/SSE/PacketMath.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/CoeffBasedProduct.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/GeneralBlockPanelKernel.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/GeneralMatrixMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/GeneralMatrixMatrixTriangular.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/GeneralMatrixMatrixTriangular_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/GeneralMatrixMatrix_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/GeneralMatrixVector.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/GeneralMatrixVector_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/Parallelizer.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/SelfadjointMatrixMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/SelfadjointMatrixMatrix_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/SelfadjointMatrixVector.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/SelfadjointMatrixVector_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/SelfadjointProduct.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/SelfadjointRank2Update.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/TriangularMatrixMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/TriangularMatrixMatrix_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/TriangularMatrixVector.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/TriangularMatrixVector_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/TriangularSolverMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/TriangularSolverMatrix_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/products/TriangularSolverVector.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/BlasUtil.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/Constants.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/DisableStupidWarnings.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/ForwardDeclarations.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/MKL_support.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/Macros.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/Memory.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/Meta.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/NonMPL2.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/ReenableStupidWarnings.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/StaticAssert.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Core/util/XprHelper.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Block.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Cwise.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/CwiseOperators.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/AlignedBox.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/All.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/AngleAxis.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/Hyperplane.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/ParametrizedLine.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/Quaternion.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/Rotation2D.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/RotationBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/Scaling.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/Transform.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Geometry/Translation.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/LU.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Lazy.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/LeastSquares.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Macros.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/MathFunctions.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Memory.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Meta.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/Minor.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/QR.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/SVD.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/TriangularSolver.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigen2Support/VectorBlock.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/ComplexEigenSolver.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/ComplexSchur.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/ComplexSchur_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/EigenSolver.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/GeneralizedEigenSolver.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/GeneralizedSelfAdjointEigenSolver.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/HessenbergDecomposition.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/MatrixBaseEigenvalues.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/RealQZ.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/RealSchur.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/RealSchur_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/SelfAdjointEigenSolver.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/SelfAdjointEigenSolver_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Eigenvalues/Tridiagonalization.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/AlignedBox.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/AngleAxis.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/EulerAngles.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/Homogeneous.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/Hyperplane.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/OrthoMethods.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/ParametrizedLine.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/Quaternion.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/Rotation2D.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/RotationBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/Scaling.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/Transform.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/Translation.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/Umeyama.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/arch/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Geometry/arch/Geometry_SSE.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Householder/BlockHouseholder.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Householder/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Householder/Householder.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Householder/HouseholderSequence.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/IterativeLinearSolvers/BasicPreconditioners.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/IterativeLinearSolvers/BiCGSTAB.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/IterativeLinearSolvers/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/IterativeLinearSolvers/ConjugateGradient.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/IterativeLinearSolvers/IncompleteLUT.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/IterativeLinearSolvers/IterativeSolverBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Jacobi/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/Jacobi/Jacobi.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/KroneckerProduct/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/KroneckerProduct/KroneckerTensorProduct.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/LU/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/LU/Determinant.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/LU/FullPivLU.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/LU/Inverse.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/LU/PartialPivLU.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/LU/PartialPivLU_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/LU/arch/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/LU/arch/Inverse_SSE.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/MetisSupport/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/MetisSupport/MetisSupport.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/OrderingMethods/Amd.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/OrderingMethods/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/OrderingMethods/Eigen_Colamd.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/OrderingMethods/Ordering.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/PaStiXSupport/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/PaStiXSupport/PaStiXSupport.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/PardisoSupport/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/PardisoSupport/PardisoSupport.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/QR/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/QR/ColPivHouseholderQR.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/QR/ColPivHouseholderQR_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/QR/FullPivHouseholderQR.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/QR/HouseholderQR.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/QR/HouseholderQR_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SPQRSupport/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SPQRSupport/SuiteSparseQRSupport.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SVD/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SVD/JacobiSVD.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SVD/JacobiSVD_MKL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SVD/UpperBidiagonalization.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCholesky/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCholesky/SimplicialCholesky.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCholesky/SimplicialCholesky_impl.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/AmbiVector.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/CompressedStorage.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/ConservativeSparseSparseProduct.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/MappedSparseMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseBlock.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseColEtree.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseCwiseBinaryOp.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseCwiseUnaryOp.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseDenseProduct.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseDiagonalProduct.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseDot.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseFuzzy.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseMatrixBase.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparsePermutation.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseProduct.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseRedux.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseSelfAdjointView.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseSparseProductWithPruning.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseTranspose.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseTriangularView.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseUtil.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseVector.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/SparseView.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseCore/TriangularSolver.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLUImpl.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_Memory.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_Structs.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_SupernodalMatrix.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_Utils.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_column_bmod.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_column_dfs.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_copy_to_ucol.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_gemm_kernel.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_heap_relax_snode.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_kernel_bmod.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_panel_bmod.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_panel_dfs.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_pivotL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_pruneL.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseLU/SparseLU_relax_snode.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseQR/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SparseQR/SparseQR.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/StlSupport/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/StlSupport/StdDeque.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/StlSupport/StdList.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/StlSupport/StdVector.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/StlSupport/details.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SuperLUSupport/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/SuperLUSupport/SuperLUSupport.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/UmfPackSupport/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/UmfPackSupport/UmfPackSupport.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/misc/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/misc/Image.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/misc/Kernel.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/misc/Solve.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/misc/SparseSolve.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/misc/blas.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/plugins/ArrayCwiseBinaryOps.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/plugins/ArrayCwiseUnaryOps.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/plugins/BlockMethods.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/plugins/CMakeLists.txt" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/plugins/CommonCwiseBinaryOps.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/plugins/CommonCwiseUnaryOps.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/plugins/MatrixCwiseBinaryOps.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/Eigen/src/plugins/MatrixCwiseUnaryOps.h" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/lib" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/main.h" afterPath="$PROJECT_DIR$/main.h" />
+    </list>
+    <ignored path="labo.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="labo" />
+  </component>
+  <component name="FileEditorManager">
+    <splitter split-orientation="horizontal" split-proportion="0.49149337">
+      <split-first>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="main.cpp" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/main.cpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="235">
+                  <caret line="185" column="16" selection-start-line="185" selection-start-column="16" selection-end-line="185" selection-end-column="16" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="Encoder.cpp" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/Encoder.cpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="28">
+                  <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-first>
+      <split-second>
+        <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+          <file leaf-file-name="main.h" pinned="false" current-in-tab="true">
+            <entry file="file://$PROJECT_DIR$/main.h">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="84">
+                  <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
+                  <folding>
+                    <element signature="e#2342#2373#0" expanded="true" />
+                  </folding>
+                </state>
+              </provider>
+            </entry>
+          </file>
+          <file leaf-file-name="main.cpp" pinned="false" current-in-tab="false">
+            <entry file="file://$PROJECT_DIR$/main.cpp">
+              <provider selected="true" editor-type-id="text-editor">
+                <state relative-caret-position="3094">
+                  <caret line="221" column="33" selection-start-line="221" selection-start-column="33" selection-end-line="221" selection-end-column="33" />
+                  <folding />
+                </state>
+              </provider>
+            </entry>
+          </file>
+        </leaf>
+      </split-second>
+    </splitter>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/symmetric_capacity" />
+        <option value="$PROJECT_DIR$/lib.h" />
+        <option value="$PROJECT_DIR$/log" />
+        <option value="$PROJECT_DIR$/log_blockerr_vs_rate" />
+        <option value="$PROJECT_DIR$/main.cpp" />
+        <option value="$PROJECT_DIR$/main.h" />
+        <option value="$PROJECT_DIR$/Encoder.cpp" />
+      </list>
+    </option>
+  </component>
+  <component name="JsBuildToolGruntFileManager" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsBuildToolPackageJson" detection-done="true" sorting="DEFINITION_ORDER" />
+  <component name="JsGulpfileManager">
+    <detection-done>true</detection-done>
+    <sorting>DEFINITION_ORDER</sorting>
+  </component>
+  <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
+  <component name="ProjectFrameBounds">
+    <option name="y" value="23" />
+    <option name="width" value="1517" />
+    <option name="height" value="1023" />
+  </component>
+  <component name="ProjectInspectionProfilesVisibleTreeState">
+    <entry key="Project Default">
+      <profile-state>
+        <expanded-state>
+          <State>
+            <id />
+          </State>
+        </expanded-state>
+        <selected-state>
+          <State>
+            <id>C/C++</id>
+          </State>
+        </selected-state>
+      </profile-state>
+    </entry>
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="1" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="ProjectPane">
+        <subPane>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="labo" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="labo" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="labo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="js-jscs-nodeInterpreter" value="/usr/local/bin/node" />
+    <property name="nodejs_interpreter_path" value="/usr/local/bin/node" />
+    <property name="js.buildTools.grunt.grunt-cli.package" value="" />
+    <property name="js.buildTools.gulp.gulp_package_dir" value="" />
+  </component>
+  <component name="RunManager" selected="Application.channel_polarization">
+    <configuration default="true" type="CLion_Remote" factoryName="GDB Remote Debug" remoteCommand="" symbolFile="" sysroot="">
+      <method />
+    </configuration>
+    <configuration default="true" type="CMakeGoogleTestRunConfigurationType" factoryName="Google Test" PASS_PARENT_ENVS_2="true" PROJECT_NAME="channel_polarization" TARGET_NAME="channel_polarization" CONFIG_NAME="Debug" TEST_MODE="SUITE_TEST">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="channel_polarization" TARGET_NAME="channel_polarization" CONFIG_NAME="Debug">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="ChromiumRemoteDebugType" factoryName="Chromium Remote">
+      <method />
+    </configuration>
+    <configuration default="true" type="CompoundRunConfigurationType" factoryName="Compound Run Configuration">
+      <method />
+    </configuration>
+    <configuration default="true" type="FirefoxRemoteDebugType" factoryName="Firefox Remote">
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
+    <configuration default="true" type="NodeWebKit" factoryName="NW.js">
+      <method />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="labo" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="labo" />
+      <method />
+    </configuration>
+    <configuration default="true" type="XSLT" factoryName="XSLT">
+      <option name="myOutputFile" />
+      <option name="myOpenOutputFile" value="false" />
+      <option name="myOpenInBrowser" value="false" />
+      <option name="mySmartErrorHandling" value="true" />
+      <option name="myRunnerPort" value="34873" />
+      <option name="myVmArguments" />
+      <option name="myWorkingDirectory" />
+      <option name="myModule" />
+      <option name="myJdk" />
+      <parameters />
+      <OutputType value="CONSOLE" save-to-file="false" />
+      <FileType name="XML" />
+      <JdkChoice value="FROM_MODULE" />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.grunt" factoryName="Grunt.js">
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.gulp" factoryName="Gulp.js">
+      <node-interpreter>project</node-interpreter>
+      <node-options />
+      <gulpfile />
+      <tasks />
+      <arguments />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="js.build_tools.npm" factoryName="npm">
+      <command value="run-script" />
+      <scripts />
+      <node-interpreter value="project" />
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Attests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="labo" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="labo" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Nosetests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="labo" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Unittests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="labo" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PUREUNITTEST" value="true" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="labo" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="testToRun" value="" />
+      <option name="keywords" value="" />
+      <option name="params" value="" />
+      <option name="USE_PARAM" value="false" />
+      <option name="USE_KEYWORD" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="channel_polarization" type="CMakeRunConfiguration" factoryName="Application" PASS_PARENT_ENVS_2="true" PROJECT_NAME="channel_polarization" TARGET_NAME="channel_polarization" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="channel_polarization" RUN_TARGET_NAME="channel_polarization">
+      <envs />
+      <method />
+    </configuration>
+    <configuration default="false" name="Build All" type="CMakeRunConfiguration" factoryName="Application" WORKING_DIR="" PASS_PARENT_ENVS_2="true" CONFIG_NAME="Debug" EXPLICIT_BUILD_TARGET_NAME="all">
+      <envs />
+      <method />
+    </configuration>
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="Application.channel_polarization" />
+      <item index="1" class="java.lang.String" itemvalue="Application.Build All" />
+    </list>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="256614b4-f8c7-4ec7-8831-74faf4a7ce5b" name="Default" comment="" />
+      <created>1474976907909</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1474976907909</updated>
+      <workItem from="1474976909871" duration="27715000" />
+      <workItem from="1475121527602" duration="8846000" />
+      <workItem from="1475467119329" duration="776000" />
+      <workItem from="1475560799044" duration="16884000" />
+      <workItem from="1475654889153" duration="16145000" />
+      <workItem from="1476255516163" duration="17239000" />
+      <workItem from="1476515945543" duration="993000" />
+      <workItem from="1478666118141" duration="7726000" />
+      <workItem from="1478680045565" duration="8520000" />
+      <workItem from="1478741389463" duration="13549000" />
+      <workItem from="1478768337263" duration="4586000" />
+      <workItem from="1479350212045" duration="12247000" />
+      <workItem from="1479367770765" duration="1000" />
+      <workItem from="1479367828295" duration="808000" />
+      <workItem from="1479893830022" duration="2070000" />
+      <workItem from="1479900357671" duration="2009000" />
+      <workItem from="1479907996772" duration="1228000" />
+      <workItem from="1480237094564" duration="21000" />
+      <workItem from="1480564652316" duration="12918000" />
+      <workItem from="1480582423124" duration="2906000" />
+      <workItem from="1480820213135" duration="15000" />
+      <workItem from="1481036745685" duration="32134000" />
+      <workItem from="1481130562017" duration="123000" />
+      <workItem from="1481165548464" duration="18731000" />
+      <workItem from="1481773200321" duration="4520000" />
+      <workItem from="1482107993655" duration="1605000" />
+      <workItem from="1482221382777" duration="1264000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TimeTrackingManager">
+    <option name="totallyTimeSpent" value="215579000" />
+  </component>
+  <component name="TodoView">
+    <todo-panel id="selected-file">
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+    <todo-panel id="all">
+      <are-packages-shown value="true" />
+      <is-autoscroll-to-source value="true" />
+    </todo-panel>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="0" y="23" width="1517" height="1023" extended-state="0" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.11322034" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928178" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.31381217" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928178" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32928178" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928178" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16949153" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32928178" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35164836" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+    <layout-to-restore>
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2751381" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3293556" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3255814" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.119802676" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection Results" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32941177" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.35164836" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+    </layout-to-restore>
+  </component>
+  <component name="Vcs.Log.UiProperties">
+    <option name="RECENTLY_FILTERED_USER_GROUPS">
+      <collection />
+    </option>
+    <option name="RECENTLY_FILTERED_BRANCH_GROUPS">
+      <collection />
+    </option>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <option name="time" value="86" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/main.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#2342#2373#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1918">
+          <caret line="137" column="0" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3458">
+          <caret line="247" column="3" selection-start-line="247" selection-start-column="3" selection-end-line="247" selection-end-column="3" />
+          <folding>
+            <element signature="e#2342#2373#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2114">
+          <caret line="151" column="17" selection-start-line="151" selection-start-column="17" selection-end-line="151" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#2342#2373#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <folding>
+            <element signature="e#2342#2373#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1750">
+          <caret line="125" column="17" selection-start-line="125" selection-start-column="17" selection-end-line="125" selection-end-column="17" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="434">
+          <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
+          <folding>
+            <element signature="e#2342#2373#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1932">
+          <caret line="138" column="55" selection-start-line="138" selection-start-column="55" selection-end-line="138" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#2342#2373#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/err_bound1048576">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="760018">
+          <caret line="54287" column="32" selection-start-line="54287" selection-start-column="32" selection-end-line="54287" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/err_bound32768">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="122360">
+          <caret line="8740" column="32" selection-start-line="8740" selection-start-column="32" selection-end-line="8740" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1932">
+          <caret line="138" column="55" selection-start-line="138" selection-start-column="55" selection-end-line="138" selection-end-column="55" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#2342#2373#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/err_bound1048576">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="760018">
+          <caret line="54287" column="32" selection-start-line="54287" selection-start-column="32" selection-end-line="54287" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/err_bound32768">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="122360">
+          <caret line="8740" column="32" selection-start-line="8740" selection-start-column="32" selection-end-line="8740" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="448">
+          <caret line="32" column="0" selection-start-line="32" selection-start-column="0" selection-end-line="32" selection-end-column="0" />
+          <folding>
+            <element signature="e#2342#2373#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/capacity_array.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="546">
+          <caret line="39" column="11" selection-start-line="39" selection-start-column="11" selection-end-line="39" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/capacity_array.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="546">
+          <caret line="39" column="11" selection-start-line="39" selection-start-column="11" selection-end-line="39" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/lib.cpp" />
+    <entry file="file://$PROJECT_DIR$/capacity_array.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="546">
+          <caret line="39" column="11" selection-start-line="39" selection-start-column="11" selection-end-line="39" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/err_bound32768">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="122360">
+          <caret line="8740" column="32" selection-start-line="8740" selection-start-column="32" selection-end-line="8740" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/err_bound1048576">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1074190">
+          <caret line="54287" column="32" selection-start-line="54287" selection-start-column="32" selection-end-line="54287" selection-end-column="32" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/symmetric_capacity">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-21000">
+          <caret line="4" column="3" selection-start-line="4" selection-start-column="3" selection-end-line="4" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/CMakeLists.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="6" column="52" selection-start-line="6" selection-start-column="52" selection-end-line="6" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/__bit_reference">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="14">
+          <caret line="51" column="0" selection-start-line="51" selection-start-column="0" selection-end-line="51" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="414">
+          <caret line="30" column="44" selection-start-line="30" selection-start-column="44" selection-end-line="30" selection-end-column="44" />
+          <folding>
+            <element signature="e#2342#2373#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/log">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="98">
+          <caret line="7" column="5" selection-start-line="7" selection-start-column="5" selection-end-line="7" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/log_blockerr_vs_rate">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="12" column="0" selection-start-line="12" selection-start-column="0" selection-end-line="12" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/include/c++/v1/iterator">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="329">
+          <caret line="430" column="0" selection-start-line="430" selection-start-column="0" selection-end-line="430" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="235">
+          <caret line="185" column="16" selection-start-line="185" selection-start-column="16" selection-end-line="185" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/main.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="84">
+          <caret line="6" column="19" selection-start-line="6" selection-start-column="19" selection-end-line="6" selection-end-column="19" />
+          <folding>
+            <element signature="e#2342#2373#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Encoder.cpp">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="28">
+          <caret line="2" column="4" selection-start-line="2" selection-start-column="4" selection-end-line="2" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
