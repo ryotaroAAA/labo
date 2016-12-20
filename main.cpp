@@ -1,9 +1,9 @@
-#include "lib.h"
+#include "main.h"
 
-VectorXi encoder(int n, VectorXi &input){
-    VectorXi x_n(n);
-    VectorXi s_n(n);
-    VectorXi v_n(n);
+vector<int> encoder(int n, vector<int> &input){
+    vector<int> x_n(n,0);
+    int s_n[n];
+    int v_n[n];
 
     for (int i = 0; i < n/2 ; i++) {
         s_n[2*i]   = (input[2*i+1] + input[2*i]) % 2;
@@ -14,140 +14,215 @@ VectorXi encoder(int n, VectorXi &input){
         v_n[i] = s_n[2*i];
         v_n[n/2 + i] = s_n[2*i + 1];
     }
-//    PRINT(s_n);
-//    PRINT(v_n);
 
     if (n == 2) {
         x_n[0] = (input[0] + input[1]) % 2;
         x_n[1] = input[1];
-
     } else {
-        VectorXi tempV_n1(n/2);
-        VectorXi tempV_n2(n/2);
+        vector<int> tempV_n1(0);
+        vector<int> tempV_n2(0);
 
         for (int i = 0; i < n ; i++) {
-            if (i < n/2) {
-                tempV_n1[i]= v_n[i];
-            } else {
-                tempV_n2[i - n/2] = v_n[i];
-            }
+            (i < n/2) ? tempV_n1.push_back(v_n[i]) : tempV_n2.push_back(v_n[i]);
         }
-//        PRINT(tempV_n1);
-//        PRINT(tempV_n2);
-
-        VectorXi tempX_n1 = encoder(n/2, tempV_n1);
-        VectorXi tempX_n2 = encoder(n/2, tempV_n2);
+        hoge++;
+        vector<int> tempX_n1 = encoder(n/2, tempV_n1);
+        vector<int> tempX_n2 = encoder(n/2, tempV_n2);
 
         for (int i = 0; i < n ; i++) {
-            if(i < n/2){
-                x_n[i] = tempX_n1[i];
-            } else {
-                x_n[i] = tempX_n2[i - n/2];
-            }
+            x_n[i] = (i < n/2) ? tempX_n1[i] : tempX_n2[i - n/2];
         }
-//        PRINT(tempX_n1);
-//        PRINT(tempX_n2);
     }
     return x_n;
 }
-VectorXi channel(VectorXi &input){
-    VectorXi y(N);
 
-    for (int i = 0; i < N; i++) {
-        y[i] = input[i];
+vector<int> channel(vector<int> &input){
+    vector<int> y(N);
+    for (auto val : input) {
+        y.push_back(val);
         if((double)rand() / RAND_MAX < e){
-            y[i] = 2;
+            y.push_back(2);
+        } else {
+            y.push_back(val);
         }
     }
     return y;
 }
-VectorXi decoder(VectorXi &y, VectorXi &u, int *Ac, int *A){
 
-    VectorXd h_i(N);
-    VectorXi u_n_est(N);
+vector<int> decoder(vector<int> &y, vector<int> &u, vector<int> &Ac, vector<int> &A){
+    vector<double> h_i(N);
+    vector<int> u_n_est(N);
+    int size = log2(N);
 
-    //h_i計算
-    for (int i = 0; i < N; i++) {
-        int count = 0;
-        for (int j = i; j < N; j++) {
-            if( y[j] == 0 || y[j] == 1 ) {
-                count++;
-            }
-        }
-        double lr = calcL_i(i, N, y, u, u[i]);
-//        cout << "i:" << i << ",N:" << N << endl;
-//        PRINT(lr);
-        if (lr >= 1) {
-            h_i[i] = 0;
-        } else {
-            h_i[i] = 1;
-        }
-    }
+    vector<vector<bool> > isCache (size, vector<bool>(N,false));
+    vector<vector<double> > cache (size, vector<double>(N,0.0));
+    double lr = 1.0;
+    int cache_i = 0;
 
     //u_n_est計算
     for (int i = 0; i < N; i++) {
-        // Aに含まれるindexなら既知
+        // Acに含まれるindexなら既知
         if (containNumInArray(i, N-K, Ac)) {
             u_n_est[i] = u[i];
         } else {
+            cout << i << endl;
+            //処理時間計測//
+            const auto startTime = chrono::system_clock::now();
+            cache_i = i;
+            lr = calcL_i(i, N, cache_i, 0, y, u, u[i], isCache, cache);
+
+            const auto endTime = chrono::system_clock::now();
+            const auto timeSpan = endTime - startTime;
+            cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
+            hogetime += chrono::duration_cast<chrono::milliseconds>(timeSpan).count();
+            const auto astartTime = chrono::system_clock::now();
+            if (lr >= 1) {
+                h_i[i] = 0;
+            } else {
+                h_i[i] = 1;
+            }
             u_n_est[i] = h_i[i];
         }
     }
-
+//    for (int j = 0; j < size; j++) {
+//        for (int k = 0; k < N; k++) {
+//            cout << "level:" << j << " ,i:" << k << " = " << cache[j][k] << "," << (isCache[j][k] ? "true" : "false")<< endl;
+//        }
+//    }
     return u_n_est;
 }
 
+double calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vector<int> &u, int u_i_est, vector<vector<bool> > &isCache , vector<vector<double> > &cache) {
+    double lr = 0.0;
+    if ( n == 1 ) {
+        double wc = calcW(y[0],0);
+        double wp = calcW(y[0],1);
+        lr = wc / wp;
+    } else {
+        vector<int> tempY1(n/2);
+        vector<int> tempY2(n/2);
+
+        for (int j = 0; j < n ; j++) {
+            (j < n/2) ? tempY1.push_back(y[j]) : tempY2.push_back(y[j]);
+        }
+
+        vector<int> tempU(n/2);
+        vector<int> tempU_bin(n/2);
+        vector<int> u_e = index_e(u);
+        vector<int> u_o = index_o(u);
+
+        int k = 0;
+        for(auto val : u_e){
+            tempU[k] = u_e[k] + u_o[k];
+            k++;
+        }
+        tempU_bin = retBinary(tempU);
+        hoge2++;
+        double temp1 = 1.0;
+        double temp2 = 1.0;
+        temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+        temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
+
+        if(((cache_i >> (int)(log2(n)-1))%2) != 1){
+            //横の辺を作る
+            if (isCache[level][cache_i]) {
+                temp1 = cache[level][cache_i];
+            } else {
+                temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+                isCache[level][cache_i] = true;
+                cache[level][cache_i] = temp1;
+            }
+            //斜め下の辺を作る
+            if (isCache[level][cache_i+(n/2)]) {
+                temp2 = cache[level][cache_i+(n/2)];
+            } else {
+                temp2 = calcL_i(i/2, n/2, cache_i+(n/2), level+1, tempY2, u_e, u_i_est, isCache, cache);
+                isCache[level][cache_i+(n/2)] = true;
+                cache[level][cache_i+(n/2)] = temp2;
+            }
+        } else {
+            //斜め上の辺を作る
+            if (isCache[level][cache_i-(n/2)]) {
+                temp1 = cache[level][cache_i-(n/2)];
+            } else {
+                temp1 = calcL_i(i/2, n/2, cache_i-(n/2), level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+                isCache[level][cache_i-(n/2)] = true;
+                cache[level][cache_i-(n/2)] = temp1;
+            }
+            //横の辺を作る
+            if (isCache[level][cache_i]) {
+                temp2 = cache[level][cache_i];
+            } else {
+                temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
+                isCache[level][cache_i] = true;
+                cache[level][cache_i] = temp2;
+            }
+        }
+
+        if ( i % 2 == 0) {
+            lr = ( 1 + temp1 * temp2 ) / ( temp1 + temp2 );
+        } else {
+            lr = pow(temp1, 1-2*u[i-1]) * temp2;
+        }
+    }
+    if (isinf(lr) || isnan(lr)) {
+        lr = 1;
+    }
+//    cout << i << " " << n << " " << lr  << endl;
+    return lr;
+}
+
+
 int main(void) {
-    int i = 1;
-    int u_Ac[N-K] = {0};
-    int u_A[K] = {0};
-    int A[K] = {0};
+    long int n = pow(2,8);
+    calcBlockErrorRate("ord", n, 1);
+//    vector<int> u{1,0,0,1};
+//
+//    vector<int> tempU(n);
+//    vector<int> tempU_bin(n);
+//    vector<int> u_e = index_e(u);
+//    vector<int> u_o = index_o(u);
+//
+//    int k = 0;
+//    for(auto val : u_e){
+//        tempU[k] = u_e[k] + u_o[k];
+//        k++;
+//    }
+//    tempU_bin = retBinary(tempU);
+//
+//    for(auto val : tempU){
+//        cout << val;
+//    }
 
-    double cap[N] = {0};
-    makeArrayCapacityForBec(cap);
-//    dispArray(cap);
+//    vector<int> u_Ac(N,0);
+//    vector<int> u_A(N,0);
+//    vector<int> A(N,0);
+//
+//    defineFixedAndFree(N, u_Ac, u_A);
+//    vector<int> u_n(N,0);
+//
+//    u_n = generateUi(2, u_n, u_Ac, A);
+//    for(auto val: u_n){
+//        cout << val << endl;
+//    }
+//    cout << "======================" << endl;
+//    vector<int> x_n = encoder(N, u_n);
+//    for(auto val: x_n){
+//        cout << val << endl;
+//    }
+//    cout << "======================" << endl;
+//    vector<int> y_n = channel(x_n);
+//    for(auto val: y_n){
+//        cout << val << endl;
+//    }
+//    cout << "======================" << endl;
 
-    defineFixedAndFree(u_Ac, u_A);
-    cout << "free_variable(A)" << endl;
-    dispArray(K,u_A);
-    cout << "fixed_variable(Ac)" << endl;
-    dispArray(N-K,u_Ac);
-    VectorXi u_n(N);
 
-    //処理時間計測//
-    const auto startTime = chrono::system_clock::now();
 
-    u_n = generateUi(2, u_n, u_Ac, A);
-//    u_n << 1,1,0,1;
-    //PRINT(u_n);
-    VectorXi x_n = encoder(N, u_n);
-    VectorXi y_n = channel(x_n);
-
-//    double arr[N];
-//    probErrBound(arr);
-//    PRINT(x_n);
-//    PRINT(y_n);
-
-//    PRINT(calcBhatForBec(i-1,N));
-//    PRINT(calcCapacityForBec(i-1, N));
-
-//    dispArray(cap);
-    //outputArray(cap);
-    //calcL_i(i, N, y_n, u_n, x_n(i));
-
-//    double W_i = calcW_i(i, N, u_n, u_n[i-1], y_n);
-//    PRINT(W_i);
-    VectorXi u_n_est = decoder(y_n, u_n, u_Ac, u_A);
-    //PRINT(u_n_est);
-
-    cout << "error　probability:" << errorRate(u_n,u_n_est) << endl;
-    cout << "rate:" << (double)K/N << endl;
-
-    //処理時間計測//
-    const auto endTime = chrono::system_clock::now();
-    const auto timeSpan = endTime - startTime;
-    cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
-    const auto astartTime = chrono::system_clock::now();
-    
+//    vector<int> u_n_est = decoder(y_n, u_n, u_Ac, u_A);
+//    for(auto val: u_n_est){
+//        cout << val << endl;
+//    }
+//    cout << "======================" << endl;
     return 0;
 }
