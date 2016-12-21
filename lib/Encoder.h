@@ -1,8 +1,14 @@
-#include "Common.h"
+#ifndef CHANNEL_POLARIZATION_ENCODER_H
+#define CHANNEL_POLARIZATION_ENCODER_H
 
-class Encoder{
+#include "Common.h"
+#include "Performance.h"
+
+class Encoder : public Performance{
 public:
     explicit Encoder();
     ~Encoder();
-    vector<int> encode(int n, vector<int> &input); 
+    vector<int> encode(int n, vector<int> &input);
 };
+
+#endif //CHANNEL_POLARIZATION_ENCODER_H

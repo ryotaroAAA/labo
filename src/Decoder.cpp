@@ -1,31 +1,38 @@
 #include "../lib/Decoder.h"
-vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vector<int> &A){
-    vector<double> h_i(N);
-    vector<int> u_n_est(N);
-    int size = log2(N);
+Decoder::Decoder(){
 
-    vector<vector<bool> > isCache (size, vector<bool>(N,false));
-    vector<vector<double> > cache (size, vector<double>(N,0.0));
+}
+
+Decoder::~Decoder(){
+
+}
+
+vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vector<int> &A){
+    vector<double> h_i(Params::N);
+    vector<int> u_n_est(Params::N);
+    int size = log2(Params::N);
+
+    vector<vector<bool> > isCache (size, vector<bool>(Params::N,false));
+    vector<vector<double> > cache (size, vector<double>(Params::N,0.0));
     double lr = 1.0;
     int cache_i = 0;
 
     //u_n_est計算
-    for (int i = 0; i < N; i++) {
+    for (int i = 0; i < Params::N; i++) {
         // Acに含まれるindexなら既知
-        if (containNumInArray(i, N-K, Ac)) {
+        if (Common::containNumInArray(i, Params::N-Params::K, Ac)) {
             u_n_est[i] = u[i];
         } else {
             cout << i << endl;
-            //処理時間計測//
-            const auto startTime = chrono::system_clock::now();
-            cache_i = i;
-            lr = calcL_i(i, N, cache_i, 0, y, u, u[i], isCache, cache);
 
-            const auto endTime = chrono::system_clock::now();
-            const auto timeSpan = endTime - startTime;
-            cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
-            hogetime += chrono::duration_cast<chrono::milliseconds>(timeSpan).count();
-            const auto astartTime = chrono::system_clock::now();
+            this->startTimer();
+
+            cache_i = i;
+            lr = calcL_i(i, Params::N, cache_i, 0, y, u, u[i], isCache, cache);
+
+            this->stopTimer();
+            this->outTime();
+
             if (lr >= 1) {
                 h_i[i] = 0;
             } else {
@@ -40,8 +47,8 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vec
 double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vector<int> &u, int u_i_est, vector<vector<bool> > &isCache , vector<vector<double> > &cache) {
     double lr = 0.0;
     if ( n == 1 ) {
-        double wc = calcW(y[0],0);
-        double wp = calcW(y[0],1);
+        double wc = Channel::calcW(y[0],0);
+        double wp = Channel::calcW(y[0],1);
         lr = wc / wp;
     } else {
         vector<int> tempY1(n/2);
@@ -53,16 +60,16 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
 
         vector<int> tempU(n/2);
         vector<int> tempU_bin(n/2);
-        vector<int> u_e = index_e(u);
-        vector<int> u_o = index_o(u);
+        vector<int> u_e = Common::index_e(u);
+        vector<int> u_o = Common::index_o(u);
 
         int k = 0;
         for(auto val : u_e){
             tempU[k] = u_e[k] + u_o[k];
             k++;
         }
-        tempU_bin = retBinary(tempU);
-        hoge2++;
+        tempU_bin = Common::retBinary(tempU);
+
         double temp1 = 1.0;
         double temp2 = 1.0;
         temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
@@ -113,6 +120,6 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
     if (isinf(lr) || isnan(lr)) {
         lr = 1;
     }
-//    cout << i << " " << n << " " << lr  << endl;
+    this->addCount();
     return lr;
 }
