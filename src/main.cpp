@@ -5,37 +5,37 @@
 #include "../lib/Channel.h"
 #include "../lib/Analysor.h"
 #include "../lib/Logger.h"
+#include "../lib/Performance.h"
 
 int main(void) {
-    long int n = pow(2,8);
+    vector<int> u_Ac(Params::N,0);
+    vector<int> u_A(Params::N,0);
+    vector<int> A(Params::N,0);
+    vector<int> u_n(Params::N,0);
+    vector<int> x_n(Params::N,0);
+    vector<int> y_n(Params::N,0);
+    vector<int> u_est(Params::N,0);
+    Performance performance;
+    Decoder decoder;
+    Encoder encoder;
 
-    vector<int> u_Ac(N,0);
-    vector<int> u_A(N,0);
-    vector<int> A(N,0);
-    vector<int> u_n(N,0);
+    Preseter::preset(u_n, u_Ac, u_A);
 
-    Preseter *preset = new Preseter(N, u_n, u_Ac, u_A);
+    performance.startTimer();
+    Common::pp(u_n);
+    x_n = encoder.encode(Params::N, u_n);
+    Common::pp(x_n);
+    y_n = Channel::channel_output(x_n);
+    Common::pp(y_n);
+    u_est = decoder.decode(y_n, u_n, u_Ac, u_A);
 
-    for(auto val: u_n){
-        cout << val << endl;
-    }
-//    cout << "======================" << endl;
-//    vector<int> x_n = encoder(N, u_n);
-//    for(auto val: x_n){
-//        cout << val << endl;
-//    }
-//    cout << "======================" << endl;
-//    vector<int> y_n = channel(x_n);
-//    for(auto val: y_n){
-//        cout << val << endl;
-//    }
-//    cout << "======================" << endl;
+    cout << "error　probability:" << Analysor::errorRate(u_n, u_est) << endl;
+    cout << "rate:" << (double)Params::K/Params::N << endl;
 
-
-//    vector<int> u_n_est = decoder(y_n, u_n, u_Ac, u_A);
-//    for(auto val: u_n_est){
-//        cout << val << endl;
-//    }
-//    cout << "======================" << endl;
+    performance.stopTimer();
+    performance.outTime("処理時間");
+    encoder.outCount("encoder_count");
+    decoder.outCount("decoder_count");
     return 0;
 }
+

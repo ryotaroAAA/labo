@@ -1,5 +1,9 @@
 #include "../lib/Common.h"
 
+void Common::bar(){
+    cout << "======================" << endl;
+}
+
 bool Common::containVal(int value, vector<int> m_array) {
     auto it = find(begin(m_array), m_array.end(), value);
     size_t index = distance(begin(m_array), it);
@@ -34,7 +38,7 @@ int Common::compare_desc(const void *x, const void *y) {
 }
 
 void Common::dispArray(double *x){
-    for(int i = 0; i < N; i++){
+    for(int i = 0; i < Params::N; i++){
         printf("x[%d] = %f\n",i, x[i]);
     }
 }
@@ -43,16 +47,31 @@ void Common::dispArray(int n, double *x){
         printf("x[%d] = %f\n",i, x[i]);
     }
 }
+
 void Common::dispArray(int n, int *x){
     for(int i = 0; i < n; i++){
         printf("x[%d] = %d\n",i, x[i]);
     }
 }
+
+void Common::pp(vector<int> &a){
+    bar();
+    for(auto var : a){
+        cout << var << endl;
+    }
+}
+
+void Common::pp(vector<double> &collection){
+    for(auto var : collection){
+        cout << var << endl;
+    }
+}
+
 void Common::outputArray(double *x){
     string filename = "/Users/ryotaro/labo/symmetric_capacity";
     ofstream w_file;
     w_file.open(filename, ios::out);
-    for (int i = 0; i<N; i++)
+    for (int i = 0; i<Params::N; i++)
     {
         w_file << i << " " << x[i]<< endl;
     }
@@ -91,7 +110,7 @@ vector<int> Common::retBinary(vector<int> &x) {
 }
 
 int Common::ithIndexDesc(int i, double *array, double *descArray){
-    for (int j=0; j<N; j++) {
+    for (int j=0; j<Params::N; j++) {
         if(descArray[i] == array[j]){
             return j;
         }

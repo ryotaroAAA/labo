@@ -1,4 +1,5 @@
-
+#ifndef CHANNEL_POLARIZATION_COMMON_H
+#define CHANNEL_POLARIZATION_COMMON_H
 #include <iostream>
 #include "stdlib.h"
 #include "math.h"
@@ -12,27 +13,30 @@
 
 using namespace std;
 
-//params
-const int  N=8;    //number of
-const int  K=3;     //number of data bits
-const double e = 0.5f;
-static int hoge = 0;
-static int hoge2 = 0;
-static double hogetime = 0.0;
 enum CHANNEL_TYPE{BEC};
 enum SOURCE_TYPE{ALL0, ALL1, RAND};
 
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 #define ARR(array)     (sizeof(array) / sizeof(array[0]));
 
+class Params{
+public:
+    constexpr static int N =1024;
+    constexpr static int K =100;
+    constexpr static double e = 0.5f;
+};
+
 class Common{
 public:
     typedef pair<int, double> ass_arr;
 
+    static void bar();
     static void outputArray(double *x);
     static void dispArray(double *x);
     static void dispArray(int n,int *x);
     static void dispArray(int n,double *x);
+    static void pp(vector<int> &collection);
+    static void pp(vector<double> &a);
 
     static int ithIndexDesc(int i, double *array, double *descArray);
     static bool containNumInArray(int i, int n, vector<int> &array);
@@ -48,3 +52,4 @@ public:
     static vector<int> retBinary(vector<int> &x);
 };
 
+#endif //CHANNEL_POLARIZATION_COMMON_H

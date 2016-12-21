@@ -1,4 +1,11 @@
 #include "../lib/Encoder.h"
+Encoder::Encoder(){
+
+}
+
+Encoder::~Encoder(){
+
+}
 
 vector<int> Encoder::encode(int n, vector<int> &input){
     vector<int> x_n(n,0);
@@ -25,13 +32,14 @@ vector<int> Encoder::encode(int n, vector<int> &input){
         for (int i = 0; i < n ; i++) {
             (i < n/2) ? tempV_n1.push_back(v_n[i]) : tempV_n2.push_back(v_n[i]);
         }
-        hoge++;
-        vector<int> tempX_n1 = this->encode(n/2, tempV_n1);
-        vector<int> tempX_n2 = this->encode(n/2, tempV_n2);
+
+        vector<int> tempX_n1 = encode(n/2, tempV_n1);
+        vector<int> tempX_n2 = encode(n/2, tempV_n2);
 
         for (int i = 0; i < n ; i++) {
             x_n[i] = (i < n/2) ? tempX_n1[i] : tempX_n2[i - n/2];
         }
     }
+    this->addCount();
     return x_n;
 }
