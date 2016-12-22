@@ -21,14 +21,20 @@ void Performance::stopTimer(){
     this->sumTime += this->timeSpan;
 }
 
-void Performance::outCount(string content){
-    cout << content << "::" << this->count << "回" << endl;
+string Performance::outCount(string content){
+    string str = content + "::" + to_string(this->count) + "回";
+    cout << str << endl;
+    return str;
 }
 
-void Performance::outTime(string content){
-    cout << content << "::" << this->timeSpan << "[ms]" << endl;
+string Performance::outTime(string content){
+    string str = content + "::" + to_string(this->timeSpan) + "[ms]";
+    cout << str << endl;
+    return str;
 }
 
-void Performance::outSumTime(string content){
-    cout << content << "::" << this->sumTime << "[ms]" << endl;
+string Performance::outSumTime(string content){
+    string str = content + "::" + to_string(this->sumTime) + "[ms]";
+    cout << str << endl;
+    return str;
 }

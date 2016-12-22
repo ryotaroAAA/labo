@@ -15,14 +15,15 @@ using namespace std;
 
 enum CHANNEL_TYPE{BEC};
 enum SOURCE_TYPE{ALL0, ALL1, RAND};
+enum MODE{ORD,TEST};
 
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 #define ARR(array)     (sizeof(array) / sizeof(array[0]));
 
 class Params{
 public:
-    constexpr static int N =1024;
-    constexpr static int K =100;
+    constexpr static int N =4096;
+    constexpr static int K =10;
     constexpr static double e = 0.5f;
 };
 

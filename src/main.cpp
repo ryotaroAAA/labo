@@ -22,12 +22,13 @@ int main(void) {
     Preseter::preset(u_n, u_Ac, u_A);
 
     performance.startTimer();
-    Common::pp(u_n);
+//    Common::pp(u_n);
     x_n = encoder.encode(Params::N, u_n);
-    Common::pp(x_n);
+//    Common::pp(x_n);
     y_n = Channel::channel_output(x_n);
-    Common::pp(y_n);
+//    Common::pp(y_n);
     u_est = decoder.decode(y_n, u_n, u_Ac, u_A);
+//    Common::pp(u_est);
 
     cout << "error　probability:" << Analysor::errorRate(u_n, u_est) << endl;
     cout << "rate:" << (double)Params::K/Params::N << endl;

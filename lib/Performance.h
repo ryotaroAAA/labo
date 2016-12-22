@@ -14,9 +14,9 @@ public:
     void addCount();
     void startTimer();
     void stopTimer();
-    void outTime(string content = "実行回数");
-    void outSumTime(string content = "処理時間");
-    void outCount(string content = "処理時間");
+    string outTime(string content = "実行回数");
+    string outSumTime(string content = "処理時間");
+    string outCount(string content = "処理時間");
 };
 
 #endif //CHANNEL_POLARIZATION_PERFORMANCE_H

@@ -75,70 +75,35 @@ void Analysor::probErrBound(vector<double> &array) {
     }
 }
 
-void Analysor::calcBlockErrorRate(string mode, int n, int a){
-//    vector<int> u_Ac(0);
-//    vector<int> u_A(0);
-//    vector<int> A(0);
-//    vector<int> x_n;
-//    vector<int> y_n;
-//    vector<int> u_n_est;
-//
-//    for (int k = 0; k < n; k += a) {
-//        hoge =0;
-//        hoge2 =0;
-//        if(mode == "eval"){
-//            N = n;
-//            K = k;
-//        } else {
-//            n=N;
-//            k=K;
-//        }
-//        int i = 1;
-//        vector<int> u_Ac(0);
-//        vector<int> u_A(0);
-//        vector<int> A(0);
-//
-////        double temp[n] = {0.0};
-////        probErrBound(temp);
-////        defineFixedAndFree(n, u_Ac, u_A);
-//        vector<int> u_n(n);
-//
-//        //処理時間計測//
-//        const auto startTime = chrono::system_clock::now();
-////        u_n = generateUi(2, u_n, u_Ac, A);
-////        x_n = encoder(n,u_n);
-////        y_n = channel(x_n);
-////        u_n_est = decoder(y_n, u_n, u_Ac, u_A);
-//
-//        string filename = "/Users/ryotaro/labo/log";
-//        ofstream log;
-//        log.open(filename, ios::app);
-//
-//        string rate_vs_error = "/Users/ryotaro/labo/log_blockerr_vs_rate";
-//        ofstream rve;
-//        rve.open(rate_vs_error, ios::app);
-//
-//        cout << "error　probability:" << errorRate(u_n,u_n_est) << endl;
-//        cout << "rate:" << (double)k/n << endl;
-////        log << "==================================================" << endl;
-////        log << "(N,K) = (" << n << "," << k << ")" << endl;
-////        log << "error　probability:" << errorRate(u_n,u_n_est) << endl;
-////        log << "rate:" << (double)k/n << endl;
-////        rve << (double)k/n << " " << errorRate(u_n,u_n_est) << endl;
-//        //処理時間計測//
-//        const auto endTime = chrono::system_clock::now();
-//        const auto timeSpan = endTime - startTime;
-//        cout << "総LR計算時間:" << hogetime << "[ms]" << endl;
-//        cout << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
-////        log << "総LR計算時間:" << hogetime << "[ms]" << endl;
-////        log << "処理時間:" << chrono::duration_cast<chrono::milliseconds>(timeSpan).count() << "[ms]" << endl;
-//        const auto astartTime = chrono::system_clock::now();
-//        cout << hoge << endl;
-//        cout << hoge2 << endl;
-////        log << hoge << endl;
-////        log << hoge2 << endl;
-////        log << "==================================================" << endl;
-//
-//        if(mode != "eval") break;
-//    }
+void Analysor::calcBlockErrorRate(MODE mode, int n, double dist) {
+    vector<int> u_Ac(Params::N, 0);
+    vector<int> u_A(Params::N, 0);
+    vector<int> A(Params::N, 0);
+    vector<int> u_n(Params::N, 0);
+    vector<int> x_n(Params::N, 0);
+    vector<int> y_n(Params::N, 0);
+    vector<int> u_est(Params::N, 0);
+
+    Performance performance;
+    Decoder decoder;
+    Encoder encoder;
+    Logger logger;
+
+    for (int k=0; k<Params::N ; k + Param::N*dist) {
+        Preseter::preset(u_n, u_Ac, u_A);
+        performance.startTimer();
+        x_n = encoder.encode(Params::N, u_n);
+        y_n = Channel::channel_output(x_n);
+        u_est = decoder.decode(y_n, u_n, u_Ac, u_A);
+
+        logger.outLog("================================");
+        logger.outLog("error　probability:" + to_string(Analysor::errorRate(u_n, u_est)));
+        logger.outLog("rate:" + to_string((double) Params::K / Params::N));
+
+        performance.stopTimer();
+
+        logger.outLog(performance.outTime("処理時間"));
+        logger.outLog(encoder.outCount("encoder_count"));
+        logger.outLog(decoder.outCount("decoder_count"));
+    }
 }

@@ -1,7 +1,26 @@
 #ifndef CHANNEL_POLARIZATION_ANALYSOR_H
 #define CHANNEL_POLARIZATION_ANALYSOR_H
 #include "Common.h"
+#include "Preseter.h"
+#include "Decoder.h"
+#include "Encoder.h"
+#include "Channel.h"
+#include "Logger.h"
+#include "Performance.h"
+
 class Analysor {
+private:
+    int tempK;
+    vector<int> u_Ac(Params::N);
+    vector<int> u_A(Params::N;
+    vector<int> A(Params::N);
+    vector<int> u_n(Params::N);
+    vector<int> x_n(Params::N);
+    vector<int> y_n(Params::N);
+    vector<int> u_est(Params::N);
+    Performance performance;
+    Decoder decoder;
+    Encoder encoder;
 public:
     explicit Analysor();
     ~Analysor();

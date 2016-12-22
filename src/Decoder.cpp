@@ -23,15 +23,15 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vec
         if (Common::containNumInArray(i, Params::N-Params::K, Ac)) {
             u_n_est[i] = u[i];
         } else {
-            cout << i << endl;
+            // cout << i << endl;
 
-            this->startTimer();
+            //this->startTimer();
 
             cache_i = i;
             lr = calcL_i(i, Params::N, cache_i, 0, y, u, u[i], isCache, cache);
 
-            this->stopTimer();
-            this->outTime();
+            //this->stopTimer();
+            //this->outTime();
 
             if (lr >= 1) {
                 h_i[i] = 0;
@@ -46,6 +46,7 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vec
 
 double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vector<int> &u, int u_i_est, vector<vector<bool> > &isCache , vector<vector<double> > &cache) {
     double lr = 0.0;
+    this->addCount();
     if ( n == 1 ) {
         double wc = Channel::calcW(y[0],0);
         double wp = Channel::calcW(y[0],1);
@@ -72,8 +73,8 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
 
         double temp1 = 1.0;
         double temp2 = 1.0;
-        temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
-        temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
+//        temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+//        temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
 
         if(((cache_i >> (int)(log2(n)-1))%2) != 1){
             //横の辺を作る
@@ -120,6 +121,5 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
     if (isinf(lr) || isnan(lr)) {
         lr = 1;
     }
-    this->addCount();
     return lr;
 }
