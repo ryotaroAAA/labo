@@ -21,8 +21,6 @@ double Analysor::calcCapacityForBec(int i, int n) {
             cap = 2 * tempCap - pow(tempCap,2);
         }
     }
-    //cout << "i:" << i << ", n:" << n <<endl;
-//    PRINT(cap);
     return cap;
 }
 
@@ -38,8 +36,6 @@ double Analysor::calcBhatForBec(int i, int n){
             bha = pow(Analysor::calcBhatForBec((i-1)/2, n/2),2);
         }
     }
-//    cout << "i:" << i << ", n:" << n <<endl;
-//    PRINT(bha);
     return bha;
 }
 
@@ -66,7 +62,7 @@ void Analysor::probErrBound(vector<double> &array) {
         sumArr[i] = sum;
     }
 
-    string filename = "/Users/ryotaro/labo/e18";
+    string filename = "e18";
     ofstream w_file;
     w_file.open(filename, ios::out);
     for (int i = 0; i < Params::N; i++)
@@ -76,34 +72,49 @@ void Analysor::probErrBound(vector<double> &array) {
 }
 
 void Analysor::calcBlockErrorRate(MODE mode, int n, double dist) {
-    vector<int> u_Ac(Params::N, 0);
-    vector<int> u_A(Params::N, 0);
-    vector<int> A(Params::N, 0);
-    vector<int> u_n(Params::N, 0);
-    vector<int> x_n(Params::N, 0);
-    vector<int> y_n(Params::N, 0);
-    vector<int> u_est(Params::N, 0);
+//    int tempK = 0;
+//
+//    Performance performance;
+//    Decoder decoder;
+//    Encoder encoder;
+//    Logger logger;
+//
+//    int eachK = Params::N*dist;
 
-    Performance performance;
-    Decoder decoder;
-    Encoder encoder;
-    Logger logger;
-
-    for (int k=0; k<Params::N ; k + Param::N*dist) {
-        Preseter::preset(u_n, u_Ac, u_A);
-        performance.startTimer();
-        x_n = encoder.encode(Params::N, u_n);
-        y_n = Channel::channel_output(x_n);
-        u_est = decoder.decode(y_n, u_n, u_Ac, u_A);
-
-        logger.outLog("================================");
-        logger.outLog("error　probability:" + to_string(Analysor::errorRate(u_n, u_est)));
-        logger.outLog("rate:" + to_string((double) Params::K / Params::N));
-
-        performance.stopTimer();
-
-        logger.outLog(performance.outTime("処理時間"));
-        logger.outLog(encoder.outCount("encoder_count"));
-        logger.outLog(decoder.outCount("decoder_count"));
-    }
+//    for (int k=0; k<Params::N ; k + eachK) {
+//        vector<int> u_Ac(Params::N, 0);
+//        vector<int> u_A(Params::N, 0);
+//        vector<int> A(Params::N, 0);
+//        vector<int> u_n(Params::N, 0);
+//        vector<int> x_n(Params::N, 0);
+//        vector<int> y_n(Params::N, 0);
+//        vector<int> u_est(Params::N, 0);
+//
+//        Preseter::preset(u_n, u_Ac, u_A);
+//        performance.startTimer();
+//        x_n = encoder.encode(Params::N, u_n);
+//        y_n = Channel::channel_output(x_n);
+//        u_est = decoder.decode(y_n, u_n, u_Ac, u_A);
+//
+//        double BER = Analysor::errorRate(u_n, u_est);
+//        double rate = (double) Params::K / Params::N;
+//
+//        logger.outLogTime(performance.outTime("処理時間"));
+//        logger.outLog("(N,K) = (" + to_string(Params::N) + "," + to_string(Params::K) + ")");
+//        logger.outLog("error　probability:" + to_string(BER));
+//        logger.outLog("rate:" + to_string(rate));
+//        logger.outLogCount(encoder.outCount("encoder_count"));
+//        logger.outLogCount(decoder.outCount("decoder_count"));
+//
+//        logger.outLog("================================");
+//        logger.outLog("BER:" + to_string(BER));
+//        logger.outLog("Rate:" + to_string(rate));
+//
+//        performance.stopTimer();
+//
+//        logger.outLog(performance.outTime("処理時間"));
+//        logger.outLog(encoder.outCount("encoder_count"));
+//        logger.outLog(decoder.outCount("decoder_count"));
+//        logger.outLogRVB(rate,BER);
+//    }
 }

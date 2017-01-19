@@ -14,7 +14,8 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vec
 
     vector<vector<bool> > isCache (size, vector<bool>(Params::N,false));
     vector<vector<double> > cache (size, vector<double>(Params::N,0.0));
-    double lr = 1.0;
+
+    double lr;
     int cache_i = 0;
 
     //u_n_est計算
@@ -23,15 +24,14 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vec
         if (Common::containNumInArray(i, Params::N-Params::K, Ac)) {
             u_n_est[i] = u[i];
         } else {
-            // cout << i << endl;
-
-            //this->startTimer();
+            cout << i << endl;
+            this->startTimer();
 
             cache_i = i;
             lr = calcL_i(i, Params::N, cache_i, 0, y, u, u[i], isCache, cache);
 
-            //this->stopTimer();
-            //this->outTime();
+            this->stopTimer();
+            this->outTime();
 
             if (lr >= 1) {
                 h_i[i] = 0;

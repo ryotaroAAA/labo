@@ -20,10 +20,14 @@ enum MODE{ORD,TEST};
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 #define ARR(array)     (sizeof(array) / sizeof(array[0]));
 
+/*
+ * 1024,2048,4096,8192,16384,32768
+ * 65536,131072,262144,524288,1048576
+ */
 class Params{
 public:
-    constexpr static int N =4096;
-    constexpr static int K =10;
+    constexpr static int N =2048;
+    constexpr static int K =1024;
     constexpr static double e = 0.5f;
 };
 

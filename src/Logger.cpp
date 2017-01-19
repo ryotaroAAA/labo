@@ -20,10 +20,10 @@ void Logger::outLogRVB(int rate, int ber){
     this->rvb << rate << " " << ber << endl;
 }
 
-void Logger::outLogCount(string content, string title) {
-    this->log << title << "::" << content << "回" << endl;
+void Logger::outLogCount(string content) {
+    this->log << content << endl;
 }
 
-void Logger::outLogTime(string content, string title){
-    this->log << title << "::" << content << "[ms]" << endl;
+void Logger::outLogTime(string content){
+    this->log << content << endl;
 }
