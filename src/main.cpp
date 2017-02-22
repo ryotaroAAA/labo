@@ -8,7 +8,15 @@
 #include "../lib/Performance.h"
 
 int main(void) {
-    Params params(1024, 5, 0.5);
+//    Params params(1024, 5, 0.5);
+//    Params(int _N, int _K, double _e){
+//        N = _N;
+//        K = _K;
+//        e = _e;
+//    }
+    Params::set_N(1024);
+    Params::set_K(5);
+    Params::set_e(0.5);
 
     vector<int> u_Ac(Params::get_N(),0);
     vector<int> u_A(Params::get_N(),0);
