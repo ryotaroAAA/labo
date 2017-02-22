@@ -38,7 +38,7 @@ int Common::compare_desc(const void *x, const void *y) {
 }
 
 void Common::dispArray(double *x){
-    for(int i = 0; i < Params::N; i++){
+    for(int i = 0; i < Params::get_N(); i++){
         printf("x[%d] = %f\n",i, x[i]);
     }
 }
@@ -71,7 +71,7 @@ void Common::outputArray(double *x){
     string filename = "/Users/ryotaro/labo/symmetric_capacity";
     ofstream w_file;
     w_file.open(filename, ios::out);
-    for (int i = 0; i<Params::N; i++)
+    for (int i = 0; i<Params::get_N(); i++)
     {
         w_file << i << " " << x[i]<< endl;
     }
@@ -110,7 +110,7 @@ vector<int> Common::retBinary(vector<int> &x) {
 }
 
 int Common::ithIndexDesc(int i, double *array, double *descArray){
-    for (int j=0; j<Params::N; j++) {
+    for (int j=0; j<Params::get_N(); j++) {
         if(descArray[i] == array[j]){
             return j;
         }

@@ -2,7 +2,7 @@
 vector<int> Channel::channel_output(vector<int> &input){
     vector<int> y;
     for (auto val : input) {
-        if((double)rand() / RAND_MAX < Params::e){
+        if((double)rand() / RAND_MAX < Params::get_e()){
             y.push_back(2);
         } else {
             y.push_back(val);
@@ -14,9 +14,9 @@ vector<int> Channel::channel_output(vector<int> &input){
 double Channel::calcW(int y, int x) {
     double retVal = 0.0;
     if (x == y) {
-        retVal = 1 - Params::e;
+        retVal = 1 - Params::get_e();
     } else if (y == 2) {
-        retVal = Params::e;
+        retVal = Params::get_e();
     } else {
         retVal = 0;
     }

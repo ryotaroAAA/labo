@@ -8,27 +8,27 @@ Decoder::~Decoder(){
 }
 
 vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vector<int> &A){
-    vector<double> h_i(Params::N);
-    vector<int> u_n_est(Params::N);
-    int size = log2(Params::N);
+    vector<double> h_i(Params::get_N());
+    vector<int> u_n_est(Params::get_N());
+    int size = log2(Params::get_N());
 
-    vector<vector<bool> > isCache (size, vector<bool>(Params::N,false));
-    vector<vector<double> > cache (size, vector<double>(Params::N,0.0));
+    vector<vector<bool> > isCache (size, vector<bool>(Params::get_N(),false));
+    vector<vector<double> > cache (size, vector<double>(Params::get_N(),0.0));
 
     double lr;
     int cache_i = 0;
 
     //u_n_est計算
-    for (int i = 0; i < Params::N; i++) {
+    for (int i = 0; i < Params::get_N(); i++) {
         // Acに含まれるindexなら既知
-        if (Common::containNumInArray(i, Params::N-Params::K, Ac)) {
+        if (Common::containNumInArray(i, Params::get_N()-Params::get_K(), Ac)) {
             u_n_est[i] = u[i];
         } else {
             cout << i << endl;
             this->startTimer();
 
             cache_i = i;
-            lr = calcL_i(i, Params::N, cache_i, 0, y, u, u[i], isCache, cache);
+            lr = calcL_i(i, Params::get_N(), cache_i, 0, y, u, u[i], isCache, cache);
 
             this->stopTimer();
             this->outTime();
@@ -71,46 +71,46 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
         }
         tempU_bin = Common::retBinary(tempU);
 
-        double temp1 = 1.0;
-        double temp2 = 1.0;
-//        temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
-//        temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
+        double temp1;
+        double temp2;
+        temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+        temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
 
-        if(((cache_i >> (int)(log2(n)-1))%2) != 1){
-            //横の辺を作る
-            if (isCache[level][cache_i]) {
-                temp1 = cache[level][cache_i];
-            } else {
-                temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
-                isCache[level][cache_i] = true;
-                cache[level][cache_i] = temp1;
-            }
-            //斜め下の辺を作る
-            if (isCache[level][cache_i+(n/2)]) {
-                temp2 = cache[level][cache_i+(n/2)];
-            } else {
-                temp2 = calcL_i(i/2, n/2, cache_i+(n/2), level+1, tempY2, u_e, u_i_est, isCache, cache);
-                isCache[level][cache_i+(n/2)] = true;
-                cache[level][cache_i+(n/2)] = temp2;
-            }
-        } else {
-            //斜め上の辺を作る
-            if (isCache[level][cache_i-(n/2)]) {
-                temp1 = cache[level][cache_i-(n/2)];
-            } else {
-                temp1 = calcL_i(i/2, n/2, cache_i-(n/2), level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
-                isCache[level][cache_i-(n/2)] = true;
-                cache[level][cache_i-(n/2)] = temp1;
-            }
-            //横の辺を作る
-            if (isCache[level][cache_i]) {
-                temp2 = cache[level][cache_i];
-            } else {
-                temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
-                isCache[level][cache_i] = true;
-                cache[level][cache_i] = temp2;
-            }
-        }
+        // if(((cache_i >> (int)(log2(n)-1))%2) != 1){
+        //     //横の辺を作る
+        //     if (isCache[level][cache_i]) {
+        //         temp1 = cache[level][cache_i];
+        //     } else {
+        //         temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+        //         isCache[level][cache_i] = true;
+        //         cache[level][cache_i] = temp1;
+        //     }
+        //     //斜め下の辺を作る
+        //     if (isCache[level][cache_i+(n/2)]) {
+        //         temp2 = cache[level][cache_i+(n/2)];
+        //     } else {
+        //         temp2 = calcL_i(i/2, n/2, cache_i+(n/2), level+1, tempY2, u_e, u_i_est, isCache, cache);
+        //         isCache[level][cache_i+(n/2)] = true;
+        //         cache[level][cache_i+(n/2)] = temp2;
+        //     }
+        // } else {
+        //     //斜め上の辺を作る
+        //     if (isCache[level][cache_i-(n/2)]) {
+        //         temp1 = cache[level][cache_i-(n/2)];
+        //     } else {
+        //         temp1 = calcL_i(i/2, n/2, cache_i-(n/2), level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
+        //         isCache[level][cache_i-(n/2)] = true;
+        //         cache[level][cache_i-(n/2)] = temp1;
+        //     }
+        //     //横の辺を作る
+        //     if (isCache[level][cache_i]) {
+        //         temp2 = cache[level][cache_i];
+        //     } else {
+        //         temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
+        //         isCache[level][cache_i] = true;
+        //         cache[level][cache_i] = temp2;
+        //     }
+        // }
 
         if ( i % 2 == 0) {
             lr = ( 1 + temp1 * temp2 ) / ( temp1 + temp2 );
@@ -119,7 +119,7 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
         }
     }
     if (isinf(lr) || isnan(lr)) {
-        lr = 1;
+        // lr = 1;
     }
     return lr;
 }

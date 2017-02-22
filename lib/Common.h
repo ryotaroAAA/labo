@@ -1,9 +1,9 @@
 #ifndef CHANNEL_POLARIZATION_COMMON_H
 #define CHANNEL_POLARIZATION_COMMON_H
 #include <iostream>
-#include "stdlib.h"
-#include "math.h"
-#include "time.h"
+#include <cstdlib>
+#include <cmath>
+#include <ctime>
 #include <chrono>
 #include <iomanip>
 #include <string>
@@ -24,12 +24,56 @@ enum MODE{ORD,TEST};
  * 1024,2048,4096,8192,16384,32768
  * 65536,131072,262144,524288,1048576
  */
+
+
 class Params{
 public:
-    constexpr static int N =2048;
-    constexpr static int K =1024;
-    constexpr static double e = 0.5f;
+    static int N;
+    static int K;
+    static double e;
+    Params(int _N, int _K, double _e){
+        N = _N;
+        K = _K;
+        e = _e;
+    }
+    static int get_N();
+    static int get_K();
+    static double get_e();
+    static void set_N(int _N);
+    static void set_K(int _K);
+    static void set_e(double _e);
+
+//    constexpr static int N = 1024;
+//    constexpr static int K = 1000;
+//    constexpr static double e = 0.5;
 };
+int Params::N = 0;
+int Params::K = 0;
+double Params::e = 0;
+
+int Params::get_N(){
+    return N;
+}
+
+int Params::get_K(){
+    return K;
+}
+
+double Params::get_e(){
+    return e;
+}
+
+void Params::set_N(int _N){
+    N = _N;
+}
+
+void Params::set_K(int _K){
+    K = _K;
+}
+
+void Params::set_e(double _e){
+    e = _e;
+}
 
 class Common{
 public:

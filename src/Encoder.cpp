@@ -9,8 +9,10 @@ Encoder::~Encoder(){
 
 vector<int> Encoder::encode(int n, vector<int> &input){
     vector<int> x_n(n,0);
-    int s_n[n];
-    int v_n[n];
+    vector<int> s_n(n,0);
+    vector<int> v_n(n,0);
+//    int s_n[n];
+//    int v_n[n];
 
     for (int i = 0; i < n/2 ; i++) {
         s_n[2*i]   = (input[2*i+1] + input[2*i]) % 2;
