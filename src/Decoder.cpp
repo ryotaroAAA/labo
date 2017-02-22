@@ -28,7 +28,7 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vec
             this->startTimer();
 
             cache_i = i;
-            lr = calcL_i(i, Params::get_N(), cache_i, 0, y, u, u[i], isCache, cache);
+//            lr = calcL_i(i, Params::get_N(), cache_i, 0, y, u, u[i], isCache, cache);
 
             this->stopTimer();
             this->outTime();

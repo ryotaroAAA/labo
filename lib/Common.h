@@ -38,5 +38,4 @@ public:
     static vector<int> index_e(vector<int> &x);
     static vector<int> retBinary(vector<int> &x);
 };
-
 #endif //CHANNEL_POLARIZATION_COMMON_H

@@ -84,43 +84,42 @@ void Analysor::calcBlockErrorRate(MODE mode, int n, double dist) {
     Decoder decoder;
     Encoder encoder;
     Logger logger;
+    vector<int> u_Ac(Params::get_N(), 0);
+    vector<int> u_A(Params::get_N(), 0);
+    vector<int> A(Params::get_N(), 0);
+    vector<int> u_n(Params::get_N(), 0);
+    vector<int> x_n(Params::get_N(), 0);
+    vector<int> y_n(Params::get_N(), 0);
+    vector<int> u_est(Params::get_N(), 0);
+    double BER = 0.0;
+    double rate = 0.0;
 
-    int tmp = Params::get_N()/100;
+    int tmp = Params::get_N()/Params::get_K();
+    int tmpK = Params::get_K();
     for (int i = 0; i < tmp; i++) {
-        Params::set_K(i*5);
-        vector<int> u_Ac(Params::get_N(), 0);
-        vector<int> u_A(Params::get_N(), 0);
-        vector<int> A(Params::get_N(), 0);
-        vector<int> u_n(Params::get_N(), 0);
-        vector<int> x_n(Params::get_N(), 0);
-        vector<int> y_n(Params::get_N(), 0);
-        vector<int> u_est(Params::get_N(), 0);
+        cout << i << endl;
+        Params::set_K(i*tmpK);
 
         Preseter::preset(RAND, u_n, u_Ac, u_A);
         performance.startTimer();
+
         x_n = encoder.encode(Params::get_N(), u_n);
         y_n = Channel::channel_output(x_n);
         u_est = decoder.decode(y_n, u_n, u_Ac, u_A);
 
-        double BER = Analysor::errorRate(u_n, u_est);
-        double rate = (double)Params::get_K() / Params::get_N();
-
-        logger.outLogTime(performance.outTime("処理時間"));
-        logger.outLog("(N,K) = (" + to_string(Params::get_N()) + "," + to_string(Params::get_K()) + ")");
-        logger.outLog("error　probability:" + to_string(BER));
-        logger.outLog("rate:" + to_string(rate));
-        logger.outLogCount(encoder.outCount("encoder_count"));
-        logger.outLogCount(decoder.outCount("decoder_count"));
-
-        logger.outLog("================================");
-        logger.outLog("BER:" + to_string(BER));
-        logger.outLog("Rate:" + to_string(rate));
-
+        BER = Analysor::errorRate(u_n, u_est);
+        rate = (double)Params::get_K() / Params::get_N();
         performance.stopTimer();
 
+        logger.outLog("=================================");
         logger.outLog(performance.outTime("処理時間"));
+        logger.outLog("(N,K) = (" + to_string(Params::get_N()) + "," + to_string(Params::get_K()) + ")");
+        logger.outLog("BER:" + to_string(BER));
+        logger.outLog("Rate:" + to_string(rate));
         logger.outLog(encoder.outCount("encoder_count"));
         logger.outLog(decoder.outCount("decoder_count"));
+
         logger.outLogRVB(rate,BER);
+        if(mode != TEST) break;
     }
 }

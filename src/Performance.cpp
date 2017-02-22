@@ -23,18 +23,15 @@ void Performance::stopTimer(){
 
 string Performance::outCount(string content){
     string str = content + "::" + to_string(this->count) + "回";
-    cout << str << endl;
     return str;
 }
 
 string Performance::outTime(string content){
     string str = content + "::" + to_string(this->timeSpan) + "[ms]";
-    cout << str << endl;
     return str;
 }
 
 string Performance::outSumTime(string content){
     string str = content + "::" + to_string(this->sumTime) + "[ms]";
-    cout << str << endl;
     return str;
 }

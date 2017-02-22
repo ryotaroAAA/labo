@@ -8,7 +8,6 @@ void Preseter::preset(SOURCE_TYPE mode, vector<int> &u, vector<int> &fixed, vect
 void Preseter::defineFixedAndFree(vector<int> &fixed, vector<int> &free){
     vector<double> cap(Params::get_N(),0);
     vector<double> cap_desc(Params::get_N(),0);
-    cout << Params::get_N();
     Analysor::makeArrayCapacityForBec(cap);
 
     vector<pair<int, double> > cap_map;
@@ -30,7 +29,6 @@ vector<int> Preseter::generateUi(SOURCE_TYPE set, vector<int> &x, vector<int> &u
     vector<int> ret(Params::get_N(),0);
     srand((int) time(NULL));
     for (int i = 0; i < Params::get_N(); i++) {
-        cout << i;
         if (set == ALL0) {
             ret.push_back(0);
         } else if (set == ALL1) {
