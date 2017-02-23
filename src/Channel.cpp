@@ -41,17 +41,17 @@ double Channel::calcW_i(int i, int n, vector<int> &u, int u_i, vector<int> &y) {
             (j < n/2) ? tempY1.push_back(y[j]) : tempY2.push_back(y[j]);
         }
 
-        vector<int> tempU;
-        vector<int> tempU_bin;
-        vector<int> u_e = Common::index_e(u);
-        vector<int> u_o = Common::index_o(u);
+        vector<int> tempU(n/2,0);
+        vector<int> tempU_bin(n/2,0);
+        vector<int> u_e = Common::index_e(n/2, u);
+        vector<int> u_o = Common::index_o(n/2, u);
 
         int k = 0;
         for(auto val : u_e){
             tempU[k] = u_e[k] + u_o[k];
             k++;
         }
-        tempU_bin = Common::retBinary(tempU);
+        tempU_bin = Common::retBinary(n/2, tempU);
 
         if ( i % 2 == 0 ) {
             W_i = 0.5 * (Channel::calcW_i(i/2, n/2, tempU_bin ,(1 + u_i) % 2,tempY1) * calcW_i(i/2, n/2, u_e, 1, tempY2)

@@ -55,19 +55,19 @@ void Analysor::makeArrayCapacityForBec(vector<double> &array) {
 
 void Analysor::probErrBound(vector<double> &array) {
     int count = 0;
-    vector<double> tempArr(Params::get_N());
-    vector<double> sumArr(Params::get_N());
+    vector<double> tempArr;
+    vector<double> sumArr;
     double sum = 0.0;
 
     for(int i = 0; i < Params::get_N(); i++) {
-        tempArr[i] = Analysor::calcBhatForBec(i, Params::get_N());
+        tempArr.push_back(Analysor::calcBhatForBec(i, Params::get_N()));
     }
 
     sort(tempArr.begin(), tempArr.end(), greater<int>());
 
     for(int i=0; i < Params::get_N(); i++){
         sum += tempArr[i];
-        sumArr[i] = sum;
+        sumArr.push_back(sum);
     }
 
     string filename = "e18";
@@ -100,6 +100,13 @@ void Analysor::calcBlockErrorRate(MODE mode, int n, double dist) {
         cout << i << endl;
         Params::set_K(i*tmpK);
 
+        u_Ac.assign(Params::get_N(), 0);
+        u_A.assign(Params::get_N(), 0);
+        A.assign(Params::get_N(), 0);
+        u_n.assign(Params::get_N(), 0);
+        x_n.assign(Params::get_N(), 0);
+        y_n.assign(Params::get_N(), 0);
+        u_est.assign(Params::get_N(), 0);
         Preseter::preset(RAND, u_n, u_Ac, u_A);
         performance.startTimer();
 

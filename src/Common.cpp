@@ -77,8 +77,8 @@ void Common::outputArray(double *x){
     }
 }
 
-vector<int> Common::index_o(vector<int> &x){
-    vector<int> ret;
+vector<int> Common::index_o(int n, vector<int> &x){
+    vector<int> ret(n, 0);
     int i = 0;
     for(auto val : x){
         if (i % 2 == 0) {
@@ -89,8 +89,8 @@ vector<int> Common::index_o(vector<int> &x){
     return ret;
 }
 
-vector<int> Common::index_e(vector<int> &x){
-    vector<int> ret;
+vector<int> Common::index_e(int n, vector<int> &x){
+    vector<int> ret(n, 0);
     int i = 0;
     for(auto val : x){
         if (!(i % 2 == 0)) {
@@ -101,8 +101,8 @@ vector<int> Common::index_e(vector<int> &x){
     return ret;
 }
 
-vector<int> Common::retBinary(vector<int> &x) {
-    vector<int> ret;
+vector<int> Common::retBinary(int n, vector<int> &x) {
+    vector<int> ret(n, 0);
     for(auto val : x){
         ret.push_back(val % 2);
     }

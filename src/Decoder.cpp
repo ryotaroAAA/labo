@@ -28,7 +28,7 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vec
             this->startTimer();
 
             cache_i = i;
-//            lr = calcL_i(i, Params::get_N(), cache_i, 0, y, u, u[i], isCache, cache);
+            lr = calcL_i(i, Params::get_N(), cache_i, 0, y, u, u[i], isCache, cache);
 
             this->stopTimer();
             this->outTime();
@@ -52,27 +52,29 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
         double wp = Channel::calcW(y[0],1);
         lr = wc / wp;
     } else {
-        vector<int> tempY1(n/2);
-        vector<int> tempY2(n/2);
+        vector<int> tempY1(n/2,0);
+        vector<int> tempY2(n/2,0);
 
         for (int j = 0; j < n ; j++) {
             (j < n/2) ? tempY1.push_back(y[j]) : tempY2.push_back(y[j]);
         }
 
-        vector<int> tempU(n/2);
-        vector<int> tempU_bin(n/2);
-        vector<int> u_e = Common::index_e(u);
-        vector<int> u_o = Common::index_o(u);
+        vector<int> tempU(n/2,0);
+        vector<int> tempU_bin(n/2,0);
+        vector<int> u_e(n/2,0);
+        vector<int> u_o(n/2,0);
+        u_e = Common::index_e(n/2,u);
+        u_o = Common::index_o(n/2,u);
 
         int k = 0;
         for(auto val : u_e){
             tempU[k] = u_e[k] + u_o[k];
             k++;
         }
-        tempU_bin = Common::retBinary(tempU);
+        tempU_bin = Common::retBinary(n/2, tempU);
 
-        double temp1;
-        double temp2;
+        double temp1 = 0.0;
+        double temp2 = 0.0;
         temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
         temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
 
@@ -119,7 +121,7 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
         }
     }
     if (isinf(lr) || isnan(lr)) {
-        // lr = 1;
+         lr = 1;
     }
     return lr;
 }

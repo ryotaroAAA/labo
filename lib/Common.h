@@ -34,8 +34,8 @@ public:
     static int compare_desc(const void *x, const void *y);
     static int compare_asc(const void *x, const void *y);
 
-    static vector<int> index_o(vector<int> &x);
-    static vector<int> index_e(vector<int> &x);
-    static vector<int> retBinary(vector<int> &x);
+    static vector<int> index_o(int n, vector<int> &x);
+    static vector<int> index_e(int n, vector<int> &x);
+    static vector<int> retBinary(int n, vector<int> &x);
 };
 #endif //CHANNEL_POLARIZATION_COMMON_H

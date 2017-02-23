@@ -6,8 +6,8 @@ void Preseter::preset(SOURCE_TYPE mode, vector<int> &u, vector<int> &fixed, vect
 }
 
 void Preseter::defineFixedAndFree(vector<int> &fixed, vector<int> &free){
-    vector<double> cap(Params::get_N(),0);
-    vector<double> cap_desc(Params::get_N(),0);
+    vector<double> cap;
+    vector<double> cap_desc;
     Analysor::makeArrayCapacityForBec(cap);
 
     vector<pair<int, double> > cap_map;
@@ -17,6 +17,7 @@ void Preseter::defineFixedAndFree(vector<int> &fixed, vector<int> &free){
 
     //昇順ソート
     sort(begin(cap_map), end(cap_map), Common::sort_greater);
+//    sort(begin(cap_map), end(cap_map));
 
     int i = 0;
     for(auto val : cap_map){
@@ -26,7 +27,7 @@ void Preseter::defineFixedAndFree(vector<int> &fixed, vector<int> &free){
 }
 
 vector<int> Preseter::generateUi(SOURCE_TYPE set, vector<int> &x, vector<int> &u_Ac, vector<int> &A){
-    vector<int> ret(Params::get_N(),0);
+    vector<int> ret;
     srand((int) time(NULL));
     for (int i = 0; i < Params::get_N(); i++) {
         if (set == ALL0) {
