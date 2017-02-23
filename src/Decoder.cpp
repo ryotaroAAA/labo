@@ -52,25 +52,27 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
         double wp = Channel::calcW(y[0],1);
         lr = wc / wp;
     } else {
-        vector<int> tempY1(n/2,0);
-        vector<int> tempY2(n/2,0);
+        vector<int> tempY1;
+        vector<int> tempY2;
 
         for (int j = 0; j < n ; j++) {
             (j < n/2) ? tempY1.push_back(y[j]) : tempY2.push_back(y[j]);
         }
 
-        vector<int> tempU(n/2,0);
-        vector<int> tempU_bin(n/2,0);
-        vector<int> u_e(n/2,0);
-        vector<int> u_o(n/2,0);
+        vector<int> tempU(Params::get_N());
+        vector<int> tempU_bin(Params::get_N());
+        vector<int> u_e;
+        vector<int> u_o;
         u_e = Common::index_e(n/2,u);
         u_o = Common::index_o(n/2,u);
 
         int k = 0;
+
         for(auto val : u_e){
             tempU[k] = u_e[k] + u_o[k];
             k++;
         }
+
         tempU_bin = Common::retBinary(n/2, tempU);
 
         double temp1 = 0.0;
