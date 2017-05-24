@@ -17,6 +17,6 @@ void Logger::outLog(string content){
     cout << content << endl;
 }
 
-void Logger::outLogRVB(int rate, int ber){
+void Logger::outLogRVB(double rate, double ber){
     this->rvb << rate << " " << ber << endl;
 }

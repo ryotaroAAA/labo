@@ -1,3 +1,5 @@
+//Bounds on probability of block error用
+
 unset key
 set logscale y
 set format y "10^{%L}"
@@ -18,7 +20,20 @@ replot 'e18' using 1:3 with lines lt 7 dt'.'
 
 (y^{4}_1,\hat{u}^{4}_{1,e} \oplus \hat{u}^{4}_{1,o})
 
+// bit error rate plot
+unset key
+set logscale y
+set format y "10^{%L}"
+set xrange[0.15:0.5]
+set yrange[0.0000000001:1]
+set tics font "Arial,25"
+set xlabel font "Arial,25"
+set ylabel font "Arial,25"
+set xl 'Rate(bits)'
+set yl 'Block Error Rate'
+plot 'rve' with lines lt 7
 
+//
 
 unset key
 set xrange[0.0:1.0]

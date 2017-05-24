@@ -79,11 +79,12 @@ void Analysor::probErrBound(vector<double> &array) {
     }
 }
 
-void Analysor::calcBlockErrorRate(MODE mode, int n, double dist) {
+void Analysor::calcBlockErrorRate(MODE mode, int n) {
     Performance performance;
     Decoder decoder;
     Encoder encoder;
     Logger logger;
+    logger.setDir("/Users/ryotaro/labo/log");
     vector<int> u_Ac(Params::get_N(), 0);
     vector<int> u_A(Params::get_N(), 0);
     vector<int> A(Params::get_N(), 0);
@@ -121,7 +122,7 @@ void Analysor::calcBlockErrorRate(MODE mode, int n, double dist) {
         logger.outLog("=================================");
         logger.outLog(performance.outTime("処理時間"));
         logger.outLog("(N,K) = (" + to_string(Params::get_N()) + "," + to_string(Params::get_K()) + ")");
-        logger.outLog("BER:" + to_string(BER));
+        logger.outLog("BitER:" + to_string(BER));
         logger.outLog("Rate:" + to_string(rate));
         logger.outLog(encoder.outCount("encoder_count"));
         logger.outLog(decoder.outCount("decoder_count"));

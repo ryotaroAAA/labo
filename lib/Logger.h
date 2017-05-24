@@ -3,8 +3,8 @@
 #include "Common.h"
 class Logger {
 private:
-    string dir = "log/all_log";
-    string rvb_dir = "log/";
+    string dir = "/Users/ryotaro/labo/log/all_log";
+    string rvb_dir = "/Users/ryotaro/labo/log/rve";
     ofstream log;
     ofstream rvb;
 public:
@@ -12,7 +12,6 @@ public:
     ~Logger();
     void setDir(string dir);
     void outLog(string content);
-    void outLogRVB(int rate, int ber);
+    void outLogRVB(double rate, double ber);
 };
-
 #endif //CHANNEL_POLARIZATION_LOGGER_H

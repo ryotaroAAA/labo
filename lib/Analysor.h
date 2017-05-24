@@ -20,7 +20,7 @@ public:
     static double calcCapacityForBec(int i, int n);
     static double errorRate(vector<int> &u, vector<int> &u_est);
     static void makeArrayCapacityForBec(vector<double> &array);
-    static void calcBlockErrorRate(MODE mode, int n, double dist);
+    static void calcBlockErrorRate(MODE mode, int n);
     static void defineFixedAndFree(int n, vector<int> &fixed, vector<int> &free);
 };
 
