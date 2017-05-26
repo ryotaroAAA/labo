@@ -9,7 +9,7 @@
 
 int main(void) {
     Params::set_N(1024);
-    Params::set_K(250);
+    Params::set_K(500);
     Params::set_e(0.5);
 
     vector<int> u_Ac;
@@ -29,14 +29,15 @@ int main(void) {
     Preseter::preset(RAND, u_n, u_Ac, u_A);
 
     performance.startTimer();
+    Common::pp(u_n);
     x_n = encoder.encode(Params::get_N(), u_n);
     Common::pp(x_n);
     y_n = Channel::channel_output(x_n);
     Common::pp(y_n);
-    u_est = decoder.decode(y_n, u_n, u_Ac, u_A);
+    u_est = decoder.decode(y_n, u_n, x_n, u_Ac, u_A);
     Common::pp(u_est);
 
-    cout << "error　probability:" << Analysor::errorRate(u_n, u_est) << endl;
+    cout << "error　probability:" << Analysor::errorRate(x_n, u_est) << endl;
     cout << "rate:" << (double)Params::get_K()/Params::get_N() << endl;
 
     performance.stopTimer();

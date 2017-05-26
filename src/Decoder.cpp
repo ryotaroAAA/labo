@@ -7,9 +7,9 @@ Decoder::~Decoder(){
 
 }
 
-vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vector<int> &A){
+vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &x, vector<int> &Ac, vector<int> &A){
     vector<double> h_i(Params::get_N());
-    vector<int> u_n_est(Params::get_N());
+    vector<int> u_n_est(Params::get_N(),0);
     int size = log2(Params::get_N());
 
     vector<vector<bool> > isCache (size, vector<bool>(Params::get_N(),false));
@@ -17,18 +17,19 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &Ac, vec
 
     double lr;
     int cache_i = 0;
+    Common::bar();
 
     //u_n_est計算
     for (int i = 0; i < Params::get_N(); i++) {
         // Acに含まれるindexなら既知
         if (Common::containNumInArray(i, Params::get_N()-Params::get_K(), Ac)) {
-            u_n_est[i] = u[i];
+            u_n_est[i] = x[i];
         } else {
             cout << i << endl;
             this->startTimer();
 
             cache_i = i;
-            lr = calcL_i(i, Params::get_N(), cache_i, 0, y, u, u[i], isCache, cache);
+            lr = calcL_i(i, Params::get_N(), cache_i, 0, y, u_n_est, u[i], isCache, cache);
 
             this->stopTimer();
             this->outTime();
@@ -122,8 +123,11 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
             lr = pow(temp1, 1-2*u[i-1]) * temp2;
         }
     }
+//    cout << lr << endl;
     if (isinf(lr) || isnan(lr)) {
          lr = 1;
     }
+
+//    cout << lr << endl;
     return lr;
 }
