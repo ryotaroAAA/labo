@@ -18,7 +18,7 @@ double Channel::calcW(int y, int x) {
     } else if (y == 2) {
         retVal = Params::get_e();
     } else {
-        retVal = 0;
+        retVal = 0.000001;
     }
     return retVal;
 }

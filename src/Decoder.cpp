@@ -23,7 +23,7 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &x, vect
     for (int i = 0; i < Params::get_N(); i++) {
         // Acに含まれるindexなら既知
         if (Common::containNumInArray(i, Params::get_N()-Params::get_K(), Ac)) {
-            u_n_est[i] = x[i];
+            u_n_est[i] = u[i];
         } else {
             cout << i << endl;
             this->startTimer();
@@ -33,6 +33,7 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &x, vect
 
             this->stopTimer();
             this->outTime();
+            cout << lr <<endl;
 
             if (lr >= 1) {
                 h_i[i] = 0;
@@ -55,77 +56,82 @@ double Decoder::calcL_i(int i, int n ,int cache_i,int level ,vector<int> &y ,vec
     } else {
         vector<int> tempY1;
         vector<int> tempY2;
-
         for (int j = 0; j < n ; j++) {
             (j < n/2) ? tempY1.push_back(y[j]) : tempY2.push_back(y[j]);
         }
-
         vector<int> tempU(Params::get_N());
         vector<int> tempU_bin(Params::get_N());
         vector<int> u_e;
         vector<int> u_o;
         u_e = Common::index_e(n/2,u);
         u_o = Common::index_o(n/2,u);
-
         int k = 0;
-
         for(auto val : u_e){
             tempU[k] = u_e[k] + u_o[k];
             k++;
         }
-
         tempU_bin = Common::retBinary(n/2, tempU);
 
         double temp1 = 0.0;
         double temp2 = 0.0;
-        temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
-        temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
 
-        // if(((cache_i >> (int)(log2(n)-1))%2) != 1){
-        //     //横の辺を作る
-        //     if (isCache[level][cache_i]) {
-        //         temp1 = cache[level][cache_i];
-        //     } else {
-        //         temp1 = calcL_i(i/2, n/2, cache_i, level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
-        //         isCache[level][cache_i] = true;
-        //         cache[level][cache_i] = temp1;
-        //     }
-        //     //斜め下の辺を作る
-        //     if (isCache[level][cache_i+(n/2)]) {
-        //         temp2 = cache[level][cache_i+(n/2)];
-        //     } else {
-        //         temp2 = calcL_i(i/2, n/2, cache_i+(n/2), level+1, tempY2, u_e, u_i_est, isCache, cache);
-        //         isCache[level][cache_i+(n/2)] = true;
-        //         cache[level][cache_i+(n/2)] = temp2;
-        //     }
-        // } else {
-        //     //斜め上の辺を作る
-        //     if (isCache[level][cache_i-(n/2)]) {
-        //         temp1 = cache[level][cache_i-(n/2)];
-        //     } else {
-        //         temp1 = calcL_i(i/2, n/2, cache_i-(n/2), level+1, tempY1, tempU_bin, u_i_est, isCache, cache);
-        //         isCache[level][cache_i-(n/2)] = true;
-        //         cache[level][cache_i-(n/2)] = temp1;
-        //     }
-        //     //横の辺を作る
-        //     if (isCache[level][cache_i]) {
-        //         temp2 = cache[level][cache_i];
-        //     } else {
-        //         temp2 = calcL_i(i/2, n/2, cache_i, level+1, tempY2, u_e, u_i_est, isCache, cache);
-        //         isCache[level][cache_i] = true;
-        //         cache[level][cache_i] = temp2;
-        //     }
-        // }
+        if (true) {
+            //通常盤
+            temp1 = calcL_i(i / 2, n / 2, cache_i, level + 1, tempY1, tempU_bin, u_i_est, isCache, cache);
+            temp2 = calcL_i(i / 2, n / 2, cache_i, level + 1, tempY2, u_e, u_i_est, isCache, cache);
+        } else {
+            //効率的な実装(要テスト)
+            if (((cache_i >> (int) (log2(n) - 1)) % 2) != 1) {
+                //横の辺を作る
+                if (isCache[level][cache_i]) {
+                    temp1 = cache[level][cache_i];
+                } else {
+                    temp1 = calcL_i(i / 2, n / 2, cache_i, level + 1, tempY1, tempU_bin, u_i_est, isCache, cache);
+                    isCache[level][cache_i] = true;
+                    cache[level][cache_i] = temp1;
+                }
+                //斜め下の辺を作る
+                if (isCache[level][cache_i + (n / 2)]) {
+                    temp2 = cache[level][cache_i + (n / 2)];
+                } else {
+                    temp2 = calcL_i(i / 2, n / 2, cache_i + (n / 2), level + 1, tempY2, u_e, u_i_est, isCache, cache);
+                    isCache[level][cache_i + (n / 2)] = true;
+                    cache[level][cache_i + (n / 2)] = temp2;
+                }
+            } else {
+                //斜め上の辺を作る
+                if (isCache[level][cache_i - (n / 2)]) {
+                    temp1 = cache[level][cache_i - (n / 2)];
+                } else {
+                    temp1 = calcL_i(i / 2, n / 2, cache_i - (n / 2), level + 1, tempY1, tempU_bin, u_i_est, isCache,
+                                    cache);
+                    isCache[level][cache_i - (n / 2)] = true;
+                    cache[level][cache_i - (n / 2)] = temp1;
+                }
+                //横の辺を作る
+                if (isCache[level][cache_i]) {
+                    temp2 = cache[level][cache_i];
+                } else {
+                    temp2 = calcL_i(i / 2, n / 2, cache_i, level + 1, tempY2, u_e, u_i_est, isCache, cache);
+                    isCache[level][cache_i] = true;
+                    cache[level][cache_i] = temp2;
+                }
+            }
+        }
+        cout << "[" << pow(temp1, 1-2*u[2*i-1]) << "]" << "[" << temp2 << "]" << endl;
 
         if ( i % 2 == 0) {
-            lr = ( 1 + temp1 * temp2 ) / ( temp1 + temp2 );
+            //odd index
+            lr = ( 1.0 + temp1 * temp2 ) / ( temp1 + temp2 );
         } else {
-            lr = pow(temp1, 1-2*u[i-1]) * temp2;
+            //even index
+            lr = pow(temp1, 1-2*u[2*i-1]) * temp2;
         }
     }
+
 //    cout << lr << endl;
     if (isinf(lr) || isnan(lr)) {
-         lr = 1;
+//         lr = 1.0;
     }
 
 //    cout << lr << endl;

@@ -8,13 +8,14 @@ Analysor::~Analysor(){
 
 }
 
-double Analysor::errorRate(vector<int> &u, vector<int> &u_est){
+double Analysor::blockErrorRate(vector<int> &u, vector<int> &u_est){
     int error_count = 0;
     for(int i=0; i<Params::get_N(); i++){
         if(u[i] != u_est[i]){
             error_count++;
         }
     }
+    cout << "[[error count::" << error_count << "]]" << endl;
     return (double)error_count/Params::get_N();
 }
 double Analysor::calcCapacityForBec(int i, int n) {
@@ -79,7 +80,8 @@ void Analysor::probErrBound(vector<double> &array) {
     }
 }
 
-void Analysor::calcBlockErrorRate(MODE mode, int n) {
+//rate vs BERのグラフ作成用
+void Analysor::calcBlockErrorRate(MODE mode) {
     Performance performance;
     Decoder decoder;
     Encoder encoder;
@@ -94,10 +96,11 @@ void Analysor::calcBlockErrorRate(MODE mode, int n) {
     vector<int> u_est(Params::get_N(), 0);
     double BER = 0.0;
     double rate = 0.0;
+    int n = Params::get_N();
 
     int tmp = Params::get_N()/Params::get_K();
     int tmpK = Params::get_K();
-    for (int i = 0; i < tmp; i++) {
+    for (int i = 1; i <= tmp; i++) {
         cout << i << endl;
         Params::set_K(i*tmpK);
 
@@ -113,9 +116,9 @@ void Analysor::calcBlockErrorRate(MODE mode, int n) {
 
         x_n = encoder.encode(Params::get_N(), u_n);
         y_n = Channel::channel_output(x_n);
-//        u_est = decoder.decode(y_n, u_n, u_Ac, u_A);
+        u_est = decoder.decode(y_n, u_n, x_n, u_Ac, u_A);
 
-        BER = Analysor::errorRate(u_n, u_est);
+        BER = Analysor::blockErrorRate(u_n, u_est);
         rate = (double)Params::get_K() / Params::get_N();
         performance.stopTimer();
 
@@ -127,7 +130,7 @@ void Analysor::calcBlockErrorRate(MODE mode, int n) {
         logger.outLog(encoder.outCount("encoder_count"));
         logger.outLog(decoder.outCount("decoder_count"));
 
-        logger.outLogRVB(rate,BER);
+        logger.outLogRVB(rate, BER);
         if(mode != TEST) break;
     }
 }

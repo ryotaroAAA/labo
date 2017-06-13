@@ -8,8 +8,8 @@
 #include "../lib/Performance.h"
 
 int main(void) {
-    Params::set_N(1024);
-    Params::set_K(500);
+    Params::set_N(pow(2,10));
+    Params::set_K(10);
     Params::set_e(0.5);
 
     vector<int> u_Ac;
@@ -25,31 +25,44 @@ int main(void) {
     Logger logger;
     Analysor analysor;
 
-//    analysor.calcBlockErrorRate(TEST, Params::get_N());
-    Preseter::preset(RAND, u_n, u_Ac, u_A);
+    cout << "N::" << Params::get_N() <<endl;
+    cout << "K::" << Params::get_K() <<endl;
 
-    performance.startTimer();
-    Common::pp(u_n);
-    x_n = encoder.encode(Params::get_N(), u_n);
-    Common::pp(x_n);
-    y_n = Channel::channel_output(x_n);
-    Common::pp(y_n);
-    u_est = decoder.decode(y_n, u_n, x_n, u_Ac, u_A);
-    Common::pp(u_est);
+    analysor.calcBlockErrorRate(ORD);
 
-    cout << "error　probability:" << Analysor::errorRate(x_n, u_est) << endl;
-    cout << "rate:" << (double)Params::get_K()/Params::get_N() << endl;
+//    Preseter::preset(RAND, u_n, u_Ac, u_A);
 
-    performance.stopTimer();
+//    performance.startTimer();
 
-    logger.outLog("================================");
-    logger.outLog(performance.outTime("処理時間"));
-    logger.outLog("(N,K) = (" + to_string(Params::get_N()) + "," +to_string(Params::get_K()) + ")");
-    logger.outLog("error　probability:" + to_string(Analysor::errorRate(u_n, u_est)));
-    logger.outLog("rate:" + to_string((double)Params::get_K()/Params::get_N()));
-    logger.outLog(encoder.outCount("encoder_count"));
-    logger.outLog(decoder.outCount("decoder_count"));
-    logger.outLog("================================");
+//    Common::pp(u_n);
+//    cout << "u_n" << endl;
+//    x_n = encoder.encode(Params::get_N(), u_n);
+//    Common::pp(x_n);
+//    cout << "x_n" << endl;
+//    y_n = Channel::channel_output(x_n);
+//    Common::pp(y_n);
+//    cout << "y_n" << endl;
+//    u_est = decoder.decode(y_n, u_n, x_n, u_Ac, u_A);
+//    Common::pp(u_est);
+//    cout << "u_est" << endl;
+//
+//    cout << "error　probability:" << Analysor::errorRate(x_n, u_est) << endl;
+//    cout << "rate:" << (double)Params::get_K()/Params::get_N() << endl;
+//
+//    performance.stopTimer();
+//
+//    logger.outLog("================================");
+//    logger.outLog(performance.outTime("処理時間"));
+//    logger.outLog("(N,K) = (" + to_string(Params::get_N()) + "," +to_string(Params::get_K()) + ")");
+//    logger.outLog("error　probability:" + to_string(Analysor::errorRate(u_n, u_est)));
+//    logger.outLog("rate:" + to_string((double)Params::get_K()/Params::get_N()));
+//    logger.outLog(encoder.outCount("encoder_count"));
+//    logger.outLog(decoder.outCount("decoder_count"));
+//    logger.outLog("================================");
 
     return 0;
 }
+
+
+
+

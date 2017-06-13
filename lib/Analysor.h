@@ -18,9 +18,9 @@ public:
     void probErrBound(vector<double> &array);
 
     static double calcCapacityForBec(int i, int n);
-    static double errorRate(vector<int> &u, vector<int> &u_est);
+    static double blockErrorRate(vector<int> &u, vector<int> &u_est);
     static void makeArrayCapacityForBec(vector<double> &array);
-    static void calcBlockErrorRate(MODE mode, int n);
+    static void calcBlockErrorRate(MODE mode);
     static void defineFixedAndFree(int n, vector<int> &fixed, vector<int> &free);
 };
 
