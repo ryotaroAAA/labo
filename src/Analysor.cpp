@@ -8,7 +8,7 @@ Analysor::~Analysor(){
 
 }
 
-double Analysor::blockErrorRate(vector<int> &u, vector<int> &u_est){
+double Analysor::bitErrorRate(vector<int> &u, vector<int> &u_est){
     int error_count = 0;
     for(int i=0; i<Params::get_N(); i++){
         if(u[i] != u_est[i]){
@@ -87,9 +87,7 @@ void Analysor::calcBlockErrorRate(MODE mode) {
     Encoder encoder;
     Logger logger;
     logger.setDir("/Users/ryotaro/labo/log");
-    vector<int> u_Ac(Params::get_N(), 0);
-    vector<int> u_A(Params::get_N(), 0);
-    vector<int> A(Params::get_N(), 0);
+    vector<int> A(Params::get_K(), 0);
     vector<int> u_n(Params::get_N(), 0);
     vector<int> x_n(Params::get_N(), 0);
     vector<int> y_n(Params::get_N(), 0);
@@ -104,21 +102,23 @@ void Analysor::calcBlockErrorRate(MODE mode) {
         cout << i << endl;
         Params::set_K(i*tmpK);
 
-        u_Ac.assign(Params::get_N(), 0);
-        u_A.assign(Params::get_N(), 0);
-        A.assign(Params::get_N(), 0);
+        A.assign(Params::get_K(), 0);
         u_n.assign(Params::get_N(), 0);
         x_n.assign(Params::get_N(), 0);
         y_n.assign(Params::get_N(), 0);
         u_est.assign(Params::get_N(), 0);
-        Preseter::preset(RAND, u_n, u_Ac, u_A);
+        Preseter::preset(RAND, u_n, A);
         performance.startTimer();
 
+//        Common::pp(u_n);
         x_n = encoder.encode(Params::get_N(), u_n);
+//        Common::pp(x_n);
         y_n = Channel::channel_output(x_n);
-        u_est = decoder.decode(y_n, u_n, x_n, u_Ac, u_A);
+//        Common::pp(y_n);
+        u_est = decoder.decode(y_n, u_n, x_n, A);
+//        Common::pp(u_est);
 
-        BER = Analysor::blockErrorRate(u_n, u_est);
+        BER = Analysor::bitErrorRate(u_n, u_est);
         rate = (double)Params::get_K() / Params::get_N();
         performance.stopTimer();
 

@@ -4,7 +4,7 @@
 class Logger {
 private:
     string dir = "/Users/ryotaro/labo/log/all_log";
-    string rvb_dir = "/Users/ryotaro/labo/log/rve";
+    string rvb_dir = "/Users/ryotaro/labo/log/rve14";
     ofstream log;
     ofstream rvb;
 public:

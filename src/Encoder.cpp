@@ -28,11 +28,15 @@ vector<int> Encoder::encode(int n, vector<int> &input){
         x_n[0] = (input[0] + input[1]) % 2;
         x_n[1] = input[1];
     } else {
-        vector<int> tempV_n1(0);
-        vector<int> tempV_n2(0);
+        vector<int> tempV_n1(n/2);
+        vector<int> tempV_n2(n/2);
 
         for (int i = 0; i < n ; i++) {
-            (i < n/2) ? tempV_n1.push_back(v_n[i]) : tempV_n2.push_back(v_n[i]);
+            if(i < n/2){
+                tempV_n1[i] = v_n[i];
+            } else {
+                tempV_n2[i-n/2] = v_n[i];
+            }
         }
 
         vector<int> tempX_n1 = encode(n/2, tempV_n1);

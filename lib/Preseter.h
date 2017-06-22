@@ -7,8 +7,8 @@ private:
 public:
     explicit Preseter();
     ~Preseter();
-    static void preset(SOURCE_TYPE mode, vector<int> &u, vector<int> &fixed, vector<int> &free);
-    static void defineFixedAndFree(vector<int> &fixed, vector<int> &free);
-    static vector<int> generateUi(SOURCE_TYPE set, vector<int> &x, vector<int> &u_Ac, vector<int> &A);
+    static void preset(SOURCE_TYPE mode, vector<int> &u, vector<int> &free);
+    static void defineFixedAndFree(vector<int> &free);
+    static vector<int> generateUi(SOURCE_TYPE set, vector<int> &x);
 };
 #endif //CHANNEL_POLARIZATION_PRESETER_H
