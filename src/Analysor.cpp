@@ -110,13 +110,9 @@ void Analysor::calcBlockErrorRate(MODE mode) {
         Preseter::preset(RAND, u_n, A);
         performance.startTimer();
 
-//        Common::pp(u_n);
         x_n = encoder.encode(Params::get_N(), u_n);
-//        Common::pp(x_n);
         y_n = Channel::channel_output(x_n);
-//        Common::pp(y_n);
         u_est = decoder.decode(y_n, u_n, x_n, A);
-//        Common::pp(u_est);
 
         BER = Analysor::bitErrorRate(u_n, u_est);
         rate = (double)Params::get_K() / Params::get_N();
