@@ -10,8 +10,8 @@
 
 int main(void) {
     Params::set_e(0.5);
-    Params::set_N(pow(2,10));
-    Params::set_K(200);
+    Params::set_N(pow(2,16));
+    Params::set_K(pow(2,14));
 
     vector<int> A(Params::get_K(), -1);
     vector<int> u_n(Params::get_N(), 0);
@@ -23,9 +23,14 @@ int main(void) {
     Encoder encoder;
     Logger logger;
     Analysor analysor;
+    performance.startTimer();
 
-    analysor.calcBlockErrorRate(ORD);
-    Preseter::preset(RAND, u_n, A);
+    analysor.calcBlockErrorRate(ORD, BEC);
+    performance.stopTimer();
+    logger.outLog("=================================");
+    logger.outLog(performance.outTime("処理時間"));
+    logger.outLog("(N,K) = (" + to_string(Params::get_N()) + "," + to_string(Params::get_K()) + ")");
+
     return 0;
 }
 

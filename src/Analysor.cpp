@@ -71,7 +71,7 @@ void Analysor::probErrBound(vector<double> &array) {
         sumArr.push_back(sum);
     }
 
-    string filename = "e18";
+    string filename = "/Users/ryotaro/labo/log/rve";
     ofstream w_file;
     w_file.open(filename, ios::out);
     for (int i = 0; i < Params::get_N(); i++)
@@ -81,7 +81,7 @@ void Analysor::probErrBound(vector<double> &array) {
 }
 
 //rate vs BERのグラフ作成用
-void Analysor::calcBlockErrorRate(MODE mode) {
+void Analysor::calcBlockErrorRate(MODE mode, CHANNEL_TYPE channel) {
     Performance performance;
     Decoder decoder;
     Encoder encoder;
@@ -111,7 +111,7 @@ void Analysor::calcBlockErrorRate(MODE mode) {
         performance.startTimer();
 
         x_n = encoder.encode(Params::get_N(), u_n);
-        y_n = Channel::channel_output(x_n);
+        y_n = Channel::channel_output(x_n, channel);
         u_est = decoder.decode(y_n, u_n, x_n, A);
 
         BER = Analysor::bitErrorRate(u_n, u_est);

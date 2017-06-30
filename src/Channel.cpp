@@ -1,9 +1,13 @@
 #include "../lib/Channel.h"
-vector<int> Channel::channel_output(vector<int> &input){
+vector<int> Channel::channel_output(vector<int> &input, CHANNEL_TYPE channel_type){
     vector<int> y;
     for (auto val : input) {
         if((double)rand() / RAND_MAX < Params::get_e()){
-            y.push_back(2);
+            if( channel_type == BEC){
+                y.push_back(2);
+            } else if (channel_type == BSC) {
+                y.push_back(val?0:1);
+            }
         } else {
             y.push_back(val);
         }

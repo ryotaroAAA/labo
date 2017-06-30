@@ -14,10 +14,8 @@ void Preseter::defineFixedAndFree(vector<int> &free){
     for(int i=0; i<Params::get_N(); i++){
         cap_map.push_back(pair<int, double>(i, cap[i]));
     }
-
     //昇順ソート
     sort(begin(cap_map), end(cap_map), Common::sort_greater);
-
     for(int i = 0; i < Params::get_K(); i++){
         free[i] = cap_map[i].first;
     }
@@ -25,8 +23,8 @@ void Preseter::defineFixedAndFree(vector<int> &free){
 
 vector<int> Preseter::generateUi(SOURCE_TYPE set, vector<int> &x){
     vector<int> ret;
-//    srand((int) time(NULL));
-    srand(0);
+    srand((int) time(NULL));
+//    srand(0);
     for (int i = 0; i < Params::get_N(); i++) {
         if (set == ALL0) {
             ret.push_back(0);

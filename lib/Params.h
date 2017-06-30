@@ -1,9 +1,9 @@
 
 #ifndef CHANNEL_POLARIZATION_PARAMS_H
 #define CHANNEL_POLARIZATION_PARAMS_H
-enum CHANNEL_TYPE{BEC};
+enum CHANNEL_TYPE{BEC, BSC};
 enum SOURCE_TYPE{ALL0, ALL1, RAND};
-enum MODE{ORD,TEST};
+enum MODE{ORD, TEST};
 
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 #define ARR(array)     (sizeof(array) / sizeof(array[0]));

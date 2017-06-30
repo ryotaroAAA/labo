@@ -65,6 +65,7 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &x, vect
 double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<int> &y, vector<int> &u, vector<vector<bool> > &isCache, vector<vector<double> > &cache) {
     double lr = 0.0;
     this->addCount();
+    cout << "[" << i << "]" << "[" << n << "]" <<endl;
     if ( n == 1 ) {
         double wc = Channel::calcW(y[0],0);
         double wp = Channel::calcW(y[0],1);
@@ -101,7 +102,6 @@ double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<int> &y, ve
 
         int temp_i = (i % 2 == 1) ? (i+1)/2 : i/2;
 
-        //効率的な実装(要テスト)
         int ci = cache_i;
         if (((cache_i >> (int) (log2(n) - 1)) % 2) != 1) {
             //横の辺を作る
@@ -140,10 +140,8 @@ double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<int> &y, ve
         }
 
         if ( i % 2 == 1) {
-            //odd index
             lr = ( 1.0 + temp1 * temp2 ) / ( temp1 + temp2 );
         } else {
-            //even index
             lr = pow(temp1, 1-2*u[size_u_eo]) * temp2;
         }
     }

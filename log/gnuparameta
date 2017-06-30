@@ -30,8 +30,18 @@ set tics font "Arial,25"
 set xlabel font "Arial,25"
 set ylabel font "Arial,25"
 set xl 'Rate(bits)'
-set yl 'Block Error Rate'
+set yl 'Bit Error Rate'
 plot 'rve' with lines lt 7
+
+
+plot 'rve5' with lines lt 1
+replot 'rve6' with lines lt 2
+replot 'rve7' with lines lt 3
+replot 'rve8' with lines lt 4
+replot 'rve9' with lines lt 5
+replot 'rve' with lines lt 6
+replot 'rve12' with lines lt 8
+replot 'rve11' with lines lt 7
 
 //
 
