@@ -8,15 +8,14 @@ Analysor::~Analysor(){
 
 }
 
-double Analysor::bitErrorRate(vector<int> &u, vector<int> &u_est){
-    int error_count = 0;
+double Analysor::errorCalc(vector<int> &u, vector<int> &u_est, int* error_count){
     for(int i=0; i<Params::get_N(); i++){
         if(u[i] != u_est[i]){
-            error_count++;
+            *error_count = *error_count + 1;
         }
     }
-    cout << "[[error count::" << error_count << "]]" << endl;
-    return (double)error_count/Params::get_N();
+//    cout << "[[error count::" << *error_count << "]]" << endl;
+    return (double)(*error_count)/Params::get_N();
 }
 double Analysor::calcCapacityForBec(int i, int n) {
     double cap =0.0;
@@ -71,7 +70,7 @@ void Analysor::probErrBound(vector<double> &array) {
         sumArr.push_back(sum);
     }
 
-    string filename = "/Users/ryotaro/labo/log/rve";
+    string filename = "/Users/ryotaro/labo/log/N=2^10";
     ofstream w_file;
     w_file.open(filename, ios::out);
     for (int i = 0; i < Params::get_N(); i++)
@@ -93,40 +92,62 @@ void Analysor::calcBlockErrorRate(MODE mode, CHANNEL_TYPE channel) {
     vector<int> y_n(Params::get_N(), 0);
     vector<int> u_est(Params::get_N(), 0);
     double BER = 0.0;
+    double sumBER = 0.0;
     double rate = 0.0;
     int n = Params::get_N();
+    int error_count = 0;
+    int block_error_count = 0;
+    int loopi = 0;
+    int repeatNum = 100000;
+//    int startI = (mode == TEST) ? 1 : Params::get_N()/8;
 
     int tmp = Params::get_N()/Params::get_K();
     int tmpK = Params::get_K();
-    for (int i = 1; i <= tmp; i++) {
-        cout << i << endl;
-        Params::set_K(i*tmpK);
-
-        A.assign(Params::get_K(), 0);
-        u_n.assign(Params::get_N(), 0);
-        x_n.assign(Params::get_N(), 0);
-        y_n.assign(Params::get_N(), 0);
-        u_est.assign(Params::get_N(), 0);
-        Preseter::preset(RAND, u_n, A);
+    for (int i = 1; i <= tmp/2; i++) {
         performance.startTimer();
+        while (block_error_count < 100) {
+            loopi++;
+            Params::set_K(i * tmpK);
 
-        x_n = encoder.encode(Params::get_N(), u_n);
-        y_n = Channel::channel_output(x_n, channel);
-        u_est = decoder.decode(y_n, u_n, x_n, A);
+            A.assign(Params::get_K(), 0);
+            u_n.assign(Params::get_N(), 0);
+            x_n.assign(Params::get_N(), 0);
+            y_n.assign(Params::get_N(), 0);
+            u_est.assign(Params::get_N(), 0);
+            Preseter::preset(RAND, u_n, A);
 
-        BER = Analysor::bitErrorRate(u_n, u_est);
-        rate = (double)Params::get_K() / Params::get_N();
+            x_n = encoder.encode(Params::get_N(), u_n);
+            y_n = Channel::channel_output(x_n, channel);
+            u_est = decoder.decode(y_n, u_n, A);
+
+            sumBER += Analysor::errorCalc(u_n, u_est, &error_count);
+            rate = (double) Params::get_K() / Params::get_N();
+            cout << loopi << endl;
+
+            if(error_count > 0) block_error_count++;
+            error_count = 0;
+            if (loopi % 1000 == 0 ) {
+                cout << i << endl;
+                cout << "error_count:" << error_count << endl;
+            }
+            if(loopi >= repeatNum || i * tmpK < Params::get_N()/4) break;
+        }
         performance.stopTimer();
+
+        BER = (double)sumBER/repeatNum;
 
         logger.outLog("=================================");
         logger.outLog(performance.outTime("処理時間"));
         logger.outLog("(N,K) = (" + to_string(Params::get_N()) + "," + to_string(Params::get_K()) + ")");
-        logger.outLog("BitER:" + to_string(BER));
+        logger.outLog("BER:" + to_string(BER));
         logger.outLog("Rate:" + to_string(rate));
         logger.outLog(encoder.outCount("encoder_count"));
         logger.outLog(decoder.outCount("decoder_count"));
 
         logger.outLogRVB(rate, BER);
-        if(mode != TEST) break;
+        loopi = 0;
+        BER = 0.0;
+        block_error_count = 0;
+        if(mode == TEST) break;
     }
 }

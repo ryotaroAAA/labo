@@ -21,6 +21,14 @@ void Performance::stopTimer(){
     this->sumTime += this->timeSpan;
 }
 
+void Performance::outHMS (){
+    int in = 1000 / this->timeSpan;
+    const int h { in / 3600 };
+    const int m { (in / 60) % 60 };
+    const int s { in % 60 };
+    printf("%02d:%02d:%02d\n",h,m,s);
+}
+
 string Performance::outCount(string content){
     string str = content + "::" + to_string(this->count) + "回";
     return str;

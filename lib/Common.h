@@ -26,7 +26,6 @@ public:
     static void pp(vector<double> &a);
 
     static int ithIndexDesc(int i, double *array, double *descArray);
-    static bool containNumInArray(int i, int n, vector<int> &array);
     static bool containVal(int value, vector<int> m_array);
     static bool sort_less(const ass_arr& left,const ass_arr& right);
     static bool sort_greater(const ass_arr& left,const ass_arr& right);
@@ -34,6 +33,7 @@ public:
     static int compare_desc(const void *x, const void *y);
     static int compare_asc(const void *x, const void *y);
 
+    static bool containNumInArray(int i, int n, vector<int> &array);
     static vector<int> index_o(int n, vector<int> &x);
     static vector<int> index_e(int n, vector<int> &x);
     static vector<int> retBinary(int n, vector<int> &x);

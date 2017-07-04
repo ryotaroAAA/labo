@@ -7,7 +7,7 @@ Decoder::~Decoder(){
 
 }
 
-vector<int>Decoder::makeTreeIndex(int n){
+inline vector<int>Decoder::makeTreeIndex(int n){
     vector<int> ret(n);
     if (n == 1) {
         ret[0] = 1;
@@ -24,7 +24,7 @@ vector<int>Decoder::makeTreeIndex(int n){
     return ret;
 }
 
-vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &x, vector<int> &A){
+vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &A){
     vector<double> h_i(Params::get_N());
     vector<int> u_n_est(Params::get_N());
     int size = log2(Params::get_N());
@@ -34,7 +34,6 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &x, vect
 
     double lr;
     int cache_i = 0;
-    Common::bar();
 
     //u_n_est計算
     for (int i = 0; i < Params::get_N(); i++) {
@@ -49,7 +48,7 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &x, vect
 
             this->stopTimer();
             this->outTime();
-            cout << i+1 << "  " << lr <<endl;
+//            cout << i+1 << "  " << lr <<endl;
 
             if (lr >= 1.0) {
                 h_i[i] = 0;
@@ -65,7 +64,6 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &x, vect
 double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<int> &y, vector<int> &u, vector<vector<bool> > &isCache, vector<vector<double> > &cache) {
     double lr = 0.0;
     this->addCount();
-    cout << "[" << i << "]" << "[" << n << "]" <<endl;
     if ( n == 1 ) {
         double wc = Channel::calcW(y[0],0);
         double wp = Channel::calcW(y[0],1);

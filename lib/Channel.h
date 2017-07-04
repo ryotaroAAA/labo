@@ -2,6 +2,7 @@
 #define CHANNEL_POLARIZATION_CHANNEL_H
 
 #include "Common.h"
+
 class Channel{
 public:
     explicit Channel();

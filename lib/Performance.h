@@ -14,6 +14,7 @@ public:
     void addCount();
     void startTimer();
     void stopTimer();
+    void outHMS();
     string outTime(string content = "処理時間");
     string outSumTime(string content = "処理時間");
     string outCount(string content = "実行回数");

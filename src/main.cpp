@@ -10,8 +10,10 @@
 
 int main(void) {
     Params::set_e(0.5);
-    Params::set_N(pow(2,16));
-    Params::set_K(pow(2,14));
+    Params::set_N(pow(2,10));
+
+    int divNum = 20;
+    Params::set_K(Params::get_N() / (divNum * 2));
 
     vector<int> A(Params::get_K(), -1);
     vector<int> u_n(Params::get_N(), 0);
@@ -25,11 +27,13 @@ int main(void) {
     Analysor analysor;
     performance.startTimer();
 
-    analysor.calcBlockErrorRate(ORD, BEC);
+    analysor.calcBlockErrorRate(TEST, BEC);
     performance.stopTimer();
     logger.outLog("=================================");
     logger.outLog(performance.outTime("処理時間"));
     logger.outLog("(N,K) = (" + to_string(Params::get_N()) + "," + to_string(Params::get_K()) + ")");
+
+    performance.outHMS();
 
     return 0;
 }
