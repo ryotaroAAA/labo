@@ -7,6 +7,7 @@
 #include "Channel.h"
 #include "Logger.h"
 #include "Performance.h"
+#include "Params.h"
 
 class Analysor {
 private:
@@ -14,13 +15,14 @@ private:
 public:
     explicit Analysor();
     ~Analysor();
-    double calcBhatForBec(int i, int n);
-    void probErrBound(vector<double> &array);
 
-    static double calcCapacityForBec(int i, int n);
+    static double calcCapacity(int i, int n);
+    static double calcBhat(int i, int n);
+
+    void probErrBound();
     static double errorCalc(vector<int> &u, vector<int> &u_est, int* error_count);
     static void makeArrayCapacityForBec(vector<double> &array);
-    static void calcBlockErrorRate(MODE mode, CHANNEL_TYPE channel_type);
+    static void calcBlockErrorRate(MODE mode);
     static void defineFixedAndFree(int n, vector<int> &fixed, vector<int> &free);
 };
 

@@ -2,6 +2,7 @@
 #define CHANNEL_POLARIZATION_PRESETER_H
 #include "Common.h"
 #include "Analysor.h"
+#include "Params.h"
 class Preseter {
 private:
 public:

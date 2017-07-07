@@ -1,11 +1,11 @@
 #include "../lib/Channel.h"
-vector<int> Channel::channel_output(vector<int> &input, CHANNEL_TYPE channel_type){
+vector<int> Channel::channel_output(vector<int> &input){
     vector<int> y;
     for (auto val : input) {
         if((double)rand() / RAND_MAX < Params::get_e()){
-            if( channel_type == BEC){
+            if( Params::get_s() == BEC){
                 y.push_back(2);
-            } else if (channel_type == BSC) {
+            } else if (Params::get_s() == BSC) {
                 y.push_back(val?0:1);
             }
         } else {
@@ -22,7 +22,11 @@ double Channel::calcW(int y, int x) {
     } else if (y == 2) {
         retVal = Params::get_e();
     } else {
-        retVal = 0.0;
+        if(Params::get_s() == BEC){
+            retVal = 0.0;
+        } else if(Params::get_s() == BSC){
+            retVal = Params::get_e();
+        }
     }
     return retVal;
 }
@@ -38,32 +42,47 @@ double Channel::calcW_i(int i, int n, vector<int> &u, int u_i, vector<int> &y) {
             W_i = 0.5 * Channel::calcW(y[0] ,(u[0]+u_i) % 2) * Channel::calcW(y[1],u_i);
         }
     } else {
-        vector<int> tempY1(0);
-        vector<int> tempY2(0);
-
+        vector<int> tempY1(n/2);
+        vector<int> tempY2(n/2);
         for (int j = 0; j < n ; j++) {
-            (j < n/2) ? tempY1.push_back(y[j]) : tempY2.push_back(y[j]);
+            if(j < n/2){
+                tempY1[j] = y[j];
+            } else {
+                tempY2[j-n/2] = y[j];
+            }
         }
+        int size_u_eo = (i % 2) == 0 ? i-2 : i-1;
+        int size_aug_u = size_u_eo/2;
 
-        vector<int> tempU(n/2,0);
-        vector<int> tempU_bin(n/2,0);
-        vector<int> u_e = Common::index_e(n/2, u);
-        vector<int> u_o = Common::index_o(n/2, u);
+        vector<int> tempU(size_aug_u);
+        vector<int> tempU_bin(size_aug_u);
+        vector<int> u_e(size_aug_u);
+        vector<int> u_o(size_aug_u);
 
-        int k = 0;
-        for(auto val : u_e){
+        u_e = Common::index_e(size_u_eo, u);
+        u_o = Common::index_o(size_u_eo, u);
+
+        for(int k=0; k<size_aug_u; k++){
             tempU[k] = u_e[k] + u_o[k];
-            k++;
         }
-        tempU_bin = Common::retBinary(n/2, tempU);
 
-        if ( i % 2 == 0 ) {
-            W_i = 0.5 * (Channel::calcW_i(i/2, n/2, tempU_bin ,(1 + u_i) % 2,tempY1) * calcW_i(i/2, n/2, u_e, 1, tempY2)
-                         + Channel::calcW_i(i/2, n/2, tempU_bin ,(0 + u_i) % 2,tempY1) * calcW_i(i/2, n/2, u_e, 0, tempY2));
+        tempU_bin = Common::retBinary(size_aug_u, tempU);
+
+        double temp1 = 0.0;
+        double temp2 = 0.0;
+
+        int temp_i = (i % 2 == 1) ? (i+1)/2 : i/2;
+
+        if ( i % 2 == 1 ) {
+            W_i = 0.5 * (Channel::calcW_i(temp_i, n/2, tempU_bin ,(1 + u_i) % 2,tempY1) * calcW_i(temp_i, n/2, u_e, 1, tempY2)
+                         + Channel::calcW_i(temp_i, n/2, tempU_bin ,(0 + u_i) % 2,tempY1) * calcW_i(temp_i, n/2, u_e, 0, tempY2));
         } else {
-            W_i = 0.5 * Channel::calcW_i((i-1)/2, n/2, tempU_bin ,(u_i+u[i-1]) % 2, tempY1)
-                  * Channel::calcW_i( i/2   , n/2, u_e       , u_i            , tempY2);
+            W_i = 0.5 * Channel::calcW_i(temp_i, n/2, tempU_bin ,(u_i+u[size_u_eo]) % 2, tempY1)
+                  * Channel::calcW_i(temp_i, n/2, u_e, u_i, tempY2);
         }
+    }
+    if (isinf(W_i) || isnan(W_i)) {
+        W_i = 1.0;
     }
     return W_i;
 }

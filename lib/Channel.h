@@ -9,7 +9,7 @@ public:
     ~Channel();
     static double calcW(int y, int x);
     static double calcW_i(int i, int n, vector<int> &u, int u_i, vector<int> &y);
-    static vector<int> channel_output(vector<int> &input, CHANNEL_TYPE channel_type);
+    static vector<int> channel_output(vector<int> &input);
 };
 
 #endif //CHANNEL_POLARIZATION_CHANNEL_H

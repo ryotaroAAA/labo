@@ -5,12 +5,16 @@ void Preseter::preset(SOURCE_TYPE mode, vector<int> &u, vector<int> &free){
     u = Preseter::generateUi(mode, u);
 }
 
+
 void Preseter::defineFixedAndFree(vector<int> &free){
     vector<double> cap;
     vector<double> cap_desc;
-    Analysor::makeArrayCapacityForBec(cap);
-
     vector<pair<int, double> > cap_map;
+    if(Params::get_s() == BEC) {
+        Analysor::makeArrayCapacityForBec(cap);
+    } else if (Params::get_s() == BSC) {
+        Analysor::makeArrayCapacityForBec(cap);
+    }
     for(int i=0; i<Params::get_N(); i++){
         cap_map.push_back(pair<int, double>(i, cap[i]));
     }

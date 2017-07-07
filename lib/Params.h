@@ -19,13 +19,16 @@ private:
     static int N;
     static int K;
     static double e;
+    static CHANNEL_TYPE s;
 public:
     static int get_N();
     static int get_K();
     static double get_e();
+    static CHANNEL_TYPE get_s();
     static void set_N(int _N);
     static void set_K(int _K);
     static void set_e(double _e);
+    static void set_s(CHANNEL_TYPE _s);
 
 };
 

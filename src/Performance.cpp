@@ -22,11 +22,11 @@ void Performance::stopTimer(){
 }
 
 void Performance::outHMS (){
-    int in = 1000 / this->timeSpan;
-    const int h { in / 3600 };
-    const int m { (in / 60) % 60 };
-    const int s { in % 60 };
-    printf("%02d:%02d:%02d\n",h,m,s);
+    long int in = this->timeSpan/1000;
+    const long int h { in / 3600 };
+    const long int m { (in / 60) % 60 };
+    const long int s { in % 60 };
+    printf("%02ld:%02ld:%02ld\n",h,m,s);
 }
 
 string Performance::outCount(string content){
