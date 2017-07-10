@@ -21,7 +21,8 @@ public:
 
     void probErrBound();
     static double errorCalc(vector<int> &u, vector<int> &u_est, int* error_count);
-    static void makeArrayCapacityForBec(vector<double> &array);
+    static void makeArrayCapacity(vector<double> &array);
+    static void makeArrayBhat(vector<double> &array);
     static void calcBlockErrorRate(MODE mode);
     static void defineFixedAndFree(int n, vector<int> &fixed, vector<int> &free);
 };

@@ -10,9 +10,9 @@
 
 int main(void) {
     Params::set_e(0.5);
-    Params::set_N(pow(2,6));
-    Params::set_K(pow(2,5));
-    Params::set_s(BEC);
+    Params::set_N(pow(2,4));
+    Params::set_K(pow(2,4));
+    Params::set_s(BSC);
 //    int divNum = 20;
 //    Params::set_K(Params::get_N() / (divNum * 2));
 
@@ -33,23 +33,24 @@ int main(void) {
     performance.startTimer();
 //    preseter.defineFixedAndFree(A, BEC);
 
-    cout << "[[" << 63 << "]]" << Analysor::calcBhat(63,Params::get_N()) << endl;
-//    vector<double> bha(Params::get_N());
-//    for (int i = 0; i < Params::get_N(); i++) {
-//         bha[i] = Analysor::calcBhat(i,Params::get_N(),BEC);
-//    }
-//    string filename = "/Users/ryotaro/labo/log/test_bha_monte_carlo_1000";
+//    cout << "[[" << 63 << "]]" << Analysor::calcBhat(63,Params::get_N()) << endl;
+    vector<double> bha(Params::get_N());
+    for (int i = 0; i < Params::get_N(); i++) {
+         bha[i] = Analysor::calcBhat(i,Params::get_N());
+    }
+    string filename = "/Users/ryotaro/labo/log/test_bha_monte_carlo_10_bec";
 //    string filename = "/Users/ryotaro/labo/log/test_bha_true";
-//    ofstream w_file;
-//    w_file.open(filename, ios::out);
-//    for (int i = 0; i < Params::get_N(); i++)
-//    {
-//        w_file << i << " " << bha[i] << endl;
-//        cout << i << " " << bha[i] << endl;
-//    }
-//    Common::pp(bha);
+    ofstream w_file;
+    w_file.open(filename, ios::out);
+    for (int i = 0; i < Params::get_N(); i++)
+    {
+        w_file << i << " " << bha[i] << endl;
+        cout << i << " " << bha[i] << endl;
+    }
+    Common::bar();
+    Common::pp(bha);
 
-//    analysor.calcBlockErrorRate(RUN, BEC);
+//    analysor.calcBlockErrorRate(TEST);
     performance.stopTimer();
     logger.outLog("=================================");
     logger.outLog(performance.outTime("処理時間"));
