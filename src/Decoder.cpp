@@ -32,7 +32,7 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &A){
     vector<vector<bool> > isCache (size, vector<bool>(Params::get_N(),false));
     vector<vector<double> > cache (size, vector<double>(Params::get_N(),0.0));
 
-    double lr;
+    double llr;
     int cache_i = 0;
 
     //u_n_est計算
@@ -44,13 +44,13 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &A){
             this->startTimer();
 
             cache_i = makeTreeIndex(Params::get_N())[i] - 1;
-            lr = calcL_i(i+1, Params::get_N(), cache_i, 0, y, u_n_est, isCache, cache);
+            llr = calcL_i(i+1, Params::get_N(), cache_i, 0, y, u_n_est, isCache, cache);
 
             this->stopTimer();
             this->outTime();
-//            cout << i+1 << "  " << lr <<endl;
+            cout << i+1 << "  " << llr <<endl;
 
-            if (lr >= 1.0) {
+            if (llr >= 0.0) {
                 h_i[i] = 0;
             } else {
                 h_i[i] = 1;
@@ -62,12 +62,13 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &A){
 }
 
 double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<int> &y, vector<int> &u, vector<vector<bool> > &isCache, vector<vector<double> > &cache) {
-    double lr = 0.0;
+    double llr = 0.0;
     this->addCount();
     if ( n == 1 ) {
         double wc = Channel::calcW(y[0],0);
         double wp = Channel::calcW(y[0],1);
-        lr = 1.0 * wc / wp;
+        llr = 1.0 * log(wc / wp);
+
     } else {
         vector<int> tempY1(n/2);
         vector<int> tempY2(n/2);
@@ -136,16 +137,18 @@ double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<int> &y, ve
                 cache[level][cache_i] = temp2;
             }
         }
-
         if ( i % 2 == 1) {
-            lr = ( 1.0 + temp1 * temp2 ) / ( temp1 + temp2 );
+            llr = 2.0 * atanh(tanh(temp1/2.0) * tanh(temp2/2.0) );
         } else {
-            lr = pow(temp1, 1-2*u[size_u_eo]) * temp2;
+            llr = (1-2*u[size_u_eo]) * temp1 + temp2;
         }
     }
 
-    if (isinf(lr) || isnan(lr)) {
-         lr = 10.0;
+    if (isinf(llr) && llr > 0) {
+        llr = 1.0;
+    } else if (isinf(llr) && llr < 0) {
+        llr = -1.0;
     }
-    return lr;
+    return llr;
+
 }

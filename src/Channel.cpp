@@ -38,14 +38,14 @@ double Channel::calcW_i(int i, int n, vector<int> &u, int u_i, vector<int> &y) {
         if ( i == 1 ) {
             W_i = 0.5 * (Channel::calcW(y[0] ,(u_i+0) % 2) * Channel::calcW(y[1],0)
                          + Channel::calcW(y[0] ,(u_i+1) % 2) * Channel::calcW(y[1],1));
-            cout << "W[" << i << "][" << n << "] = 0.5*W(" << y[0] << "|" << (u_i+0) % 2 << ")W(" << y[1] << "|" << 0 << ")"
-                 << " + 0.5*W(" << y[0] << "|" << (u_i+1) % 2 << ")W(" << y[1] << "|" << 1 << ") = "
-                 << "0.5*" << Channel::calcW(y[0] ,(u_i+0) % 2) << "*" << Channel::calcW(y[1],0)
-                 << " + 0.5*" << Channel::calcW(y[0] ,(u_i+1) % 2) << "*" << Channel::calcW(y[1],1) << " = " << W_i << endl;
+//            cout << "W[" << i << "][" << n << "] = 0.5*W(" << y[0] << "|" << (u_i+0) % 2 << ")W(" << y[1] << "|" << 0 << ")"
+//                 << " + 0.5*W(" << y[0] << "|" << (u_i+1) % 2 << ")W(" << y[1] << "|" << 1 << ") = "
+//                 << "0.5*" << Channel::calcW(y[0] ,(u_i+0) % 2) << "*" << Channel::calcW(y[1],0)
+//                 << " + 0.5*" << Channel::calcW(y[0] ,(u_i+1) % 2) << "*" << Channel::calcW(y[1],1) << " = " << W_i << endl;
         } else {
             W_i = 0.5 * Channel::calcW(y[0] ,(u[0]+u_i) % 2) * Channel::calcW(y[1],u_i);
-            cout << "W[" << i << "][" << n << "] = 0.5*W(" << y[0] << "|" << (u[0]+u_i) % 2 << ")W(" << y[1] << "|" << u_i << ") = "
-                 << "0.5*"<< Channel::calcW(y[0] ,(u[0]+u_i) % 2) << "*" << Channel::calcW(y[1],u_i) << " = " << W_i << endl;
+//            cout << "W[" << i << "][" << n << "] = 0.5*W(" << y[0] << "|" << (u[0]+u_i) % 2 << ")W(" << y[1] << "|" << u_i << ") = "
+//                 << "0.5*"<< Channel::calcW(y[0] ,(u[0]+u_i) % 2) << "*" << Channel::calcW(y[1],u_i) << " = " << W_i << endl;
         }
     } else {
         vector<int> tempY1(n/2);
@@ -93,12 +93,12 @@ double Channel::calcW_i(int i, int n, vector<int> &u, int u_i, vector<int> &y) {
             t3 = calcW_i(temp_i, n/2, tempU_bin ,(0 + u_i) % 2,tempY1);
             t4 = calcW_i(temp_i, n/2, u_e, 0, tempY2);
             W_i = 0.5 * (t1*t2 + t3*t4);
-            cout << "W[" << i << "][" << n << "] = 0.5*(" << t1 << "*" << t2 << " + " << t3 << "*" << t4 << ") = " << W_i << endl;
+//            cout << "W[" << i << "][" << n << "] = 0.5*(" << t1 << "*" << t2 << " + " << t3 << "*" << t4 << ") = " << W_i << endl;
         } else {
             t1 = calcW_i(temp_i, n/2, tempU_bin ,(u_i+u[size_u_eo-1]) % 2, tempY1);
             t2 = calcW_i(temp_i, n/2, u_e, u_i, tempY2);
             W_i = 0.5 * t1 * t2;
-            cout << "W[" << i << "][" << n << "] = 0.5*W[" << temp_i << "][" << n/2 << "]*W[" << temp_i << "][" << n/2 << "] = 0.5*" << t1 << "*" << t2 << " = " << W_i << endl;
+//            cout << "W[" << i << "][" << n << "] = 0.5*W[" << temp_i << "][" << n/2 << "]*W[" << temp_i << "][" << n/2 << "] = 0.5*" << t1 << "*" << t2 << " = " << W_i << endl;
         }
     }
     if (isinf(W_i) || isnan(W_i)) {

@@ -10,26 +10,29 @@ void Preseter::preset_u(SOURCE_TYPE mode, vector<int> &u){
 
 
 void Preseter::defineFixedAndFree(vector<int> &free){
-    vector<double> cap;
+    vector<double> cap(Params::get_N());
     vector<pair<int, double> > cap_map;
-    if(Params::get_s() == BEC) {
+
+    if(1) {
         Analysor::makeArrayCapacity(cap);
 //        Analysor::makeArrayBhat(cap);
-    } else if (Params::get_s() == BSC) {
+    } else if (Params::get_s() == BSC || 0) {
         Analysor::makeArrayBhat(cap);
     }
     for(int i=0; i<Params::get_N(); i++){
         cap_map.push_back(pair<int, double>(i, cap[i]));
     }
+
     //昇順ソート
-    if(Params::get_s() == BEC) {
+    if(1) {
         sort(begin(cap_map), end(cap_map), Common::sort_greater);
-    } else if (Params::get_s() == BSC) {
+    } else if (Params::get_s() == BSC || 0) {
         sort(begin(cap_map), end(cap_map), Common::sort_less);
     }
     for(int i = 0; i < Params::get_K(); i++){
         free[i] = cap_map[i].first;
     }
+
 }
 
 vector<int> Preseter::generateUi(SOURCE_TYPE set, vector<int> &x){

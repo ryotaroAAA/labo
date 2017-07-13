@@ -40,7 +40,7 @@ double Analysor::calcCapacity(int i, int n) {
 double Analysor::calcBhat(int i, int n){
     double bha =0.0;
     cout << i << endl;
-    if(Params::get_s() == BEC){
+    if(Params::get_s() == BSC){
         if ( i == 0 && n == 1 ) {
             bha = Params::get_e();
         } else {
@@ -51,14 +51,14 @@ double Analysor::calcBhat(int i, int n){
                 bha = pow(Analysor::calcBhat((i-1)/2, n/2),2);
             }
         }
-    } else if (Params::get_s() == BSC){
+    } else if (Params::get_s() == BEC){
 //        vector<double> W_in(Params::get_N(), 0);
         vector<int> A(Params::get_K(), 0);
         vector<int> u(Params::get_N(), 0);
         vector<int> x(Params::get_N(), 0);
         vector<int> y(Params::get_N(), 0);
         int u_n = 0;
-        int repeatNum = 1;
+        int repeatNum = 100;
         double sumbha = 0.0;
         double tempbha = 0.0;
 
@@ -87,10 +87,10 @@ double Analysor::calcBhat(int i, int n){
             if (tempbha > 1.0) tempbha = 1.0;
             sumbha += tempbha;
 //            if(j%(repeatNum/10) == 0) cout << j << endl;
-//            cout << j << endl;
+            cout << j << endl;
 //            cout << "[" << i << "][" << n << "]"  << " " << u[size_u_eo] <<endl;
 //         cout << "[" << i+1 << "]" << "[" << n << "]" << W_in_2 << endl;
-            cout << "[" << i+1 << "]" << "[" << n << "]" << W_in_1 << " " << W_in_2 << endl;
+//            cout << "[" << i+1 << "]" << "[" << n << "]" << W_in_1 << " " << W_in_2 << endl;
         }
         performance.stopTimer();
 //        performance.outHMS();
@@ -103,14 +103,86 @@ double Analysor::calcBhat(int i, int n){
 
 void Analysor::makeArrayCapacity(vector<double> &array) {
     for(int i = 0; i < Params::get_N(); i++) {
-        array.push_back(Analysor::calcCapacity(i, Params::get_N()));
+        array[i] = Analysor::calcCapacity(i, Params::get_N());
     }
 }
 
 void Analysor::makeArrayBhat(vector<double> &array) {
-    for(int i = 0; i < Params::get_N(); i++) {
-        array.push_back(Analysor::calcBhat(i, Params::get_N()));
+//    for(int i = 0; i < Params::get_N(); i++) {
+//        array.push_back(Analysor::calcBhat(i, Params::get_N()));
+//    }
+    //        vector<double> W_in(Params::get_N(), 0);
+    Performance performance;
+    Decoder decoder;
+    Encoder encoder;
+    Logger logger;
+    double W_in_1, W_in_2;
+
+    vector<int> u(Params::get_N(), 0);
+    vector<int> x(Params::get_N(), 0);
+    vector<int> y(Params::get_N(), 0);
+    int u_n = 0;
+    int repeatNum = 1;
+    double sumbha = 0.0;
+    double tempbha = 0.0;
+    vector<int> u_n_est(Params::get_N(),0);
+    int size = log2(Params::get_N());
+//    array.resize(Params::get_K());
+
+    vector<vector<bool> > isCache (size, vector<bool>(Params::get_N(),false));
+    vector<vector<double> > cache (size, vector<double>(Params::get_N(),0.0));
+
+    double lr;
+    int cache_i = 0;
+
+    for (int m = 1; m <= repeatNum; m++) {
+        performance.startTimer();
+        cout << "[" << m << "]" << endl;
+
+        u.resize(Params::get_N());
+        Preseter::preset_u(RAND, u);
+//            Common::pp(u);
+        u_n = u[Params::get_N() - 1];
+        u.resize(Params::get_N() - 1);
+        x = encoder.encode(Params::get_N(), u);
+        y = Channel::channel_output(x);
+//            Common::pp(y);
+        for (int i = 0; i < Params::get_N(); i++) {
+//            W_in_1 = Channel::calcW_i(i + 1, Params::get_N(), u, (u_n + 1) % 2, y);
+//            W_in_2 = Channel::calcW_i(i + 1, Params::get_N(), u, u_n, y);
+            cache_i = decoder.makeTreeIndex(Params::get_N())[i] - 1;
+            lr = decoder.calcL_i(i+1, Params::get_N(), cache_i, 0, y, u_n_est, isCache, cache);
+            if(u_n == 0){
+                lr = 1.0/lr;
+            }
+            tempbha = sqrt(lr);
+            if (isinf(tempbha) || isnan(tempbha)) {
+                tempbha = 0.0;
+            }
+//            if (tempbha >= 1.0) tempbha = 1/tempbha;
+//            if (tempbha >= 1.0) tempbha = 1.0;
+            array[i] += 1.0 * tempbha/repeatNum;
+            //            if(j%(repeatNum/10) == 0) cout << j << endl;
+//            cout << i << endl;
+            //            cout << "[" << i << "][" << n << "]"  << " " << u[size_u_eo] <<endl;
+            //         cout << "[" << i+1 << "]" << "[" << n << "]" << W_in_2 << endl;
+            //            cout << "[" << i+1 << "]" << "[" << n << "]" << W_in_1 << " " << W_in_2 << endl;
+
+            performance.stopTimer();
+            //        performance.outHMS();
+
+        }
     }
+    string filename = "/Users/ryotaro/labo/log/test_bha_monte_carlo_10_bec";
+//    string filename = "/Users/ryotaro/labo/log/test_bha_true";
+    ofstream w_file;
+    w_file.open(filename, ios::out);
+    for (int i = 0; i < Params::get_N(); i++)
+    {
+        w_file << i << " " << array[i] << endl;
+        cout << i << " " << array[i] << endl;
+    }
+    Common::bar();
 }
 
 void Analysor::probErrBound() {
@@ -147,7 +219,7 @@ void Analysor::calcBlockErrorRate(MODE mode) {
     Encoder encoder;
     Logger logger;
 //    logger.setDir("/Users/ryotaro/labo/log");
-    vector<int> A(Params::get_K(), 0);
+    vector<int> A(Params::get_K(), -1);
     vector<int> u_n(Params::get_N(), 0);
     vector<int> x_n(Params::get_N(), 0);
     vector<int> y_n(Params::get_N(), 0);
@@ -161,22 +233,21 @@ void Analysor::calcBlockErrorRate(MODE mode) {
     int block_error_count = 0;
     int loopi = 0;
     int repeatNum = 1;
+    Preseter::preset_A(A);
+    Common::pp(A);
 
     int tmp = Params::get_N()/Params::get_K();
     int tmpK = Params::get_K();
-    for (int i = 1; i <= tmp; i++) {
+    for (int i = 1; i <= tmp/2; i++) {
         performance.startTimer();
-        while (block_error_count < 1) {
+        while (block_error_count == 0) {
             loopi++;
             Params::set_K(i * tmpK);
 
-            A.assign(Params::get_K(), 0);
             u_n.assign(Params::get_N(), 0);
             x_n.assign(Params::get_N(), 0);
             y_n.assign(Params::get_N(), 0);
             u_est.assign(Params::get_N(), 0);
-            Preseter::preset_A(A);
-            Common::pp(A);
             Preseter::preset_u(RAND, u_n);
 
             x_n = encoder.encode(Params::get_N(), u_n);
@@ -185,15 +256,16 @@ void Analysor::calcBlockErrorRate(MODE mode) {
 
             sumBER += Analysor::errorCalc(u_n, u_est, &error_count);
             rate = (double) Params::get_K() / Params::get_N();
-            if (loopi % 100 == 0 ) cout << loopi << endl;
+            if (loopi % 100 == 0 ) cout << loopi << " " << error_count << endl;
 
             if(error_count > 0) block_error_count++;
             error_count = 0;
             if (loopi % 1000 == 0 ) {
-                cout << i << endl;
+                cout << i << " " << error_count << endl;
                 cout << "block_error_count:" << block_error_count << endl;
             }
-            if(loopi >= repeatNum || i * tmpK < Params::get_N()/5) break;
+//            if(loopi >= repeatNum || i * tmpK < Params::get_N()/5) break;
+            if(loopi >= repeatNum) break;
         }
         performance.stopTimer();
 
