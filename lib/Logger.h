@@ -4,13 +4,14 @@
 class Logger {
 private:
     string dir = "/Users/ryotaro/labo/log/all_log";
-    string rvb_dir = "/Users/ryotaro/labo/log/rve";
+    string rvb_dir = "";
     ofstream log;
     ofstream rvb;
 public:
     explicit Logger();
     ~Logger();
     void setDir(string dir);
+    void setRvbDir(string rvb_dir);
     void outLog(string content);
     void outLogRVB(double rate, double ber);
 };

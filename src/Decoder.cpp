@@ -48,9 +48,9 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &A){
 
             this->stopTimer();
             this->outTime();
-            cout << i+1 << "  " << llr <<endl;
+//            cout << i+1 << "  " << llr <<endl;
 
-            if (llr >= 0.0) {
+            if (exp(llr) >= 1.0) {
                 h_i[i] = 0;
             } else {
                 h_i[i] = 1;
@@ -145,9 +145,9 @@ double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<int> &y, ve
     }
 
     if (isinf(llr) && llr > 0) {
-        llr = 1.0;
+//        llr = 10.0;
     } else if (isinf(llr) && llr < 0) {
-        llr = -1.0;
+//        llr = -10.0;
     }
     return llr;
 

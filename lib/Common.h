@@ -10,7 +10,10 @@
 #include <fstream>
 #include <vector>
 #include <algorithm>
+#include <sys/stat.h>
 #include "Params.h"
+
+
 using namespace std;
 
 class Common{

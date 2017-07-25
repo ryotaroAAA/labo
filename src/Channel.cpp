@@ -1,8 +1,14 @@
 #include "../lib/Channel.h"
+
 vector<int> Channel::channel_output(vector<int> &input){
     vector<int> y;
+//    init_genrand((unsigned)time(NULL));
+    init_genrand((int) time(NULL));
     for (auto val : input) {
-        if((double)rand() / RAND_MAX < Params::get_e()){
+//        cout << genrand_real1() << endl;
+//        cout << (unsigned)time(NULL) << endl;
+//        cout << genrand_int32() << endl;
+        if(genrand_real1() < Params::get_e()){
             if( Params::get_s() == BEC){
                 y.push_back(2);
             } else if (Params::get_s() == BSC) {
