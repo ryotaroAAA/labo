@@ -10,8 +10,8 @@ public:
     explicit Decoder();
     ~Decoder();
     vector<int> makeTreeIndex(int n);
-    vector<int> decode(vector<int> &y, vector<int> &u, vector<int> &A);
-    double calcL_i(int i, int n ,int cache_i, int lefvel ,vector<int> &y ,vector<int> &u, vector<vector<bool> > &isCache , vector<vector<double> > &cache);
+    vector<int> decode(vector<double> &y, vector<int> &u, vector<int> &A);
+    double calcL_i(int i, int n ,int cache_i, int lefvel ,vector<double> &y ,vector<int> &u, vector<vector<bool> > &isCache , vector<vector<double> > &cache);
 };
 
 #endif //CHANNEL_POLARIZATION_DECDER_H

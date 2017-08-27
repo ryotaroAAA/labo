@@ -27,8 +27,8 @@ void Preseter::makeMutualInfoArray(vector<pair<int, double> > &cap_map){
 
     if(Params::get_s() == BEC) {
         Analysor::makeArrayCapacity(cap);
-//        Analysor::makeArrayBhat(cap);
-    } else if (Params::get_s() == BSC) {
+        Analysor::makeArrayBhat(cap);
+    } else {
         Analysor::makeArrayBhat(cap);
     }
     for(int i=0; i<Params::get_N(); i++){
@@ -38,7 +38,7 @@ void Preseter::makeMutualInfoArray(vector<pair<int, double> > &cap_map){
     //昇順ソート
     if(Params::get_s() == BEC) {
         sort(begin(cap_map), end(cap_map), Common::sort_greater);
-    } else if (Params::get_s() == BSC) {
+    } else {
         sort(begin(cap_map), end(cap_map), Common::sort_less);
     }
 }

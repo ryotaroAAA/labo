@@ -7,12 +7,12 @@
 #include <chrono>
 #include <iomanip>
 #include <string>
-#include <fstream>
 #include <vector>
 #include <algorithm>
 #include <sys/stat.h>
+#include <fstream>
+#include <random>
 #include "Params.h"
-
 
 using namespace std;
 
@@ -35,6 +35,7 @@ public:
     static int compare_int(const void *a, const void *b);
     static int compare_desc(const void *x, const void *y);
     static int compare_asc(const void *x, const void *y);
+    static double gauss_dist(double x, double mean, double sigma);
 
     static bool containNumInArray(int i, int n, vector<int> &array);
     static vector<int> index_o(int n, vector<int> &x);

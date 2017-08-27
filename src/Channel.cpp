@@ -1,39 +1,55 @@
 #include "../lib/Channel.h"
 
-vector<int> Channel::channel_output(vector<int> &input){
-    vector<int> y;
-//    init_genrand((unsigned)time(NULL));
+vector<double> Channel::channel_output(vector<int> &input){
+    vector<double> y;
+
     init_genrand((int) time(NULL));
+
     for (auto val : input) {
-//        cout << genrand_real1() << endl;
-//        cout << (unsigned)time(NULL) << endl;
-//        cout << genrand_int32() << endl;
-        if(genrand_real1() < Params::get_e()){
-            if( Params::get_s() == BEC){
-                y.push_back(2);
-            } else if (Params::get_s() == BSC) {
-                y.push_back(val?0:1);
-            }
+        if( Params::get_s() == AWGN ){
+            random_device seed_gen;
+            default_random_engine engine(seed_gen());
+            normal_distribution<> dist(0.0, Params::get_e());
+//            cout << dist(engine) << endl;
+            y.push_back(val + dist(engine));
         } else {
-            y.push_back(val);
+            if(genrand_real1() < Params::get_e()){
+                if( Params::get_s() == BEC){
+                    y.push_back(2);
+                } else if (Params::get_s() == BSC) {
+                    y.push_back(val?0:1);
+                }
+            } else {
+                y.push_back(val);
+            }
         }
     }
     return y;
 }
 
-double Channel::calcW(int y, int x) {
+double Channel::calcW(double y, int x) {
     double retVal = 0.0;
-    if (y == x) {
-        retVal = 1 - Params::get_e();
-    } else if (y == 2) {
-        retVal = Params::get_e();
+    if( Params::get_s() == AWGN ){
+        if(x == 0){
+            retVal = Common::gauss_dist(y, 0.0, Params::get_e());
+        } else {
+            retVal = Common::gauss_dist(y, 1.0, Params::get_e());
+        }
+
     } else {
-        if(Params::get_s() == BEC){
-            retVal = 0.00001;
-        } else if(Params::get_s() == BSC){
+        if (y == x) {
+            retVal = 1 - Params::get_e();
+        } else if (y == 2) {
             retVal = Params::get_e();
+        } else {
+            if(Params::get_s() == BEC){
+                retVal = 0.00001;
+            } else if(Params::get_s() == BSC){
+                retVal = Params::get_e();
+            }
         }
     }
+
     return retVal;
 }
 

@@ -18,6 +18,12 @@ public:
 
     static double calcCapacity(int i, int n);
     static double calcBhatforBEC(int i, int n);
+    static double calc_m_in(int i, int n);
+//    static double calc_sigma2_in(int i, int n, vector<double> &m_in);
+
+    static double inv_m_func(double m);
+    static double m_func(double x);
+    static double calc_inv(double x);
 
     static void errorCount(vector<int> &u, vector<int> &u_est, int* error_count);
 

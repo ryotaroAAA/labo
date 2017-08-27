@@ -6,7 +6,7 @@
 
 using namespace std;
 
-enum CHANNEL_TYPE{BEC, BSC};
+enum CHANNEL_TYPE{BEC, BSC, AWGN};
 enum SOURCE_TYPE{ALL0, ALL1, RAND};
 enum MODE{TEST, RUN};
 

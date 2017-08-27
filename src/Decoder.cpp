@@ -24,7 +24,7 @@ inline vector<int>Decoder::makeTreeIndex(int n){
     return ret;
 }
 
-vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &A){
+vector<int> Decoder::decode(vector<double> &y, vector<int> &u, vector<int> &A){
     vector<double> h_i(Params::get_N());
     vector<int> u_n_est(Params::get_N());
     int size = log2(Params::get_N());
@@ -61,7 +61,7 @@ vector<int> Decoder::decode(vector<int> &y, vector<int> &u, vector<int> &A){
     return u_n_est;
 }
 
-double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<int> &y, vector<int> &u, vector<vector<bool> > &isCache, vector<vector<double> > &cache) {
+double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<double> &y, vector<int> &u, vector<vector<bool> > &isCache, vector<vector<double> > &cache) {
     double llr = 0.0;
     this->addCount();
     if ( n == 1 ) {
@@ -70,8 +70,8 @@ double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<int> &y, ve
         llr = 1.0 * log(wc / wp);
 
     } else {
-        vector<int> tempY1(n/2);
-        vector<int> tempY2(n/2);
+        vector<double> tempY1(n/2);
+        vector<double> tempY2(n/2);
         for (int j = 0; j < n ; j++) {
             if(j < n/2){
                 tempY1[j] = y[j];

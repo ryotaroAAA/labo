@@ -4,6 +4,10 @@ void Common::bar(){
     cout << "======================" << endl;
 }
 
+double Common::gauss_dist(double x, double mean, double sigma){
+    return exp(-1.0*pow(x - mean, 2)/(2 * sigma)) / (sqrt(2*M_PI*sigma));
+}
+
 bool Common::containVal(int value, vector<int> m_array) {
     auto it = find(begin(m_array), m_array.end(), value);
     size_t index = distance(begin(m_array), it);
