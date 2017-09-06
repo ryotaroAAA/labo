@@ -4,6 +4,7 @@ vector<double> Channel::channel_output(vector<int> &input){
     vector<double> y;
 
     init_genrand((int) time(NULL));
+//    init_genrand(0);
 
     for (auto val : input) {
         if( Params::get_s() == AWGN ){
@@ -27,6 +28,33 @@ vector<double> Channel::channel_output(vector<int> &input){
     return y;
 }
 
+void Channel::channel_output_m(vector<vector<int> > &input, vector<vector<double> > &y) {
+//    init_genrand((int) time(NULL));
+    init_genrand(0);
+
+    for (int i=0; i<log2(Params::get_N()); i++) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            if( Params::get_s() == AWGN ){
+                random_device seed_gen;
+                default_random_engine engine(seed_gen());
+                normal_distribution<> dist(0.0, Params::get_e());
+//            cout << dist(engine) << endl;
+                y[i][j] = (input[i][j] + dist(engine));
+            } else {
+                if(genrand_real1() < Params::get_e()){
+                    if( Params::get_s() == BEC){
+                        y[i][j] = 2;
+                    } else if (Params::get_s() == BSC) {
+                        y[i][j] = (input[i][j])?0:1;
+                    }
+                } else {
+                    y[i][j] = input[i][j];
+                }
+            }
+        }
+    }
+}
+
 double Channel::calcW(double y, int x) {
     double retVal = 0.0;
     if( Params::get_s() == AWGN ){
@@ -43,7 +71,7 @@ double Channel::calcW(double y, int x) {
             retVal = Params::get_e();
         } else {
             if(Params::get_s() == BEC){
-                retVal = 0.00001;
+                retVal = 0.000000001;
             } else if(Params::get_s() == BSC){
                 retVal = Params::get_e();
             }

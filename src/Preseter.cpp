@@ -27,7 +27,7 @@ void Preseter::makeMutualInfoArray(vector<pair<int, double> > &cap_map){
 
     if(Params::get_s() == BEC) {
         Analysor::makeArrayCapacity(cap);
-        Analysor::makeArrayBhat(cap);
+//        Analysor::makeArrayBhat(cap);
     } else {
         Analysor::makeArrayBhat(cap);
     }
