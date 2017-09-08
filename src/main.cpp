@@ -18,10 +18,10 @@ void calcBER(){
     Analysor analysor;
 
     Params::set_e(0.5);
-    Params::set_N(pow(2,3));
+    Params::set_N(pow(2,6));
 
     Params::set_decode_mode(BP);
-    Params::set_rp(50);
+    Params::set_rp(100);
 
     Params::set_s(BEC);
     Params::set_monteNum(1);
@@ -57,9 +57,9 @@ void calcBER(){
         );
     }
 
-//    int divNum = 10;
-//    Params::set_K(Params::get_N() / (divNum * 2));
-    Params::set_K(1);
+    int divNum = 10;
+    Params::set_K(Params::get_N() / (divNum * 2));
+//    Params::set_K(1);
 
     performance.startTimer();
 
@@ -78,11 +78,11 @@ int main(void) {
 
     calcBER();
 //    Params::set_e(0.5);
-//    Params::set_N(pow(2,3));
-//    Params::set_K(2);
+//    Params::set_N(pow(2,4));
+//    Params::set_K(4);
 //    Params::set_s(BEC);
 //
-//    Params::set_rp(1000);
+//    Params::set_rp(100);
 //
 //    Performance performance;
 //    Decoder decoder;
@@ -99,7 +99,7 @@ int main(void) {
 //    Preseter::makeMutualInfoArray(cap_map);
 //    Preseter::represet_A(A, cap_map);
 //
-////    u_n ={1,1,0,0,0,1,1,1,1,1,0,1,1,0,1,1};
+////    u_n ={1,1,1,1};
 //    Preseter::preset_u(RAND, u_n);
 //
 //    Common::pp(u_n);
