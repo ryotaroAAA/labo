@@ -9,6 +9,7 @@ using namespace std;
 enum CHANNEL_TYPE{BEC, BSC, AWGN};
 enum SOURCE_TYPE{ALL0, ALL1, RAND};
 enum MODE{TEST, RUN};
+enum DECODE_MODE{BP, SC};
 
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 #define ARR(array)     (sizeof(array) / sizeof(array[0]));
@@ -24,10 +25,12 @@ private:
     static int N;
     static int K;
     static double e;
+    static int rp;
     static int monteNum;
     static int blockNum;
     static int upperBlockErrorNum;
     static CHANNEL_TYPE s;
+    static DECODE_MODE dm;
     static string rvbDir;
 public:
     static int get_N();
@@ -38,14 +41,18 @@ public:
     static int get_upperBlockErrorNum();
     static string get_rvbDir();
     static CHANNEL_TYPE get_s();
+    static DECODE_MODE get_decode_mode();
+    static int get_rp();
     static void set_N(int _N);
     static void set_K(int _K);
     static void set_monteNum(int _monteNum);
     static void set_blockNum(int _blockNum);
+    static void set_decode_mode(DECODE_MODE _dm);
     static void set_upperBlockErrorNum(int _upperBlockErrorNum);
     static void set_e(double _e);
     static void set_rvbDir(string rvbDir);
     static void set_s(CHANNEL_TYPE _s);
+    static void set_rp(double _rp);
 };
 
 #endif //CHANNEL_POLARIZATION_PARAMS_H

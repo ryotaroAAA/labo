@@ -5,9 +5,11 @@ int Params::K = 0;
 int Params::monteNum = 0;
 int Params::blockNum = 0;
 int Params::upperBlockErrorNum = 0;
+int Params::rp = 0;
 double Params::e = 0;
 string Params::rvbDir = "";
 CHANNEL_TYPE Params::s = BEC;
+DECODE_MODE Params::dm = BP;
 
 int Params::get_N(){
     return N;
@@ -33,12 +35,20 @@ double Params::get_e(){
     return e;
 }
 
+int Params::get_rp(){
+    return rp;
+}
+
 string Params::get_rvbDir() {
     return rvbDir;
 }
 
 CHANNEL_TYPE Params::get_s(){
     return s;
+}
+
+DECODE_MODE Params::get_decode_mode(){
+    return dm;
 }
 
 void Params::set_N(int _N){
@@ -65,11 +75,19 @@ void Params::set_e(double _e){
     e = _e;
 }
 
+void Params::set_rp(double _rp){
+    rp = _rp;
+}
+
 void Params::set_rvbDir(string _rvbDir) {
     rvbDir = _rvbDir;
 }
 
 void Params::set_s(CHANNEL_TYPE _s){
     s = _s;
+}
+
+void Params::set_decode_mode(DECODE_MODE _dm){
+    dm = _dm;
 }
 

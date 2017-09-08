@@ -10,7 +10,7 @@ Decoder::~Decoder(){
 vector<vector<int> > Decoder::adjacentIndex(int level, int index){
     vector<vector<int> > adjacent;
     vector<int> temp;
-    int n = (level != 1) ? Params::get_N()/pow(2,(level/2)) : 1;
+    int n = (level != 1) ? Params::get_N()/pow(2,((level-2)/2)) : 1;
     temp = makeBPTreeIndex(n);
     if(level%2 == 0) {
         //check_node
@@ -36,7 +36,7 @@ vector<vector<int> > Decoder::adjacentIndex(int level, int index){
             }
             for (int i = 0; i < Params::get_N(); i++) {
                 if (temp_r[i] == (index-1)%n+1) {
-                    div = i/n;
+                    div = (index-1)/n;
                     temp_i = i+1+div*n;
                     break;
                 }
@@ -129,11 +129,13 @@ bool Decoder::isCalculable(int level, int index, vector<vector<int> > &adjacent,
     }
 
     if (level%2 == 0 && zero_count > 1){
+        //checkが通ってるならやらない
         flag = false;
     }
     if(zero_count == adjacent_count) {
         flag = false;
     }
+
     return flag;
 }
 
@@ -178,6 +180,8 @@ bool Decoder::isTerminate(vector<vector<double> > &node_val, vector<vector<bool>
                 if(isChecked(i+1, j+1, adjacent, node_val, node_isChecked) == false) {
                     flag = false;
                     break;
+                } else {
+//                    node_isChecked[i][j] = true;
                 }
             }
         }
@@ -223,9 +227,9 @@ vector<int> Decoder::BP(int limit, vector<double> &y, vector<int> &u, vector<int
     BPinit(y, u, A, node_value, update_count, node_isChecked);
 
     //BP
-    int count = 1;
+    int count = 0;
     while(count <= limit) {
-        for (int i = 0; i < size; i++) {
+        for (int i = count%2; i < size; i=i+2){
             for (int j = 0; j < Params::get_N(); j++) {
                 int adjacent_count = 0, up1 = 0, up2 = 0, up3 = 0, min_up = 0;
                 double val1 = 0.0, val2 = 0.0, val3 = 0.0;
@@ -252,17 +256,22 @@ vector<int> Decoder::BP(int limit, vector<double> &y, vector<int> &u, vector<int
                                 val2 = take_val(adjacent[1], node_value);
                                 up2 = take_val(adjacent[1], update_count);
                                 if (val1 != 0.0 && val2 != 0.0) {
-                                    if (up1 > up2) {
-                                        node_value[i][j] = val1;
-                                        update_count[i][j]++;
-                                    } else if (up1 < up2) {
-                                        node_value[i][j] = val2;
+                                    if(i == 0){
+                                        node_value[i][j] = calc_node(0, val1, val2);
                                         update_count[i][j]++;
                                     } else {
-                                        //たぶんここにはこないはず
-                                        //後で乱数を絡ませる
-                                        node_value[i][j] = val1;
-                                        update_count[i][j]++;
+                                        //違った?
+                                        if (up1 > up2) {
+                                            node_value[i][j] = val1;
+                                            update_count[i][j]++;
+                                        } else if (up1 < up2) {
+                                            node_value[i][j] = val2;
+                                            update_count[i][j]++;
+                                        } else {
+                                            //たぶんここにはこないはず後で乱数を絡ませる
+                                            node_value[i][j] = val1;
+                                            update_count[i][j]++;
+                                        }
                                     }
                                 } else if (val1 == 0.0 && val2 != 0.0) {
                                     node_value[i][j] = val2;
@@ -315,6 +324,11 @@ vector<int> Decoder::BP(int limit, vector<double> &y, vector<int> &u, vector<int
                             default :
                                 break;
                         }
+                        //一回決まったら値を確定させる
+//                        if (i == 0 && node_value[i][j] != 0) {
+//                            node_isChecked[i][j] = true;
+//                            node_value[i][j] = (node_value[i][j] > 0) ? 10.0 : -10.0;
+//                        }
                     } else {
                         //check_node
                         val1 = take_val(adjacent[0], node_value);
@@ -325,6 +339,9 @@ vector<int> Decoder::BP(int limit, vector<double> &y, vector<int> &u, vector<int
                                 val2 = take_val(adjacent[1], node_value);
                                 up2 = take_val(adjacent[1], update_count);
                                 if (val1 != 0.0 && val2 != 0.0) {
+//                                    node_value[i][j] = calc_node(1, val1, val2);
+//                                    update_count[i][j]++;
+                                    //違った?
                                     if (up1 > up2) {
                                         node_value[i][j] = val1;
                                         update_count[i][j]++;
@@ -391,7 +408,7 @@ vector<int> Decoder::BP(int limit, vector<double> &y, vector<int> &u, vector<int
                 }
             }
         }
-        if(isTerminate(node_value, node_isChecked) == true) break;
+        if(isTerminate(node_value, node_isChecked)) break;
         count++;
     }
     for (int i = 0; i < Params::get_N(); i++) {

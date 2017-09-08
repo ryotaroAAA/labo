@@ -281,9 +281,8 @@ void Analysor::calcBlockErrorRate(MODE mode) {
         Params::set_K(i * tmpK);
         A.resize(Params::get_K(), -1);
         Preseter::represet_A(A, cap_map);
-        Preseter::preset_u(ALL1, u_n);
+        Preseter::preset_u(RAND, u_n);
         x_n = encoder.encode(Params::get_N(), u_n);
-
 
         while (block_error_count < Params::get_upperBlockErrorNum()) {
             loopi++;
@@ -291,8 +290,9 @@ void Analysor::calcBlockErrorRate(MODE mode) {
             y_n.assign(Params::get_N(), 0);
             u_est.assign(Params::get_N(), 0);
             y_n = Channel::channel_output(x_n);
-            u_est = decoder.decode(y_n, u_n, A);
-            Common::pp(u_est);
+            u_est = (Params::get_decode_mode() == BP)?decoder.BP(Params::get_rp(), y_n, u_n, A):decoder.decode(y_n, u_n, A);
+
+//            Common::pp(u_est);
             Analysor::errorCount(u_n, u_est, &error_count);
             if(error_count > 0) block_error_count++;
             if (loopi % 10 == 0 ) cout << loopi << " " << error_count << " " << block_error_count << endl;
