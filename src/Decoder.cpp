@@ -93,117 +93,53 @@ bool Decoder::take_val(vector<int> locate, vector<vector<bool> > &node_val){
     return node_val[level-1][index-1];
 }
 
-double Decoder::calc_node(int mode, double a, double b) {
+void Decoder::set_val(bool val, vector<int> locate, vector<vector<bool> > &node_val){
+    int level = locate[0];
+    int index = locate[1];
+    node_val[level-1][index-1] = val;
+}
+
+double Decoder::calc_message(int mode, vector<double> val) {
     double llr = 0.0;
     if (mode == 0){
         //val
-        llr = a + b;
-    } else{
+        llr = 0.0;
+        for (int i = 0; i < val.size(); i++) {
+            llr += val[i];
+        }
+    } else {
         //check
-        llr = 2.0 * atanh(tanh(a/2.0) * tanh(b/2.0) );
+        llr = 2.0;
+        for (int i = 0; i < val.size(); i++) {
+            llr *= tanh(val[i]/2.0);
+        }
     }
     return llr;
 }
 
-bool Decoder::isCalculable(int level, int index, vector<vector<int> > &adjacent, vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked){
+bool Decoder::isTerminate(vector<vector<double> > &node_value, vector<vector<vector<message>>> &message_list, vector<vector<bool> > &node_isChecked) {
     bool flag = true;
-    double val=0.0,val1=0.0,val2=0.0,val3=0.0;
-    bool ch=false, ch1=false, ch2=false, ch3=false;
-    int adjacent_count = adjacent.size();
-    int zero_count = 0;
-    val = node_val[level-1][index-1];
-    ch = node_isChecked[level-1][index-1];
-    flag = (ch == false) ? true : false;
-    val1 = take_val(adjacent[0], node_val);
-    ch1 = take_val(adjacent[0], node_isChecked);
-    if(val1 == 0) zero_count++;
-    if(adjacent_count > 1){
-        val2 = take_val(adjacent[1], node_val);
-        ch2 = take_val(adjacent[1], node_isChecked);
-        if(val2 == 0) zero_count++;
-        if(adjacent_count == 3) {
-            val3 = take_val(adjacent[2], node_val);
-            ch3 = take_val(adjacent[2], node_isChecked);
-            if (val3 == 0) zero_count++;
-        }
-    }
+    int size = 2*log2(Params::get_N())+1;
+    int level = 0, index = 0, temp = 0;
 
-    if (level%2 == 0 && zero_count > 1){
-        //checkが通ってるならやらない
-        flag = false;
-    }
-    if(zero_count == adjacent_count) {
-        flag = false;
-    }
-
-    return flag;
-}
-
-bool Decoder::isChecked(int level, int index, vector<vector<int> > &adjacent, vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked){
-    bool flag = false;
-    double val,val1,val2,val3;
-    bool ch = false, ch1 = false, ch2 = false, ch3 = false;
-    int check_val = 0;
-    int adjacent_count = adjacent.size();
-    if(node_isChecked[level-1][index-1]) return true;
-    val = node_val[level-1][index-1];
-    val1 = take_val(adjacent[0], node_val);
-    ch1 = take_val(adjacent[0], node_isChecked);
-    if(val1 < 0.0) check_val++;
-    if(adjacent_count > 1){
-        val2 = take_val(adjacent[1], node_val);
-        ch2 = take_val(adjacent[1], node_isChecked);
-        if(val2 < 0.0) check_val++;
-        if(adjacent_count == 3){
-            val3 = take_val(adjacent[2], node_val);
-            ch3 = take_val(adjacent[2], node_isChecked);
-            if(val3 < 0.0) check_val++;
-        }
-    }
-    if(level%2 == 1){
-        if(ch1 || ch2 || ch3 || ch) flag = true;
-    } else {
-        flag = (check_val%2 == 0) ? true : false;
-    }
-    if(val == 0 || val1 == 0 || val2 == 0 || val3 == 0) flag = false;
-    return flag;
-}
-
-bool Decoder::isTerminate(vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked) {
     vector<vector<int> > adjacent;
-    bool flag = true;
 
-    //check - valの順で更新する
-    for (int i = 0; i < node_val.size(); i++) {
+    //val nodeからのメッセージをあつめる
+    for (int i = 1; i < size-1; i=i+2) {
         for (int j = 0; j < Params::get_N(); j++) {
-            //隣接ノードのチェックを調べる
-            if (i%2 == 1) {
-                adjacent = adjacentIndex(i + 1, j + 1);
-                if (isChecked(i + 1, j + 1, adjacent, node_val, node_isChecked)) {
-                    node_isChecked[i][j] = true;
-                } else {
-                    flag = false;
-                }
+            adjacent = adjacentIndex(i + 1, j + 1);
+            for (int k = 0; k < adjacent.size(); ++k) {
+                temp += take_val(adjacent[k], node_value);
             }
+            node_isChecked[i][j] = (temp%2 == 0) ? true : false;
+            if(temp%2 == 1) flag = false;
         }
     }
-    for (int i = 0; i < node_val.size(); i++) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            //隣接ノードのチェックを調べる
-            if (i%2 == 0) {
-                adjacent = adjacentIndex(i + 1, j + 1);
-                if (isChecked(i + 1, j + 1, adjacent, node_val, node_isChecked)) {
-                    node_isChecked[i][j] = true;
-                } else {
-                    flag = false;
-                }
-            }
-        }
-    }
+
     return flag;
 }
 
-void Decoder::BPinit(vector<double> &y, vector<int> &u, vector<int> &A, vector<vector<double> > &node_val, vector<vector<int> > &update_count, vector<vector<bool> > &node_isChecked){
+void Decoder::BPinit(vector<double> &y, vector<int> &u, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message>>> &message_list, vector<vector<bool> > &node_isChecked){
     double wc, wp, llr;
     int size = 2*log2(Params::get_N())+1;
     bool databit_flag = false;
@@ -212,7 +148,7 @@ void Decoder::BPinit(vector<double> &y, vector<int> &u, vector<int> &A, vector<v
         wp = Channel::calcW(y[i],1);
         llr = 1.0 * log(wc / wp);
         node_val[size-1][i] = llr;
-        update_count[size-1][i] = 1;
+        node_isChecked[size-1][i]=true;
         //frozen_bitのllr設定
         databit_flag = false;
         for (int j = 0; j < Params::get_K(); j++) {
@@ -221,9 +157,70 @@ void Decoder::BPinit(vector<double> &y, vector<int> &u, vector<int> &A, vector<v
             }
         }
         if(databit_flag == false){
-            node_val[0][i] = (u[i] == 0) ? 10.0 : -10.0;
-            update_count[0][i] = 10000000;
+            node_val[0][i] = (u[i] == 0) ? 30.0 : -30.0;
             node_isChecked[0][i] = true;
+        }
+    }
+    vector<vector<int> > adjacent;
+    message temp = {0,0,0.0};
+    int adjacent_count=0, level=0, index=0;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            //隣接ノードの位置
+            adjacent = adjacentIndex(i + 1, j + 1);
+            for (int k = 0; k < adjacent.size(); k++) {
+                level = adjacent[k][0];
+                index = adjacent[k][1];
+                temp.toLevel = level;
+                temp.toIndex = index;
+                message_list[i][j].push_back(temp);
+            }
+        }
+    }
+}
+
+void Decoder::calc_BP(int count, vector<vector<double>> &node_value, vector<vector<vector<message>>> &message_list, vector<vector<bool> > &node_isChecked){
+    vector<vector<int> > adjacent;
+    int size = 2*log2(Params::get_N())+1;
+    int fromLevel=0, fromIndex=0;
+    for (int i = count%2; i < size; i=i+2) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            vector<double> temp_val;
+            for (int k = 0; k < message_list[i][j].size(); k++) {
+                for (int l = 0; l < message_list[i][j].size(); l++) {
+                    fromLevel = message_list[i][j][k].toLevel-1;
+                    fromIndex = message_list[i][j][k].toIndex-1;
+                    if( message_list[fromLevel][fromIndex][l].toLevel == i+1 && message_list[fromLevel][fromIndex][l].toIndex == j+1){
+                        temp_val.push_back(message_list[fromLevel][fromIndex][l].val);
+                    }
+                }
+            }
+            for (int k = 0; k < message_list[i][j].size(); k++) {
+                message_list[i][j][k].val = calc_message(i%2, temp_val);
+            }
+        }
+    }
+}
+
+void Decoder::calc_node_val(vector<vector<double>> &node_value, vector<vector<vector<message>>> &message_list, vector<vector<bool>> &node_isChecked){
+    int size = 2*log2(Params::get_N())+1;
+    int level = 0, index = 0;
+    //初期化
+    for (int i = 0; i < size; i=i+2) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            if(!node_isChecked[i][j]){
+                node_value[i][j] = 0.0;
+            }
+        }
+    }
+    //check nodeからのメッセージをあつめる
+    for (int i = 1; i < size-1; i=i+2) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            for (int k = 0; k < message_list[i][j].size(); k++) {
+                level = message_list[i][j][k].toLevel-1;
+                index = message_list[i][j][k].toIndex-1;
+                node_value[level][index] += message_list[i][j][k].val;
+            }
         }
     }
 }
@@ -234,209 +231,25 @@ vector<int> Decoder::BP(int limit, vector<double> &y, vector<int> &u, vector<int
 
     //node初期化、奇数が変数ノード（1,3,5...）、偶数がチェックノード（2,4,6...）
     int size = 2*log2(Params::get_N())+1;
+
+    vector<vector<vector<message>>> message_list(size, vector<vector<message>>(Params::get_N(), vector<message>()));
     vector<vector<double> > node_value(size, vector<double>(Params::get_N(),0.0));
-    vector<vector<int> > update_count(size, vector<int>(Params::get_N(),0));
     vector<vector<bool> > node_isChecked(size, vector<bool>(Params::get_N(),false));
     //yとかの値をセット
-    BPinit(y, u, A, node_value, update_count, node_isChecked);
+    BPinit(y, u, A, node_value, message_list, node_isChecked);
 
     //BP
     int count = 0;
     while(count <= limit) {
-        for (int i = count%2; i < size; i=i+2){
-            for (int j = 0; j < Params::get_N(); j++) {
-                int adjacent_count = 0, up1 = 0, up2 = 0, up3 = 0, min_up = 0;
-                double val1 = 0.0, val2 = 0.0, val3 = 0.0;
-                bool ch1 = false, ch2 = false, ch3 = false;
-
-                //隣接ノードの位置
-                adjacent = adjacentIndex(i + 1, j + 1);
-                adjacent_count = adjacent.size();
-                if (isCalculable(i + 1, j + 1, adjacent, node_value, node_isChecked) == true &&
-                    node_isChecked[i][j] == false) {
-                    if (i % 2 == 0) {
-                        //val_node
-                        val1 = take_val(adjacent[0], node_value);
-                        up1 = take_val(adjacent[0], update_count);
-//                    ch1 = take_val(adjacent[0], node_isChecked);
-                        switch (adjacent_count) {
-                            case 1 :
-                                if (val1 != 0.0) {
-                                    node_value[i][j] = val1;
-                                    update_count[i][j]++;
-                                }
-                                break;
-                            case 2 :
-                                val2 = take_val(adjacent[1], node_value);
-                                up2 = take_val(adjacent[1], update_count);
-                                if (val1 != 0.0 && val2 != 0.0) {
-                                    if(i == 0){
-                                        node_value[i][j] = calc_node(0, val1, val2);
-                                        update_count[i][j]++;
-                                    } else {
-                                        //違った?
-                                        if (up1 > up2) {
-                                            node_value[i][j] = val1;
-                                            update_count[i][j]++;
-                                        } else if (up1 < up2) {
-                                            node_value[i][j] = val2;
-                                            update_count[i][j]++;
-                                        } else {
-                                            //たぶんここにはこないはず後で乱数を絡ませる
-                                            node_value[i][j] = val1;
-                                            update_count[i][j]++;
-                                        }
-                                    }
-                                } else if (val1 == 0.0 && val2 != 0.0) {
-                                    node_value[i][j] = val2;
-                                    update_count[i][j]++;
-                                } else if (val1 != 0.0 && val2 == 0.0) {
-                                    node_value[i][j] = val1;
-                                    update_count[i][j]++;
-                                }
-                                break;
-                            case 3 :
-                                val2 = take_val(adjacent[1], node_value);
-                                up2 = take_val(adjacent[1], update_count);
-                                val3 = take_val(adjacent[2], node_value);
-                                up3 = take_val(adjacent[2], update_count);
-                                if (val1 != 0.0 && val2 != 0.0 && val3 != 0.0) {
-                                    //全部同じ更新回数だった場合は適当になる
-                                    min_up = min(min(up1, up2), up3);
-                                    //全部違う時
-                                    if (min_up == up1) {
-                                        node_value[i][j] = calc_node(0, val2, val3);
-                                    } else if (min_up == up2) {
-                                        node_value[i][j] = calc_node(0, val1, val3);
-                                    } else {
-                                        node_value[i][j] = calc_node(0, val1, val2);
-                                    }
-                                    update_count[i][j]++;
-                                } else if (val1 == 0.0 && val2 != 0.0 && val3 != 0.0) {
-                                    node_value[i][j] = calc_node(0, val2, val3);
-                                    update_count[i][j]++;
-                                } else if (val1 != 0.0 && val2 == 0.0 && val3 != 0.0) {
-                                    node_value[i][j] = calc_node(0, val1, val3);
-                                    update_count[i][j]++;
-                                } else if (val1 != 0.0 && val2 != 0.0 && val3 == 0.0) {
-                                    node_value[i][j] = calc_node(0, val1, val2);
-                                    update_count[i][j]++;
-                                } else if (val1 == 0.0 && val2 == 0.0 && val3 != 0.0) {
-                                    node_value[i][j] = val3;
-                                    update_count[i][j]++;
-                                } else if (val1 != 0.0 && val2 == 0.0 && val3 == 0.0) {
-                                    node_value[i][j] = val1;
-                                    update_count[i][j]++;
-                                } else if (val1 == 0.0 && val2 != 0.0 && val3 == 0.0) {
-                                    node_value[i][j] = val2;
-                                    update_count[i][j]++;
-                                } else {
-                                    //何もしない
-                                    cout << "aaaaaaaaaaaaaaa" << endl;
-                                }
-                                break;
-                            default :
-                                break;
-                        }
-                        //一回決まったら値を確定させる
-//                        if (i == 0 && node_value[i][j] != 0) {
-//                            node_isChecked[i][j] = true;
-//                            node_value[i][j] = (node_value[i][j] > 0) ? 10.0 : -10.0;
-//                        }
-                    } else {
-                        //check_node
-                        val1 = take_val(adjacent[0], node_value);
-                        up1 = take_val(adjacent[0], update_count);
-                        switch (adjacent_count) {
-//                    ch2 = take_val(adjacent[1], node_isChecked);
-                            case 2 :
-                                val2 = take_val(adjacent[1], node_value);
-                                up2 = take_val(adjacent[1], update_count);
-                                if (val1 != 0.0 && val2 != 0.0) {
-//                                    node_value[i][j] = calc_node(1, val1, val2);
-//                                    update_count[i][j]++;
-                                    //違った?
-                                    if (up1 > up2) {
-                                        node_value[i][j] = val1;
-                                        update_count[i][j]++;
-                                    } else if (up1 < up2) {
-                                        node_value[i][j] = val2;
-                                        update_count[i][j]++;
-                                    } else {
-                                        //たぶんここにはこないはず
-                                        node_value[i][j] = val1;
-                                        update_count[i][j]++;
-                                    }
-                                } else if (val1 == 0.0 && val2 != 0.0) {
-                                    node_value[i][j] = val2;
-                                    update_count[i][j]++;
-                                } else if (val1 != 0.0 && val2 == 0.0) {
-                                    node_value[i][j] = val1;
-                                    update_count[i][j]++;
-                                }
-                                node_isChecked[i][j]=true;
-                                break;
-                            case 3 :
-                                val2 = take_val(adjacent[1], node_value);
-                                up2 = take_val(adjacent[1], update_count);
-                                val3 = take_val(adjacent[2], node_value);
-                                up3 = take_val(adjacent[2], update_count);
-
-                                if (val1 != 0.0 && val2 != 0.0 && val3 != 0.0) {
-                                    //全部同じ更新回数だった場合は適当になる?
-                                    min_up = min(min(up1, up2), up3);
-                                    if (min_up == up1) {
-                                        node_value[i][j] = calc_node(1, val2, val3);
-                                    } else if (min_up == up2) {
-                                        node_value[i][j] = calc_node(1, val1, val3);
-                                    } else {
-                                        node_value[i][j] = calc_node(1, val1, val2);
-                                    }
-                                    update_count[i][j]++;
-                                } else if (val1 == 0.0 && val2 != 0.0 && val3 != 0.0) {
-                                    node_value[i][j] = calc_node(1, val2, val3);
-                                    update_count[i][j]++;
-                                    node_isChecked[i][j]=true;
-                                } else if (val1 != 0.0 && val2 == 0.0 && val3 != 0.0) {
-                                    node_value[i][j] = calc_node(1, val1, val3);
-                                    update_count[i][j]++;
-                                    node_isChecked[i][j]=true;
-                                } else if (val1 != 0.0 && val2 != 0.0 && val3 == 0.0) {
-                                    node_value[i][j] = calc_node(1, val1, val2);
-                                    update_count[i][j]++;
-                                    node_isChecked[i][j]=true;
-                                } else if (val1 == 0.0 && val2 == 0.0 && val3 != 0.0) {
-                                    node_value[i][j] = val3;
-                                    update_count[i][j]++;
-                                    node_isChecked[i][j]=true;
-                                } else if (val1 != 0.0 && val2 == 0.0 && val3 == 0.0) {
-                                    node_value[i][j] = val1;
-                                    update_count[i][j]++;
-                                    node_isChecked[i][j]=true;
-                                } else if (val1 == 0.0 && val2 != 0.0 && val3 == 0.0) {
-                                    node_value[i][j] = val2;
-                                    update_count[i][j]++;
-                                    node_isChecked[i][j]=true;
-                                } else {
-                                    //何もしない
-                                    cout << "aaaaaaaaaaaaaaa" << endl;
-                                }
-
-                                break;
-                            default :
-                                break;
-                        }
-                    }
-                }
-            }
-        }
-        if(isTerminate(node_value, node_isChecked)) break;
+        calc_BP(count, node_value, message_list, node_isChecked);
+        calc_node_val(node_value, message_list, node_isChecked);
+        if(isTerminate(node_value, message_list, node_isChecked)) break;
+        
         count++;
-        if(count%100 ==0){
-//            cout << count << endl;
-        }
     }
+    cout <<  "count : "<< count << endl;
     for (int i = 0; i < Params::get_N(); i++) {
+        cout << "BP: " << i+1 << " " << node_value[0][i] << endl;
         u_n_est[i] = (node_value[0][i]>0) ? 0 : 1;
     }
     return u_n_est;
@@ -488,6 +301,7 @@ vector<int> Decoder::decode(vector<double> &y, vector<int> &u, vector<int> &A){
         // Aに含まれないindexなら既知
         if (Common::containNumInArray(i, Params::get_N()-Params::get_K(), A) == false) {
             u_n_est[i] = u[i];
+            cout << "SC: " << i+1 << " " << ((u[i] == 1)?(-1000):(1000)) << endl;
         } else {
             this->startTimer();
 
@@ -496,7 +310,7 @@ vector<int> Decoder::decode(vector<double> &y, vector<int> &u, vector<int> &A){
 
             this->stopTimer();
             this->outTime();
-//            cout << i+1 << "  " << llr <<endl;
+//            cout << i+1 << " " << llr <<endl;
 
             if (exp(llr) >= 1.0) {
                 h_i[i] = 0;
@@ -504,6 +318,7 @@ vector<int> Decoder::decode(vector<double> &y, vector<int> &u, vector<int> &A){
                 h_i[i] = 1;
             }
             u_n_est[i] = h_i[i];
+            cout << "SC: " << i+1 << " " << llr << endl;
         }
     }
     return u_n_est;
@@ -531,9 +346,7 @@ vector<int> Decoder::decode_m(vector<vector<double> > &y, vector<int> &u, vector
             }
         }
     }
-
     double llr;
-
 
     //u_n_est計算
     for (int i = 0; i < Params::get_N(); i++) {

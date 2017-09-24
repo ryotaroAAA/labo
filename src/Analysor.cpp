@@ -276,7 +276,7 @@ void Analysor::calcBlockErrorRate(MODE mode) {
 
     int tmp = Params::get_N()/Params::get_K();
     int tmpK = Params::get_K();
-    for (int i = 1; i <= tmp/2; i++) {
+    for (int i = 1; i <= (tmp+1)/2; i++) {
         performance.startTimer();
         Params::set_K(i * tmpK);
         A.resize(Params::get_K(), -1);

@@ -60,15 +60,26 @@ void Common::dispArray(int n, int *x){
 
 void Common::pp(vector<int> &a){
     bar();
+    cout << "{";
+    int count = 1;
     for(auto var : a){
-        cout << var << endl;
+        cout << var;
+        if(count != a.size()) cout << ",";
+        count++;
     }
+    cout << "}" << endl;
 }
 
-void Common::pp(vector<double> &collection){
-    for(auto var : collection){
-        cout << var << endl;
+void Common::pp(vector<double> &a){
+    bar();
+    cout << "{";
+    int count = 1;
+    for(auto var : a){
+        cout << var;
+        if(count != a.size()) cout << ",";
+        count++;
     }
+    cout << "}" << endl;
 }
 
 void Common::outputArray(double *x){
