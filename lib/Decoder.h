@@ -19,11 +19,16 @@ public:
     void calc_node_val(vector<vector<double>> &node_value, vector<vector<vector<message>>> &message_list, vector<vector<bool>> &node_isChecked);
     void calc_BP(int count, vector<vector<double>> &node_value, vector<vector<vector<message>>> &message_list, vector<vector<bool> > &node_isChecked);
     void BPinit(vector<double> &y, vector<int> &u, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message>>> &message_list, vector<vector<bool> > &node_isChecked);
+    void send_message(int i, int j, vector<vector<vector<message>>> &message_list, vector<vector<bool> > &node_isChecked);
     bool isTerminate(vector<vector<double> > &node_value, vector<vector<vector<message>>> &message_list, vector<vector<bool> > &node_isChecked);
+    void printDecodeProgress(int count, vector<vector<bool>> &node_value, ofstream &w_file);
+    void printDecodeProgress(int count, vector<vector<double>> &node_value, ofstream &w_file);
+
     int take_val(vector<int> index, vector<vector<int> > &node_val);
     double take_val(vector<int> index, vector<vector<double> > &node_val);
     bool take_val(vector<int> index, vector<vector<bool> > &node_val);
     void set_val(bool val, vector<int> locate, vector<vector<bool> > &node_val);
+
     vector<vector<int> > adjacentIndex(int level, int index);
     vector<int> makeTreeIndex(int n);
     vector<int> makeBPTreeIndex(int n);

@@ -77,9 +77,9 @@ void calcBER(){
 int main(void) {
 
 //    calcBER();
-    Params::set_e(0.0);
-    Params::set_N(pow(2,2));
-    Params::set_K(2);
+    Params::set_e(0.5);
+    Params::set_N(pow(2,10));
+    Params::set_K(256);
     Params::set_s(BEC);
 
     Params::set_rp(100);
@@ -103,17 +103,17 @@ int main(void) {
 //    u_n ={0,1,1,1};
 //    u_n = {0,1,0,1,0,0,1,0,1,1,0,0,1,0,1,1};
 
-    Common::pp(u_n);
+//    Common::pp(u_n);
     x_n = encoder.encode(Params::get_N(), u_n);
-    Common::pp(x_n);
+//    Common::pp(x_n);
 
     y_n = Channel::channel_output(x_n);
-    Common::pp(y_n);
+//    Common::pp(y_n);
 
     Common::bar();
 
     u_est = decoder.decode(y_n, u_n, A);
-    Common::pp(u_est);
+//    Common::pp(u_est);
     int error_count=0;
     Analysor::errorCount(u_n, u_est, &error_count);
     cout << "error " << error_count << "/" << Params::get_N() <<  endl;
