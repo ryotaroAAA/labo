@@ -16,12 +16,10 @@ vector<int> Encoder::encode(int n, vector<int> &input){
         s_n[2*i]   = (input[2*i+1] + input[2*i]) % 2;
         s_n[2*i+1] = input[2*i+1];
     }
-
     for (int i = 0; i < n/2 ; i++) {
         v_n[i] = s_n[2*i];
         v_n[n/2 + i] = s_n[2*i + 1];
     }
-
     if (n == 2) {
         x_n[0] = (input[0] + input[1]) % 2;
         x_n[1] = input[1];
@@ -47,7 +45,6 @@ vector<int> Encoder::encode(int n, vector<int> &input){
     this->addCount();
     return x_n;
 }
-
 
 //中間ノード送信
 vector<int> Encoder::encode_m(int n, int m, int level, vector<int>  &input, vector<vector<int> > &x){
@@ -78,6 +75,7 @@ vector<int> Encoder::encode_m(int n, int m, int level, vector<int>  &input, vect
             } else {
                 tempV_n2[i-n/2] = v_n[i];
             }
+            //ここで入れる
             x[level][i + m] = v_n[i];
         }
 

@@ -29,11 +29,11 @@ vector<double> Channel::channel_output(vector<int> &input){
 }
 
 void Channel::channel_output_m(vector<vector<int> > &input, vector<vector<double> > &y) {
-//    init_genrand((int) time(NULL));
-    init_genrand(0);
+    init_genrand((int) time(NULL));
+//    init_genrand(12345);
 
-    for (int i=0; i<log2(Params::get_N()); i++) {
-        for (int j = 0; j < Params::get_N(); j++) {
+    for (int i=0; i<log2(Params::get_N())+1; i++) {
+        for (int j=0; j < Params::get_N(); j++) {
             if( Params::get_s() == AWGN ){
                 random_device seed_gen;
                 default_random_engine engine(seed_gen());

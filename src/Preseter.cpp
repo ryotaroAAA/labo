@@ -1,7 +1,7 @@
 #include "../lib/Preseter.h"
 
-void Preseter::preset_A(vector<int> &free){
-    Preseter::defineFixedAndFree(free);
+void Preseter::preset_A_Ac(vector<int> &free, vector<int> &fixed){
+    Preseter::defineFixedAndFree(free,fixed);
 }
 
 void Preseter::preset_u(SOURCE_TYPE mode, vector<int> &u){
@@ -14,11 +14,15 @@ void Preseter::represet_A(vector<int> &free, vector<pair<int,double> > &cap_map)
     }
 }
 
-void Preseter::defineFixedAndFree(vector<int> &free){
+void Preseter::defineFixedAndFree(vector<int> &free, vector<int> &fixed){
     vector<pair<int, double> > cap_map;
     Preseter::makeMutualInfoArray(cap_map);
-    for(int i = 0; i < Params::get_K(); i++){
-        free[i] = cap_map[i].first;
+    for(int i = 0; i < Params::get_N(); i++){
+        if (i < Params::get_K()){
+            free.push_back(cap_map[i].first);
+        } else {
+            fixed.push_back(cap_map[i].first);
+        }
     }
 }
 

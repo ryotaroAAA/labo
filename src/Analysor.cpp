@@ -290,7 +290,7 @@ void Analysor::calcBlockErrorRate(MODE mode) {
             y_n.assign(Params::get_N(), 0);
             u_est.assign(Params::get_N(), 0);
             y_n = Channel::channel_output(x_n);
-            u_est = (Params::get_decode_mode() == BP)?decoder.BP(Params::get_rp(), y_n, u_n, A):decoder.decode(y_n, u_n, A);
+//            u_est = (Params::get_decode_mode() == BP)?decoder.BP(Params::get_rp(), y_n, u_n, A):decoder.decode(y_n, u_n, A);
 
 //            Common::pp(u_est);
             Analysor::errorCount(u_n, u_est, &error_count);
