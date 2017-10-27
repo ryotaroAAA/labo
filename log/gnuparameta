@@ -1,5 +1,4 @@
 //Bounds on probability of block error用
-
 unset key
 set logscale y
 set format y "10^{%L}"
@@ -20,7 +19,7 @@ replot 'e18' using 1:3 with lines lt 7 dt'.'
 
 (y^{4}_1,\hat{u}^{4}_{1,e} \oplus \hat{u}^{4}_{1,o})
 
-// bit error rate plot
+// block error rate plot
 unset key
 set grid
 set xtics 0.1
@@ -37,9 +36,6 @@ set yl 'Block Error Rate'
 plot 'rve' with lines lt 7
 plot 'N=1000_e=0.11_bsc_montecarlo_1000_block_1000' with lines lt 7
 
-
-
-
 plot 'rve5' with lines lt 1
 replot 'rve6' with lines lt 2
 replot 'rve7' with lines lt 3
@@ -50,7 +46,6 @@ replot 'rve12' with lines lt 8
 replot 'rve11' with lines lt 7
 
 //
-
 unset key
 set xrange[0.0:1.0]
 set yrange[0.0:1.0]
@@ -60,3 +55,54 @@ set ylabel font "Arial,25"
 set grid
 set xtics 0.1
 set ytics 0.1
+
+//error集中箇所リスト
+set xrange[0:1024]
+set yrange[0.0:500]
+set tics font "Arial,25"
+set xlabel font "Arial,25"
+set ylabel font "Arial,25"
+set key font "Arial,25"
+set grid
+set xtics 128
+set ytics 100
+set rmargin 5
+set xl 'error occured index'
+set yl 'count'
+plot "erlog_1024" using 1:2 title "error" with lines lt 1
+replot "erlog_1024" using 1:3 title "itr" with lines lt 2
+replot "erlog_1024" using 1:4 title "no\\_checked" with lines lt 3
+
+//バタチャリア相互情報量plot用
+unset key
+set xrange[0:1024]
+set yrange[0.0:1.0]
+set tics font "Arial,25"
+set xlabel font "Arial,25"
+set ylabel font "Arial,25"
+set key font "Arial,25"
+set grid
+set xtics 128
+set ytics 100
+set rmargin 5
+set xl 'index'
+set yl 'Bhattacharyya parameter'
+plot "bhat_1024bsc" using 1:2
+
+//Palatino Optima
+
+set grid
+set xtics 0.1 font "Arial,25"
+set ytics 0.1 font "Arial,25"
+set logscale y
+set format y "10^{%L}"
+set xrange[0.0:0.5]
+set yrange[0.0000000001:1]
+set xlabel font "Arial,25"
+set ylabel font "Arial,25"
+set key font "Arial,20" left top
+set xl 'Rate(bits)'
+set yl 'Block Error Rate'
+plot 'N=512 e=0.500000 channel=BEC' with lines lt 6 title "N=512 e=0.5 BEC"
+replot 'N=512 e=0.500000 channel=BEC mid' with lines lt 7 title "N=512 e=0.5 BEC with mid"
+

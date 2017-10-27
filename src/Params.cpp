@@ -1,11 +1,13 @@
 #include "../lib/Params.h"
 
 int Params::N = 0;
+int Params::M = 0;
 int Params::K = 0;
 int Params::monteNum = 0;
 int Params::blockNum = 0;
 int Params::upperBlockErrorNum = 0;
 int Params::rp = 0;
+bool Params::is_outlog = false;
 double Params::e = 0;
 string Params::rvbDir = "";
 CHANNEL_TYPE Params::s = BEC;
@@ -13,6 +15,10 @@ DECODE_MODE Params::dm = BP;
 
 int Params::get_N(){
     return N;
+}
+
+int Params::get_M(){
+    return M;
 }
 
 int Params::get_K(){
@@ -39,6 +45,10 @@ int Params::get_rp(){
     return rp;
 }
 
+bool Params::get_is_outlog(){
+    return is_outlog;
+}
+
 string Params::get_rvbDir() {
     return rvbDir;
 }
@@ -53,6 +63,10 @@ DECODE_MODE Params::get_decode_mode(){
 
 void Params::set_N(int _N){
     N = _N;
+}
+
+void Params::set_M(int _M){
+    M = _M;
 }
 
 void Params::set_K(int _K){
@@ -89,5 +103,9 @@ void Params::set_s(CHANNEL_TYPE _s){
 
 void Params::set_decode_mode(DECODE_MODE _dm){
     dm = _dm;
+}
+
+void Params::set_is_outlog(bool _is_outlog){
+    is_outlog = _is_outlog;
 }
 

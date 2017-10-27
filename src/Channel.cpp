@@ -151,8 +151,8 @@ double Channel::calcW_i(int i, int n, vector<int> &u, int u_i, vector<int> &y) {
 //            cout << "W[" << i << "][" << n << "] = 0.5*W[" << temp_i << "][" << n/2 << "]*W[" << temp_i << "][" << n/2 << "] = 0.5*" << t1 << "*" << t2 << " = " << W_i << endl;
         }
     }
-    if (isinf(W_i) || isnan(W_i)) {
-        W_i = 1.0;
-    }
+//    if (isinf(W_i) || isnan(W_i)) {
+//        W_i = 1.0;
+//    }
     return W_i;
 }

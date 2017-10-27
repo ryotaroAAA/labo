@@ -13,6 +13,8 @@
 #include <fstream>
 #include <random>
 #include "Params.h"
+#include "sys/stat.h"
+#include <unistd.h>
 
 using namespace std;
 

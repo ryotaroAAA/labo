@@ -4,7 +4,7 @@ Logger::Logger(){
     struct tm *pnow = localtime(&now);
 
     struct stat st;
-    string dir = "/Users/ryotaro/labo/log/" + to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday);
+    string dir = "log/" + to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday) + "/";
     int ret = stat(dir.data(), &st);
     if (ret == -1) {
         mkdir(dir.data(), S_IRUSR | S_IWUSR | S_IXUSR);

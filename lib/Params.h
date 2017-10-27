@@ -11,6 +11,9 @@ enum SOURCE_TYPE{ALL0, ALL1, RAND};
 enum MODE{TEST, RUN};
 enum DECODE_MODE{BP, SC};
 
+const static double inf_p =  30.0;
+const static double inf_m = -30.0;
+
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 #define ARR(array)     (sizeof(array) / sizeof(array[0]));
 
@@ -23,28 +26,34 @@ enum DECODE_MODE{BP, SC};
 class Params{
 private:
     static int N;
+    static int M;
     static int K;
     static double e;
     static int rp;
     static int monteNum;
     static int blockNum;
     static int upperBlockErrorNum;
+    static bool is_outlog;
     static CHANNEL_TYPE s;
     static DECODE_MODE dm;
     static string rvbDir;
 public:
     static int get_N();
+    static int get_M();
     static int get_K();
     static double get_e();
     static int get_monteNum();
     static int get_blockNum();
     static int get_upperBlockErrorNum();
+    static bool get_is_outlog();
     static string get_rvbDir();
     static CHANNEL_TYPE get_s();
     static DECODE_MODE get_decode_mode();
     static int get_rp();
     static void set_N(int _N);
+    static void set_M(int _M);
     static void set_K(int _K);
+    static void set_is_outlog(bool _is_outlog);
     static void set_monteNum(int _monteNum);
     static void set_blockNum(int _blockNum);
     static void set_decode_mode(DECODE_MODE _dm);
