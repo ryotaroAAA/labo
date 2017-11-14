@@ -172,82 +172,16 @@ double Decoder::take_val(vector<int> locate, vector<vector<double> > &node_val){
     return node_val[level-1][index-1];
 }
 
-void Decoder::send_message(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked){
-    int size = 2*log2(Params::get_N())+2;
-    double val = 0.0;
-    bool is_send = false;
-    for (int k = 0; k < message_list[i][j].size(); ++k) {
-        vector<double> temp;
-//        is_send = false;
-        if(message_list[i][j].size() == 1){
-            //次数1のval nodeはメッセージをそのまま返す, channel factor nodeはほっとく
-            if (!node_isChecked[i][j] && i < size-1  ) {
-                //frozen bitはメッセージ固定なのでそれ以外を計算
-                int fromLevel = message_list[i][j][0].toLevel-1;
-                int fromIndex = message_list[i][j][0].toIndex-1;
-                for (int m = 0; m < message_list[fromLevel][fromIndex].size(); m++) {
-                    if( message_list[fromLevel][fromIndex][m].toLevel == i+1 && message_list[fromLevel][fromIndex][m].toIndex == j+1){
-                        //メッセージを送りたい場所以外のメッセージ
-                        val = message_list[fromLevel][fromIndex][m].val;
-                        if(val != 0.0 || isinf(val)) {
-                            message_list[i][j][k].val = val;
-                            is_send = true;
-                        }
-                        break;
-                    }
-                }
-            }
-        } else {
-            for (int l = 0; l < message_list[i][j].size(); l++) {
-                if(k != l){
-                    int fromLevel = message_list[i][j][l].toLevel-1;
-                    int fromIndex = message_list[i][j][l].toIndex-1;
-                    for (int m = 0; m < message_list[fromLevel][fromIndex].size(); m++) {
-                        if( message_list[fromLevel][fromIndex][m].toLevel == i+1 && message_list[fromLevel][fromIndex][m].toIndex == j+1){
-                            //メッセージを送りたい場所以外のメッセージ
-                            temp.push_back(message_list[fromLevel][fromIndex][m].val);
-                        }
-                    }
-                }
-            }
-            int tol = message_list[i][j][k].toLevel;
-            int toi = message_list[i][j][k].toIndex;
-
-            int zero_count = 0;
-            bool isCalcable = true;
-            if(i%2 == 1){
-                //check node
-                for (int l = 0; l < temp.size(); ++l) {
-                    if(temp[l] == 0.0){
-                        zero_count++;
-                    }
-                }
-                if(zero_count > 0) isCalcable = false;
-            } else {
-                //val node
-                if(node_isChecked[i][j]) isCalcable = false;
-            }
-
-            if(isCalcable){
-                val = calc_message(i%2, temp);
-                if(val != 0.0 || isinf(val)){
-                    message_list[i][j][k].val = val;
-                    is_send = true;
-                }
-            }
-        }
-    }
-    if (Params::get_decode_mode() == SC && is_send) node_isChecked[i][j] = true;
-}
-
-void Decoder::send_message_m(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived){
+void Decoder::send_message(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived){
     int size = 2*log2(Params::get_N())+2;
     double wc,wp,llr = 0.0,val = 0.0;
-    if (ym_isReceived[i][j]) {
-        wc = Channel::calcW(y[i][j],0);
-        wp = Channel::calcW(y[i][j],1);
-        llr = 1.0 * log(wc / wp);
-//        val += y[i][j];
+    bool is_send = false;
+    if(is_mid_send()){
+        if (ym_isReceived[i][j]) {
+            wc = Channel::calcW(y[i][j],0);
+            wp = Channel::calcW(y[i][j],1);
+            llr = 1.0 * log(wc / wp);
+        }
     }
     for (int k = 0; k < message_list[i][j].size(); ++k) {
         vector<double> temp;
@@ -261,7 +195,10 @@ void Decoder::send_message_m(int i, int j, vector<vector<vector<message> > > &me
                     if( message_list[fromLevel][fromIndex][m].toLevel == i+1 && message_list[fromLevel][fromIndex][m].toIndex == j+1){
                         //メッセージを送りたい場所以外のメッセージ
                         val = message_list[fromLevel][fromIndex][m].val + llr;
-                        if(val != 0.0) message_list[i][j][k].val = val;
+                        if(val != 0.0 || isinf(val)) {
+                            message_list[i][j][k].val = val;
+                            is_send = true;
+                        }
                         break;
                     }
                 }
@@ -302,10 +239,12 @@ void Decoder::send_message_m(int i, int j, vector<vector<vector<message> > > &me
                 val = calc_message(i%2, temp) + llr;
                 if(val != 0.0){
                     message_list[i][j][k].val = val;
+                    is_send = true;
                 }
             }
         }
     }
+    if (Params::get_decode_mode() == SC && is_send) node_isChecked[i][j] = true;
 }
 
 double Decoder::calc_message(int mode, vector<double> val) {
@@ -398,6 +337,32 @@ bool Decoder::isTerminate(int &no_checked, vector<vector<double> > &node_value, 
     return flag;
 }
 
+
+void Decoder::init_message(vector<bool> puncFlag, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list){
+    double val = 0.0;
+    vector<vector<int> > adjacent;
+    int size = 2*log2(Params::get_N())+2;
+    message temp = {0,0,0.0};
+    int adjacent_count=0, level=0, index=0;
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            //隣接ノードの位置
+            if(!puncFlag[j] || i != size-1){
+                adjacent = adjacentIndex(i + 1, j + 1);
+                for (int k = 0; k < adjacent.size(); k++) {
+                    level = adjacent[k][0];
+                    index = adjacent[k][1];
+                    val = node_val[i][j];
+                    temp.toLevel = level;
+                    temp.toIndex = index;
+                    temp.val = val;
+                    message_list[i][j].push_back(temp);
+                }
+            }
+        }
+    }
+}
+
 void Decoder::SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_est, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<vector<message> > > &save_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &save_isChecked){
     double wc, wp, llr = 0.0, val = 0.0;
     int size = 2*log2(Params::get_N())+2;
@@ -416,11 +381,6 @@ void Decoder::SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_es
         llr = 1.0 * log(wc / wp);
         node_val[size-1][i] = llr;
 //        node_val[size-2][i] = llr;
-
-//        node_isChecked[size-1][i] = true;
-//        node_isChecked[size-2][i] = true;
-//        save_isChecked[size-1][i] = true;
-//        save_isChecked[size-2][i] = true;
 
         //frozen_bitのllr設定
         databit_flag = false;
@@ -466,19 +426,28 @@ void Decoder::SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_es
     }
 }
 
-void Decoder::BPinit_wang(vector<int> p, vector<int> &x, vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked){
+
+void Decoder::init_params(vector<bool> puncFlag, vector<int> p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived){
     double wc, wp, llr = 0.0, val = 0.0;
     int size = 2*log2(Params::get_N())+2;
+    int ysize = log2(Params::get_N())+1;
     bool databit_flag = false;
-    vector<bool> puncFlag(Params::get_N(),false);
 
-    //punctureするchannel factornodeを設定
+    //実験モード
+    EXP_MODE em = Params::get_exp_mode();
+
+    //パンクチャ設定
     for (int i = 0; i < Params::get_N(); i++) {
-        if(Common::containVal(i,p)){
-            puncFlag[i] = true;
+        if( em == WANG || em == M_WANG ){
+            if(Common::containVal(i,p)){
+                puncFlag[i] = true;
+            }
+        } else if(em = PUNC) {
+            puncFlag[Ac[i]] = true;
         }
     }
 
+    //val_node frozen shorten設定
     for (int i = 0; i < Params::get_N(); i++) {
         if(!puncFlag[i]){
             wc = Channel::calcW(y[i],0);
@@ -486,8 +455,11 @@ void Decoder::BPinit_wang(vector<int> p, vector<int> &x, vector<double> &y, vect
             llr = 1.0 * log(wc / wp);
             node_val[size-2][i] = llr;
         } else {
-            llr = (x[i]==0)? inf_p : inf_m;
-            node_val[size-2][i] = llr;
+            //shortening
+            if( em == WANG ){
+                llr = (x[i]==0)? inf_p : inf_m;
+                node_val[size-2][i] = llr;
+            }
         }
         node_isChecked[size-1][i] = true;
 
@@ -504,774 +476,170 @@ void Decoder::BPinit_wang(vector<int> p, vector<int> &x, vector<double> &y, vect
         }
     }
 
-    vector<vector<int> > adjacent;
-    message temp = {0,0,0.0};
-    int adjacent_count=0, level=0, index=0;
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            //隣接ノードの位置
-            if(!puncFlag[j] || i != size-1){
-                adjacent = adjacentIndex(i + 1, j + 1);
-                for (int k = 0; k < adjacent.size(); k++) {
-                    level = adjacent[k][0];
-                    index = adjacent[k][1];
-                    val = node_val[i][j];
-                    temp.toLevel = level;
-                    temp.toIndex = index;
-                    temp.val = val;
-                    message_list[i][j].push_back(temp);
-                }
-            }
+    //中間ノード設定, yからメッセージを受信するようになる
+    if(em == MID || em == M_WANG || em == M_QUP || em == M_VALERIO_P || em == M_VALERIO_S){
+        for (int i = 0; i < Params::get_M(); i++) {
+            ym_isReceived[0][A[i]] = true;
         }
     }
 }
 
-
-void Decoder::BPinit(vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked){
-    double wc, wp, llr = 0.0, val = 0.0;
-    int size = 2*log2(Params::get_N())+2;
-    bool databit_flag = false;
+void Decoder::BPinit(vector<int> p, vector<int> &u, vector<int> &x, vector<double> &y, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked){
     vector<bool> puncFlag(Params::get_N(),false);
-
-    //punctureするchannel factornodeを設定
-    for (int i = 0; i < Params::get_M(); i++) {
-        puncFlag[Ac[i]] = true;
-    }
-
-    for (int i = 0; i < Params::get_N(); i++) {
-        if(!puncFlag[i]){
-            wc = Channel::calcW(y[i],0);
-            wp = Channel::calcW(y[i],1);
-            llr = 1.0 * log(wc / wp);
-            node_val[size-2][i] = llr;
-        }
-        node_isChecked[size-1][i] = true;
-
-        //frozen_bitのllr設定
-        databit_flag = false;
-        for (int j = 0; j < Params::get_K(); j++) {
-            if(i == A[j]){
-                databit_flag = true;
-            }
-        }
-        if(databit_flag == false){
-            node_val[0][i] = (u[i] == 0) ? inf_p : inf_m;
-            node_isChecked[0][i] = true;
-        }
-    }
-
-    vector<vector<int> > adjacent;
-    message temp = {0,0,0.0};
-    int adjacent_count=0, level=0, index=0;
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            //隣接ノードの位置
-            if(!puncFlag[j] || i != size-1){
-                adjacent = adjacentIndex(i + 1, j + 1);
-                for (int k = 0; k < adjacent.size(); k++) {
-                    level = adjacent[k][0];
-                    index = adjacent[k][1];
-                    val = node_val[i][j];
-                    temp.toLevel = level;
-                    temp.toIndex = index;
-                    temp.val = val;
-                    message_list[i][j].push_back(temp);
-                }
-            }
-        }
-    }
+    //init node frozen punc etc pattern
+    init_params(puncFlag, p, u, x, y, {}, {}, A, Ac, node_val, node_isChecked, {});
+    init_message(puncFlag, node_val, message_list);
 }
 
-void Decoder::BPinit_m(vector<vector<double> > &y, vector<int> &u, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived){
-    double wc, wp, llr = 0.0, val = 0.0;
-    int size = 2*log2(Params::get_N())+2;
-    int ysize = log2(Params::get_N())+1;
-    bool databit_flag = false;
-    for (int i = 0; i < Params::get_N(); i++) {
-        wc = Channel::calcW(y[ysize-1][i],0);
-        wp = Channel::calcW(y[ysize-1][i],1);
-        llr = 1.0 * log(wc / wp);
-        node_val[size-2][i] = llr;
-        node_isChecked[size-1][i] = true;
-        //frozen_bitのllr設定
-        databit_flag = false;
-        for (int j = 0; j < Params::get_K(); j++) {
-            if(i == A[j]){
-                databit_flag = true;
-            }
-        }
-        if(databit_flag == false){
-            node_val[0][i] = (u[i] == 0) ? inf_p : inf_m;
-            node_isChecked[0][i] = true;
-        }
-    }
-
-    //受信したい中間ノードを設定
-    //trueにすると, 毎周yからメッセージを受信するようになる
-    for (int i = 0; i < Params::get_M(); i++) {
-        ym_isReceived[0][A[i]] = true;
-    }
-
-    vector<vector<int> > adjacent;
-    message temp = {0,0,0.0};
-    int adjacent_count=0, level=0, index=0;
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            //隣接ノードの位置
-            adjacent = adjacentIndex(i + 1, j + 1);
-            for (int k = 0; k < adjacent.size(); k++) {
-                level = adjacent[k][0];
-                index = adjacent[k][1];
-                val = node_val[i][j];
-                temp.toLevel = level;
-                temp.toIndex = index;
-                temp.val = val;
-                message_list[i][j].push_back(temp);
-            }
-        }
-    }
-}
-
-void Decoder::BPinit_m_wang(vector<int> p, vector<vector<int> > &x, vector<vector<double> > &y, vector<int> &u, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived) {
-    double wc, wp, llr = 0.0, val = 0.0;
-    int size = 2*log2(Params::get_N())+2;
-    int ysize = log2(Params::get_N())+1;
-    bool databit_flag = false;
+void Decoder::BPinit_m(vector<int> p, vector<int> &u, vector<vector<int> > &x, vector<vector<double> > &y, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived){
     vector<bool> puncFlag(Params::get_N(),false);
-
-    //punctureするchannel factornodeを設定
-    for (int i = 0; i < Params::get_N(); i++) {
-        if(Common::containVal(i,p)){
-            puncFlag[i] = true;
-        }
-    }
-
-    for (int i = 0; i < Params::get_N(); i++) {
-        if(!puncFlag[i]){
-            wc = Channel::calcW(y[ysize-1][i],0);
-            wp = Channel::calcW(y[ysize-1][i],1);
-            llr = 1.0 * log(wc / wp);
-            node_val[size-2][i] = llr;
-        } else {
-            llr = (x[ysize-1][i]==0)? inf_p : inf_m;
-            node_val[size-2][i] = llr;
-        }
-        node_isChecked[size-1][i] = true;
-
-        //frozen_bitのllr設定
-        databit_flag = false;
-        for (int j = 0; j < Params::get_K(); j++) {
-            if(i == A[j]){
-                databit_flag = true;
-            }
-        }
-        if(databit_flag == false){
-            node_val[0][i] = (u[i] == 0) ? inf_p : inf_m;
-            node_isChecked[0][i] = true;
-        }
-    }
-
-    //受信したい中間ノードを設定
-    //trueにすると, 毎周yからメッセージを受信するようになる
-    for (int i = 0; i < Params::get_M(); i++) {
-        ym_isReceived[0][A[i]] = true;
-    }
-
-    vector<vector<int> > adjacent;
-    message temp = {0,0,0.0};
-    int adjacent_count=0, level=0, index=0;
-    for (int i = 0; i < size; i++) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            //隣接ノードの位置
-            if(!puncFlag[j] || i != size-1){
-                adjacent = adjacentIndex(i + 1, j + 1);
-                for (int k = 0; k < adjacent.size(); k++) {
-                    level = adjacent[k][0];
-                    index = adjacent[k][1];
-                    val = node_val[i][j];
-                    temp.toLevel = level;
-                    temp.toIndex = index;
-                    temp.val = val;
-                    message_list[i][j].push_back(temp);
-                }
-            }
-        }
-    }
+    //init node frozen punc etc pattern
+    init_params(puncFlag, p, u, {}, {}, x, y, A, Ac, node_val, node_isChecked, ym_isReceived);
+    init_message(puncFlag, node_val, message_list);
 }
 
-void Decoder::calc_mp(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked){
-    calc_val_to_check(size, node_value, message_list, node_isChecked);
-    calc_check_to_val(size, node_value, message_list, node_isChecked);
-    calc_marge(node_value, message_list, node_isChecked);
+
+void Decoder::calc_mp(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked ,vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived){
+    calc_val_to_check(size, node_value, message_list, node_isChecked, y, ym_isReceived);
+    calc_check_to_val(size, node_value, message_list, node_isChecked, y, ym_isReceived);
+    calc_marge(node_value, message_list, node_isChecked, y, ym_isReceived);
 }
 
-void Decoder::calc_val_to_check(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked){
+void Decoder::calc_val_to_check(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived){
     vector<vector<int> > adjacent;
     bool bpflag = Params::get_decode_mode() == BP;
     for (int i = 0; i < size; i=i+2) {
         for (int j = 0; j < Params::get_N(); j++) {
-            if( (!node_isChecked[i][j] || bpflag)  ) {
-                send_message(i,j,message_list, node_isChecked);
-            }
-        }
-    }
-}
-
-void Decoder::calc_check_to_val(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked){
-    vector<vector<int> > adjacent;
-    bool bpflag = Params::get_decode_mode() == BP;
-    for (int i = 1; i < size; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            if( !node_isChecked[i][j] || bpflag) {
-                send_message(i, j, message_list, node_isChecked);
-            }
-        }
-    }
-}
-
-void Decoder::calc_val_to_check_m(vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived){
-    vector<vector<int> > adjacent;
-    int size = 2*log2(Params::get_N())+2;
-    for (int i = 0; i < size; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            send_message_m(i,j,message_list, node_isChecked, y, ym_isReceived);
-        }
-    }
-}
-
-void Decoder::calc_check_to_val_m(vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived){
-    vector<vector<int> > adjacent;
-    int size = 2*log2(Params::get_N())+2;
-    for (int i = 1; i < size; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            send_message_m(i,j,message_list, node_isChecked, y, ym_isReceived);
-        }
-    }
-}
-
-void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vector<message> >> &message_list, vector<vector<bool> > &node_isChecked){
-
-    int size = 2*log2(Params::get_N())+2;
-    int ysize = log2(Params::get_N())+1;
-    int level = 0, index = 0;
-    vector<vector<double> > temp(size, vector<double>(Params::get_N(),0.0));
-    //check nodeからのメッセージをあつめる
-    //check nodeが出力したメッセージをtempに集めておく
-    for (int i = 1; i < size; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            for (int k = 0; k < message_list[i][j].size(); k++) {
-                level = message_list[i][j][k].toLevel-1;
-                index = message_list[i][j][k].toIndex-1;
-                temp[level][index] += message_list[i][j][k].val;
-            }
-        }
-    }
-
-    //更新
-    for (int i = 0; i < size; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            if(temp[i][j] != 0.0 && !node_isChecked[i][j]){
-                node_value[i][j] = temp[i][j];
-            }
-        }
-    }
-
-}
-
-void Decoder::calc_marge_m(vector<vector<double> > &node_value, vector<vector<vector<message> >> &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived){
-    int size = 2*log2(Params::get_N())+2;
-    int ysize = log2(Params::get_N())+1;
-    int level = 0, index = 0;
-    vector<vector<double> > temp(size, vector<double>(Params::get_N(),0.0));
-    //check nodeからのメッセージをあつめる
-    //check nodeが出力したメッセージをtempに集めておく
-    for (int i = 1; i < size; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            for (int k = 0; k < message_list[i][j].size(); k++) {
-                level = message_list[i][j][k].toLevel-1;
-                index = message_list[i][j][k].toIndex-1;
-                temp[level][index] += message_list[i][j][k].val;
-            }
-        }
-    }
-    for (int i = 0; i < ysize; i++) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            if (ym_isReceived[i][j]) {
-                double wc = Channel::calcW(y[i][j],0);
-                double wp = Channel::calcW(y[i][j],1);
-                double llr = 1.0 * log(wc / wp);
-                temp[2*i][j] += llr;
-            }
-        }
-    }
-
-    //更新
-    for (int i = 0; i < size; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            if(temp[i][j] != 0.0 && !node_isChecked[i][j]){
-                node_value[i][j] = temp[i][j];
-            }
-        }
-    }
-}
-
-vector<int> Decoder::calcBP_wang(vector<int> p,vector<int> &param, vector<int> &x, vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac) {
-    vector<double> tmp_u(Params::get_N(),0.0);
-    vector<int> u_n_est(Params::get_N(),2);
-    vector<vector<int> > adjacent;
-
-    //node初期化、奇数が変数ノード（1,3,5...）、偶数がチェックノード（2,4,6...）
-    int size = 2 * log2(Params::get_N()) + 2;
-    vector<vector<double> > node_value(size, vector<double>(Params::get_N(), 0.0));
-    vector<vector<bool> > node_isChecked(size, vector<bool>(Params::get_N(), false));
-
-    //BP
-    int count = 0;
-    int itr = 0;
-    int no_checked = 0;
-
-    string val_fn = "/Users/ryotaro/Dropbox/labo/graph_js/val.json";
-    string check_fn = "/Users/ryotaro/Dropbox/labo/graph_js/check.json";
-    ofstream val_file;
-    ofstream check_file;
-    if(Params::get_is_outlog()) {
-        val_file.open(val_fn, ios::out);
-        check_file.open(check_fn, ios::out);
-        val_file << "{" << endl;
-        check_file << "{" << endl;
-    }
-
-    vector<vector<vector<message> > > message_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
-    BPinit_wang(p, x, y, u, A, Ac, node_value, message_list, node_isChecked);
-    for (int i = 0; i < Params::get_rp(); i++) {
-        if (isTerminate(no_checked, node_value, node_isChecked)) break;
-        if(Params::get_is_outlog()){
-            printDecodeProgress(itr, node_value, val_file);
-            printDecodeProgress(itr, node_isChecked, check_file);
-        }
-        itr++;
-        calc_mp(size, node_value, message_list, node_isChecked);
-        confirmIsCheck(node_value, node_isChecked);
-    }
-    for (int i = 0; i < Params::get_N(); i++) {
-        if(Params::get_is_outlog()) {
-            cout << "BP: " << i+1 << " " << node_value[0][i] << endl;
-        }
-        u_n_est[i] = (node_value[0][i]>=0.0) ? 0 : 1;
-    }
-    int error_count = 0;
-    Analysor::errorCount(u, u_n_est, &error_count);
-    param[0] = itr;
-    param[1] = no_checked;
-
-    if(Params::get_is_outlog()) {
-        printDecodeProgress(itr, node_isChecked, check_file);
-        printDecodeProgress(itr, node_value, val_file);
-
-        val_file << "\t}" << endl;
-        val_file << "}" << endl;
-        check_file << "\t}" << endl;
-        check_file << "}" << endl;
-
-        string channel = "";
-        if (Params::get_s() == BEC) {
-            channel = "BEC";
-        } else if (Params::get_s() == BSC) {
-            channel = "BSC";
-        } else {
-            channel = "AWGN";
-        }
-
-        string correct_fn = "/Users/ryotaro/Dropbox/labo/graph_js/correct.json";
-        ofstream correct_file;
-        correct_file.open(correct_fn, ios::out);
-        correct_file << "{" << endl;
-        for (int i = 0; i < Params::get_N(); i++) {
-            if (i == Params::get_N() - 1) {
-                correct_file << "\t\"" << i << "\" : \"" << u[i] << "\"" << endl;
+            if( is_mid_send() ){
+                send_message_m(i,j,message_list, node_isChecked, y, ym_isReceived);
             } else {
-                correct_file << "\t\"" << i << "\" : \"" << u[i] << "\"," << endl;
+                if( (!node_isChecked[i][j] || bpflag)  ) {
+                    send_message(i,j,message_list, node_isChecked);
+                }
             }
         }
-        correct_file << "}" << endl;
-
-        string params_fn = "/Users/ryotaro/Dropbox/labo/graph_js/params.json";
-        ofstream params_file;
-        params_file.open(params_fn, ios::out);
-        params_file << "{" << endl;
-        params_file << "\t\"N\" : \"" << Params::get_N() << "\"," << endl;
-        params_file << "\t\"Channel\" : \"" << channel << "\"," << endl;
-        params_file << "\t\"e\" : \"" << Params::get_e() << "\"," << endl;
-        params_file << "\t\"ITR\" : \"" << itr << "\"," << endl;
-        params_file << "\t\"no_checked\" : \"" << no_checked << "\"," << endl;
-        params_file << "\t\"error_count\" : \"" << error_count << "\"" << endl;
-
-//    cout <<  "no_checked : " << no_checked << endl;
-        params_file << "}" << endl;
     }
-    return u_n_est;
 }
 
+void Decoder::calc_check_to_val(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived){
+    vector<vector<int> > adjacent;
+    bool bpflag = Params::get_decode_mode() == BP;
+    for (int i = 1; i < size; i=i+2) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            if( is_mid_send() ){
+                send_message_m(i,j,message_list, node_isChecked, y, ym_isReceived);
+            } else {
+                if( (!node_isChecked[i][j] || bpflag)  ) {
+                    send_message(i,j,message_list, node_isChecked);
+                }
+            }
+        }
+    }
+}
 
-vector<int> Decoder::calcBP(vector<int> &param, vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac) {
+void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vector<message> >> &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived){
+    int size = 2*log2(Params::get_N())+2;
+    int ysize = log2(Params::get_N())+1;
+    int level = 0, index = 0;
+    vector<vector<double> > temp(size, vector<double>(Params::get_N(),0.0));
+    //check nodeからのメッセージをあつめる
+    //check nodeが出力したメッセージをtempに集めておく
+    for (int i = 1; i < size; i=i+2) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            for (int k = 0; k < message_list[i][j].size(); k++) {
+                level = message_list[i][j][k].toLevel-1;
+                index = message_list[i][j][k].toIndex-1;
+                temp[level][index] += message_list[i][j][k].val;
+            }
+        }
+    }
+
+    if( is_mid_send() ){
+        for (int i = 0; i < ysize; i++) {
+            for (int j = 0; j < Params::get_N(); j++) {
+                if (ym_isReceived[i][j]) {
+                    double wc = Channel::calcW(y[i][j],0);
+                    double wp = Channel::calcW(y[i][j],1);
+                    double llr = 1.0 * log(wc / wp);
+                    temp[2*i][j] += llr;
+                }
+            }
+        }
+    }
+
+    //更新
+    for (int i = 0; i < size; i=i+2) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            if(temp[i][j] != 0.0 && !node_isChecked[i][j]){
+                node_value[i][j] = temp[i][j];
+            }
+        }
+    }
+}
+
+vector<int> Decoder::calcBP(vector<int> p, vector<int> &param, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &u, vector<int> &A, vector<int> &Ac) {
     vector<double> tmp_u(Params::get_N(),0.0);
-    vector<int> u_n_est(Params::get_N(),2);
+    vector<int> u_n_est(Params::get_N());
     vector<vector<int> > adjacent;
 
     //node初期化、奇数が変数ノード（1,3,5...）、偶数がチェックノード（2,4,6...）
-    int size = 2 * log2(Params::get_N()) + 2;
-    vector<vector<double> > node_value(size, vector<double>(Params::get_N(), 0.0));
-    vector<vector<bool> > node_isChecked(size, vector<bool>(Params::get_N(), false));
+    int size = 2*log2(Params::get_N())+2;
+
+    vector<vector<vector<message> >> message_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
+    vector<vector<double> > node_value(size, vector<double>(Params::get_N(),0.0));
+    vector<vector<bool> > node_isChecked(size, vector<bool>(Params::get_N(),false));
+    vector<vector<bool> > ym_isReceived(size, vector<bool>(Params::get_N(),false));
 
     //BP
     int count = 0;
     int itr = 0;
     int no_checked = 0;
 
-    string val_fn = "/Users/ryotaro/Dropbox/labo/graph_js/val.json";
-    string check_fn = "/Users/ryotaro/Dropbox/labo/graph_js/check.json";
     ofstream val_file;
     ofstream check_file;
-    if(Params::get_is_outlog()) {
-        val_file.open(val_fn, ios::out);
-        check_file.open(check_fn, ios::out);
-        val_file << "{" << endl;
-        check_file << "{" << endl;
-    }
-
+    init_outLog(val_file, check_file);
     if (Params::get_decode_mode() == BP) {
         vector<vector<vector<message> > > message_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
-        BPinit(y, u, A, Ac, node_value, message_list, node_isChecked);
+        if ( is_mid_send() ) {
+            BPinit_m(p, u, xm, ym, A, Ac, node_value, message_list, node_isChecked, ym_isReceived);
+        } else {
+            BPinit(p, u, x, y, A, Ac, node_value, message_list, node_isChecked);
+        }
+
         for (int i = 0; i < Params::get_rp(); i++) {
-            if (isTerminate(no_checked, node_value, node_isChecked)) break;
-            if(Params::get_is_outlog()){
+            if(isTerminate(no_checked, node_value, node_isChecked)) break;
+            if(Params::get_is_outlog()) {
                 printDecodeProgress(itr, node_value, val_file);
                 printDecodeProgress(itr, node_isChecked, check_file);
             }
             itr++;
-            calc_mp(size, node_value, message_list, node_isChecked);
+            if( is_mid_send() ){
+                calc_val_to_check(size, node_value, message_list, node_isChecked, ym, ym_isReceived);
+                calc_check_to_val(size, node_value, message_list, node_isChecked, ym, ym_isReceived);
+                calc_marge(node_value, message_list, node_isChecked, ym, ym_isReceived);
+            } else {
+                calc_mp(size, node_value, message_list, node_isChecked, ym, ym_isReceived);
+
+            }
             confirmIsCheck(node_value, node_isChecked);
+            count++;
         }
+
         for (int i = 0; i < Params::get_N(); i++) {
             if(Params::get_is_outlog()) {
-               cout << "BP: " << i+1 << " " << node_value[0][i] << endl;
+                cout << "BP: " << i+1 << " " << node_value[0][i] << endl;
             }
             u_n_est[i] = (node_value[0][i]>=0.0) ? 0 : 1;
         }
     } else {
-
-        vector<vector<vector<message> > > save_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
-        vector<vector<double> > tmp_node(size, vector<double>(Params::get_N(), 0.0));
-        vector<vector<double> > save_node(size, vector<double>(Params::get_N(), 0.0));
-        vector<vector<bool> > save_isChecked(size, vector<bool>(Params::get_N(), false));
-        vector<vector<bool> > tmp_isChecked(size, vector<bool>(Params::get_N(), false));
-        int tmpSize;
-        int count_limit = 1;
-        bool is_check_changed_left = false;
-        bool is_check_changed_right = false;
-        bool tmpflg = true;
-        for (int i = 0; i < Params::get_N(); i++) {
-            count = 0;
-            tmpSize = size-2;
-            is_check_changed_left = true;
-            is_check_changed_right = true;
-            tmpflg = true;
-
-            vector<vector<vector<message> > > message_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
-            SCinit(i, y, u, u_n_est, A, node_value, message_list, save_list, node_isChecked, save_isChecked);
-            if( i == 0 ){
-                save_list = message_list;
-            }
-
-            for (int j = 0; j < Params::get_rp(); j++) {
-                //uにメッセージがきたらlogに書いてu_estに代入する
-                if (node_value[0][i] != 0.0 || node_isChecked[0][i]) {
-                    u_n_est[i] = (node_value[0][i]>=0) ? 0 : 1;
-                    if(Common::containVal(i,A)){
-                        // if(count < count_limit) {
-                        if(is_check_changed_left && Params::get_is_outlog()) {
-                            printDecodeProgress(itr, node_isChecked, check_file);
-                            printDecodeProgress(itr, node_value, val_file);
-                            itr++;
-                        }
-                    }
-                    break;
-                }
-
-                //message passing
-//                if(count < count_limit) {
-                if(is_check_changed_left) {
-                    //左から
-                    calc_mp(tmpSize, node_value, save_list, save_isChecked);
-                    confirmIsCheck(node_value, save_isChecked);
-                    is_check_changed_left = isChanged(tmp_isChecked, save_isChecked);
-                    tmp_isChecked = save_isChecked;
-                    if(Params::get_is_outlog()){
-                        printDecodeProgress(itr, save_isChecked, check_file);
-                    }
-                } else {
-                    //右から
-//                    if(count == log2(Params::get_N())){
-                    if(tmpflg){
-                        tmpSize = size;
-                        message_list = save_list;
-                        node_isChecked = save_isChecked;
-                        tmpflg = false;
-                    }
-                    calc_mp(tmpSize, node_value, message_list, node_isChecked);
-                    confirmIsCheck(node_value, node_isChecked);
-
-                    is_check_changed_right = isChanged(tmp_isChecked, node_isChecked);
-                    tmp_isChecked = node_isChecked;
-                    if(Params::get_is_outlog()){
-                        printDecodeProgress(itr, node_isChecked, check_file);
-                    }
-                }
-                if(Params::get_is_outlog()){
-                    printDecodeProgress(itr, node_value, val_file);
-                }
-
-                itr++;
-
-                count++;
-                if((Params::get_decode_mode() == BP && j == Params::get_rp()-1) || !is_check_changed_right) {
-                    u_n_est[i] = (node_value[0][i]>=0.0) ? 0 : 1;
-                    if(Common::containVal(i,A)){
-                        // if(count < count_limit) {
-                        if(Params::get_is_outlog()){
-                            if(is_check_changed_left) {
-                                printDecodeProgress(itr, save_isChecked, check_file);
-                            } else {
-                                printDecodeProgress(itr, node_isChecked, check_file);
-                            }
-                            printDecodeProgress(itr, node_value, val_file);
-                        }
-                        itr++;
-                    }
-                    break;
-                }
-            }
-            tmp_u[i] = node_value[0][i];
-            node_value[0][i] = (u_n_est[i]==0) ? inf_p : inf_m;
-        }
-
-        if(Params::get_is_outlog()) {
-            for (int i = 0; i < Params::get_N(); i++) {
-                cout << "BP: " << i+1 << " " << tmp_u[i] << endl;
-            }
-        }
+        calcSConBP(itr, count, val_file, check_file, u, y, u_n_est, tmp_u, A, node_value, node_isChecked, {}, {});
     }
+
     int error_count = 0;
     Analysor::errorCount(u, u_n_est, &error_count);
     param[0] = itr;
     param[1] = no_checked;
 
-    if(Params::get_is_outlog()) {
-        printDecodeProgress(itr, node_isChecked, check_file);
-        printDecodeProgress(itr, node_value, val_file);
-
-        val_file << "\t}" << endl;
-        val_file << "}" << endl;
-        check_file << "\t}" << endl;
-        check_file << "}" << endl;
-
-        string channel = "";
-        if (Params::get_s() == BEC) {
-            channel = "BEC";
-        } else if (Params::get_s() == BSC) {
-            channel = "BSC";
-        } else {
-            channel = "AWGN";
-        }
-
-        string correct_fn = "/Users/ryotaro/Dropbox/labo/graph_js/correct.json";
-        ofstream correct_file;
-        correct_file.open(correct_fn, ios::out);
-        correct_file << "{" << endl;
-        for (int i = 0; i < Params::get_N(); i++) {
-            if (i == Params::get_N() - 1) {
-                correct_file << "\t\"" << i << "\" : \"" << u[i] << "\"" << endl;
-            } else {
-                correct_file << "\t\"" << i << "\" : \"" << u[i] << "\"," << endl;
-            }
-        }
-        correct_file << "}" << endl;
-
-        string params_fn = "/Users/ryotaro/Dropbox/labo/graph_js/params.json";
-        ofstream params_file;
-        params_file.open(params_fn, ios::out);
-        params_file << "{" << endl;
-        params_file << "\t\"N\" : \"" << Params::get_N() << "\"," << endl;
-        params_file << "\t\"Channel\" : \"" << channel << "\"," << endl;
-        params_file << "\t\"e\" : \"" << Params::get_e() << "\"," << endl;
-        params_file << "\t\"ITR\" : \"" << itr << "\"," << endl;
-        params_file << "\t\"no_checked\" : \"" << no_checked << "\"," << endl;
-        params_file << "\t\"error_count\" : \"" << error_count << "\"" << endl;
-
-//    cout <<  "no_checked : " << no_checked << endl;
-        params_file << "}" << endl;
-    }
-    return u_n_est;
-}
-
-vector<int> Decoder::calcBP_m(vector<int> &param, vector<vector<double> > &y, vector<int> &u, vector<int> &A){
-    vector<int> u_n_est(Params::get_N());
-    vector<vector<int> > adjacent;
-
-    //node初期化、奇数が変数ノード（1,3,5...）、偶数がチェックノード（2,4,6...）
-    int size = 2*log2(Params::get_N())+2;
-
-    vector<vector<vector<message> >> message_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
-    vector<vector<double> > node_value(size, vector<double>(Params::get_N(),0.0));
-    vector<vector<bool> > node_isChecked(size, vector<bool>(Params::get_N(),false));
-    vector<vector<bool> > ym_isReceived(size, vector<bool>(Params::get_N(),false));
-
-    //yとかの値をセット
-    BPinit_m(y, u, A, node_value, message_list, node_isChecked, ym_isReceived);
-
-    //BP
-    int count = 0;
-    int itr = 0;
-    int no_checked = 0;
-
-    string val_fn = "/Users/ryotaro/Dropbox/labo/graph_js/val.json";
-    string check_fn = "/Users/ryotaro/Dropbox/labo/graph_js/check.json";
-    ofstream val_file;
-    ofstream check_file;
-    if(Params::get_is_outlog()) {
-        val_file.open(val_fn, ios::out);
-        check_file.open(check_fn, ios::out);
-        val_file << "{" << endl;
-        check_file << "{" << endl;
-    }
-
-    while(count <= Params::get_rp()) {
-        if(isTerminate(no_checked, node_value, node_isChecked)) break;
-        if(Params::get_is_outlog()) {
-            printDecodeProgress(itr, node_value, val_file);
-            printDecodeProgress(itr, node_isChecked, check_file);
-        }
-        itr++;
-        calc_val_to_check_m(node_value, message_list, node_isChecked, y, ym_isReceived);
-        calc_check_to_val_m(node_value, message_list, node_isChecked, y, ym_isReceived);
-
-        //中間変数考慮
-        calc_marge_m(node_value, message_list, node_isChecked, y, ym_isReceived);
-        confirmIsCheck(node_value, node_isChecked);
-        count++;
-    }
-
-    param[0] = itr;
-    param[1] = no_checked;
-
-    if(Params::get_is_outlog()) {
-        printDecodeProgress(itr, node_value, val_file);
-        printDecodeProgress(itr, node_isChecked, check_file);
-        val_file << "\t}" << endl;
-        val_file << "}" << endl;
-        check_file << "\t}" << endl;
-        check_file << "}" << endl;
-
-        string channel = "";
-        if (Params::get_s() == BEC) {
-            channel = "BEC";
-        } else if (Params::get_s() == BSC) {
-            channel = "BSC";
-        } else {
-            channel = "AWGN";
-        }
-
-        string correct_fn = "/Users/ryotaro/Dropbox/labo/graph_js/correct.json";
-        ofstream correct_file;
-        correct_file.open(correct_fn, ios::out);
-        correct_file << "{" << endl;
-        for (int i = 0; i < Params::get_N(); i++) {
-            if (i == Params::get_N() - 1) {
-                correct_file << "\t\"" << i << "\" : \"" << u[i] << "\"" << endl;
-            } else {
-                correct_file << "\t\"" << i << "\" : \"" << u[i] << "\"," << endl;
-            }
-        }
-        correct_file << "}" << endl;
-
-        string params_fn = "/Users/ryotaro/Dropbox/labo/graph_js/params.json";
-        ofstream params_file;
-        params_file.open(params_fn, ios::out);
-        params_file << "{" << endl;
-        params_file << "\t\"N\" : \"" << Params::get_N() << "\"," << endl;
-        params_file << "\t\"Channel\" : \"" << channel << "\"," << endl;
-        params_file << "\t\"e\" : \"" << Params::get_e() << "\"," << endl;
-        params_file << "\t\"ITR\" : \"" << itr << "\"," << endl;
-        params_file << "\t\"no_checked\" : \"" << no_checked << "\"," << endl;
-
-//    cout <<  "itr : " << itr << endl;
-//    cout <<  "no_checked : " << no_checked << endl;
-
-        int error_count = 0;
-        Analysor::errorCount(u, u_n_est, &error_count);
-        params_file << "\t\"error_count\" : \"" << error_count << "\"" << endl;
-
-        params_file << "}" << endl;
-    }
-    for (int i = 0; i < Params::get_N(); i++) {
-        if(Params::get_is_outlog()) {
-            cout << "BP: " << i + 1 << " " << node_value[0][i] << endl;
-        }
-        u_n_est[i] = (node_value[0][i] > 0) ? 0 : 1;
-    }
-    return u_n_est;
-}
-
-vector<int> Decoder::calcBP_m_wang(vector<int> p, vector<int> &param, vector<vector<int> > &x, vector<vector<double> > &y, vector<int> &u, vector<int> &A) {
-    vector<int> u_n_est(Params::get_N());
-    vector<vector<int> > adjacent;
-
-    //node初期化、奇数が変数ノード（1,3,5...）、偶数がチェックノード（2,4,6...）
-    int size = 2*log2(Params::get_N())+2;
-
-    vector<vector<vector<message> >> message_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
-    vector<vector<double> > node_value(size, vector<double>(Params::get_N(),0.0));
-    vector<vector<bool> > node_isChecked(size, vector<bool>(Params::get_N(),false));
-    vector<vector<bool> > ym_isReceived(size, vector<bool>(Params::get_N(),false));
-
-    //yとかの値をセット
-    BPinit_m_wang(p, x, y, u, A, node_value, message_list, node_isChecked, ym_isReceived);
-
-    //BP
-    int count = 0;
-    int itr = 0;
-    int no_checked = 0;
-
-    string val_fn = "/Users/ryotaro/Dropbox/labo/graph_js/val.json";
-    string check_fn = "/Users/ryotaro/Dropbox/labo/graph_js/check.json";
-    ofstream val_file;
-    ofstream check_file;
-    if(Params::get_is_outlog()) {
-        val_file.open(val_fn, ios::out);
-        check_file.open(check_fn, ios::out);
-        val_file << "{" << endl;
-        check_file << "{" << endl;
-    }
-
-    while(count <= Params::get_rp()) {
-        if(isTerminate(no_checked, node_value, node_isChecked)) break;
-        if(Params::get_is_outlog()) {
-            printDecodeProgress(itr, node_value, val_file);
-            printDecodeProgress(itr, node_isChecked, check_file);
-        }
-        itr++;
-        calc_val_to_check_m(node_value, message_list, node_isChecked, y, ym_isReceived);
-        calc_check_to_val_m(node_value, message_list, node_isChecked, y, ym_isReceived);
-
-        //中間変数考慮
-        calc_marge_m(node_value, message_list, node_isChecked, y, ym_isReceived);
-        confirmIsCheck(node_value, node_isChecked);
-        count++;
-    }
-
-    param[0] = itr;
-    param[1] = no_checked;
-
     for (int i = 0; i < Params::get_N(); i++) {
         if(Params::get_is_outlog()) {
             cout << "BP: " << i + 1 << " " << node_value[0][i] << endl;
@@ -1279,6 +647,43 @@ vector<int> Decoder::calcBP_m_wang(vector<int> p, vector<int> &param, vector<vec
         u_n_est[i] = (node_value[0][i] > 0) ? 0 : 1;
     }
 
+    outLog(itr, no_checked, u, u_n_est, val_file, check_file , node_value, node_isChecked);
+
+    return u_n_est;
+}
+
+bool Decoder::is_mid_send(){
+    switch (Params::get_exp_mode()){
+        case NORMAL:
+        case PUNC:
+        case QUP:
+        case WANG:
+            return false;
+        case MID:
+        case M_WANG:
+        case M_QUP:
+        case VALERIO_P:
+        case VALERIO_S:
+        case M_VALERIO_P:
+        case M_VALERIO_S:
+            return true;
+        default:
+            break;
+    }
+}
+
+void Decoder::init_outLog(ofstream val_file, ofstream check_file){
+    if(Params::get_is_outlog()) {
+        string val_fn = "/Users/ryotaro/Dropbox/labo/graph_js/val.json";
+        string check_fn = "/Users/ryotaro/Dropbox/labo/graph_js/check.json";
+        val_file.open(val_fn, ios::out);
+        check_file.open(check_fn, ios::out);
+        val_file << "{" << endl;
+        check_file << "{" << endl;
+    }
+}
+
+void Decoder::outLog(int itr, int no_checked, vector<int>u, vector<int>u_n_est, ofstream val_file, ofstream check_file ,vector<vector<double> > node_value, vector<vector<bool> > node_isChecked){
     if(Params::get_is_outlog()) {
         printDecodeProgress(itr, node_value, val_file);
         printDecodeProgress(itr, node_isChecked, check_file);
@@ -1319,18 +724,13 @@ vector<int> Decoder::calcBP_m_wang(vector<int> p, vector<int> &param, vector<vec
         params_file << "\t\"ITR\" : \"" << itr << "\"," << endl;
         params_file << "\t\"no_checked\" : \"" << no_checked << "\"," << endl;
 
-//    cout <<  "itr : " << itr << endl;
-//    cout <<  "no_checked : " << no_checked << endl;
-
         int error_count = 0;
         Analysor::errorCount(u, u_n_est, &error_count);
         params_file << "\t\"error_count\" : \"" << error_count << "\"" << endl;
 
         params_file << "}" << endl;
     }
-    return u_n_est;
 }
-
 
 inline vector<int>Decoder::makeBPTreeIndex(int n){
     vector<int> ret(n);
@@ -1397,56 +797,6 @@ vector<int> Decoder::decode(vector<double> &y, vector<int> &u, vector<int> &A){
             u_n_est[i] = h_i[i];
             cout << "SC: " << i+1 << " " << llr << endl;
 //            printf("%05f\n", llr);
-        }
-    }
-    return u_n_est;
-}
-
-vector<int> Decoder::decode_m(vector<vector<double> > &y, vector<int> &u, vector<int> &A){
-    vector<double> h_i(Params::get_N());
-    vector<int> u_n_est(Params::get_N());
-    int size = log2(Params::get_N());
-
-    vector<vector<bool> > isCache (size, vector<bool>(Params::get_N(),false));
-    vector<vector<double> > cache (size, vector<double>(Params::get_N(),0.0));
-
-    int cache_i = 0;
-
-    vector<int> tree = makeTreeIndex(Params::get_N());
-    for (int i = 0; i<log2(Params::get_N())-1; i++) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            if (y[i][j] == 0){
-                isCache[i][ tree[j]-1 ] = true;
-                cache[i][ tree[j]-1 ] = inf_p;
-            } else if(y[i][j] == 1) {
-                isCache[i][ tree[j]-1 ] = true;
-                cache[i][ tree[j]-1 ] = inf_m;
-            }
-        }
-    }
-    double llr;
-
-    //u_n_est計算
-    for (int i = 0; i < Params::get_N(); i++) {
-        // Aに含まれないindexなら既知
-        if (Common::containNumInArray(i, Params::get_N()-Params::get_K(), A) == false) {
-            u_n_est[i] = u[i];
-        } else {
-            this->startTimer();
-
-            cache_i = makeTreeIndex(Params::get_N())[i] - 1;
-            llr = calcL_i(i+1, Params::get_N(), cache_i, 0, y[log2(Params::get_N())- 1], u_n_est, isCache, cache);
-
-            this->stopTimer();
-            this->outTime();
-//            cout << i+1 << "  " << llr <<endl;
-//            if (exp(llr) >= 1.0) {
-            if (llr >= 0.0) {
-                h_i[i] = 0;
-            } else {
-                h_i[i] = 1;
-            }
-            u_n_est[i] = h_i[i];
         }
     }
     return u_n_est;
@@ -1542,4 +892,109 @@ double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<double> &y,
     }
     return llr;
 
+}
+
+vector<int> Decoder::calcSConBP(int itr, int count, ofstream val_file, ofstream check_file, vector<int> u, vector<double> y, vector<int> u_n_est, vector<double> tmp_u, vector<int> A, vector<vector<double> > node_value, vector<vector<bool> > node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived) {
+    int size = 2 * log2(Params::get_N()) + 2;
+
+    vector<vector<vector<message> > > save_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
+    vector<vector<double> > tmp_node(size, vector<double>(Params::get_N(), 0.0));
+    vector<vector<double> > save_node(size, vector<double>(Params::get_N(), 0.0));
+    vector<vector<bool> > save_isChecked(size, vector<bool>(Params::get_N(), false));
+    vector<vector<bool> > tmp_isChecked(size, vector<bool>(Params::get_N(), false));
+    int tmpSize;
+    int count_limit = 1;
+    bool is_check_changed_left = false;
+    bool is_check_changed_right = false;
+    bool tmpflg = true;
+    for (int i = 0; i < Params::get_N(); i++) {
+        count = 0;
+        tmpSize = size-2;
+        is_check_changed_left = true;
+        is_check_changed_right = true;
+        tmpflg = true;
+
+        vector<vector<vector<message> > > message_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
+        SCinit(i, y, u, u_n_est, A, node_value, message_list, save_list, node_isChecked, save_isChecked);
+        if( i == 0 ){
+            save_list = message_list;
+        }
+
+        for (int j = 0; j < Params::get_rp(); j++) {
+            //uにメッセージがきたらlogに書いてu_estに代入する
+            if (node_value[0][i] != 0.0 || node_isChecked[0][i]) {
+                u_n_est[i] = (node_value[0][i]>=0) ? 0 : 1;
+                if(Common::containVal(i,A)){
+                    // if(count < count_limit) {
+                    if(is_check_changed_left && Params::get_is_outlog()) {
+                        printDecodeProgress(itr, node_isChecked, check_file);
+                        printDecodeProgress(itr, node_value, val_file);
+                        itr++;
+                    }
+                }
+                break;
+            }
+
+            //message passing
+//                if(count < count_limit) {
+            if(is_check_changed_left) {
+                //左から
+                calc_mp(tmpSize, node_value, save_list, save_isChecked, y, ym_isReceived);
+                confirmIsCheck(node_value, save_isChecked);
+                is_check_changed_left = isChanged(tmp_isChecked, save_isChecked);
+                tmp_isChecked = save_isChecked;
+                if(Params::get_is_outlog()){
+                    printDecodeProgress(itr, save_isChecked, check_file);
+                }
+            } else {
+                //右から
+//                    if(count == log2(Params::get_N())){
+                if(tmpflg){
+                    tmpSize = size;
+                    message_list = save_list;
+                    node_isChecked = save_isChecked;
+                    tmpflg = false;
+                }
+                calc_mp(tmpSize, node_value, message_list, node_isChecked, y, ym_isReceived);
+                confirmIsCheck(node_value, node_isChecked);
+
+                is_check_changed_right = isChanged(tmp_isChecked, node_isChecked);
+                tmp_isChecked = node_isChecked;
+                if(Params::get_is_outlog()){
+                    printDecodeProgress(itr, node_isChecked, check_file);
+                }
+            }
+            if(Params::get_is_outlog()){
+                printDecodeProgress(itr, node_value, val_file);
+            }
+
+            itr++;
+
+            count++;
+            if((Params::get_decode_mode() == BP && j == Params::get_rp()-1) || !is_check_changed_right) {
+                u_n_est[i] = (node_value[0][i]>=0.0) ? 0 : 1;
+                if(Common::containVal(i,A)){
+                    // if(count < count_limit) {
+                    if(Params::get_is_outlog()){
+                        if(is_check_changed_left) {
+                            printDecodeProgress(itr, save_isChecked, check_file);
+                        } else {
+                            printDecodeProgress(itr, node_isChecked, check_file);
+                        }
+                        printDecodeProgress(itr, node_value, val_file);
+                    }
+                    itr++;
+                }
+                break;
+            }
+        }
+        tmp_u[i] = node_value[0][i];
+        node_value[0][i] = (u_n_est[i]==0) ? inf_p : inf_m;
+    }
+
+    if(Params::get_is_outlog()) {
+        for (int i = 0; i < Params::get_N(); i++) {
+            cout << "BP: " << i+1 << " " << tmp_u[i] << endl;
+        }
+    }
 }

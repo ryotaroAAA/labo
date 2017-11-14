@@ -15,48 +15,50 @@ class Decoder : public Performance{
 public:
     explicit Decoder();
     ~Decoder();
-    double calc_message(int mode, vector<double> val);
 
-    void calc_marge(vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
-    void calc_marge_m(vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
-    void calc_check_to_val(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
-    void calc_check_to_val_m(vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
-    void calc_val_to_check(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
-    void calc_val_to_check_m(vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
-    void send_message(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
-    void send_message_m(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
+    //main BP
+    vector<int> calcBP(vector<int> p, vector<int> &param, vector<int> &x, vector<double> &y, vector<vector<int> > &x, vector<vector<double> > &y, vector<int> &u, vector<int> &A, vector<int> &Ac;
+    vector<int> calcSConBP(int itr, int count, ofstream val_file, ofstream check_file, vector<int> u, vector<double> y, vector<int> u_n_est, vector<double> tmp_u, vector<int> A, vector<vector<double> > node_value, vector<vector<bool> > node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
 
-    void BPinit(vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
-    void BPinit_wang(vector<int> p, vector<int> &x, vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
+    //BP init
+    void init_message(vector<bool> puncFlag, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list);
+    void init_params(vector<bool> puncFlag, vector<int> p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
     void SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_est, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<vector<message> > > &save_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &save_isChecked);
-    void BPinit_m(vector<vector<double> > &y, vector<int> &u, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
-    void BPinit_m_wang(vector<int> p, vector<vector<int> > &x, vector<vector<double> > &y, vector<int> &u, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
+    void BPinit(vector<int> p, vector<int> &u, vector<int> &x, vector<double> &y, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
+    void BPinit_m(vector<int> p, vector<int> &u, vector<vector<int> > &x, vector<vector<double> > &y, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
 
+    //calc message
+    double calc_message(int mode, vector<double> val);
+    void calc_marge(vector<vector<double> > &node_value, vector<vector<vector<message> >> &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
+    void calc_check_to_val(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
+    void calc_val_to_check(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
+    void send_message(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
+    void calc_mp(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
+
+    //calc terminal condition
     bool isTerminate(int &no_checked, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked);
     void confirmIsCheck(vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked);
     bool isChanged(vector<vector<bool> > &old_node_isChecked, vector<vector<bool> > &new_node_isChecked2);
 
+    //log
+    void init_outLog(ofstream val_file, ofstream check_file);
+    void outLog(int itr, int no_checked, vector<int>u, vector<int>u_est, ofstream val_file, ofstream check_file ,vector<vector<double> > node_value, vector<vector<bool> > node_isChecked);
     void printDecodeProgress(int count, vector<vector<bool> > &node_value, ofstream &w_file);
     void printDecodeProgress(int count, vector<vector<double> > &node_value, ofstream &w_file);
 
+    //gear
+    bool is_mid_send();
+    vector<vector<int> > adjacentIndex(int level, int index);
+    vector<int> makeTreeIndex(int n);
+    vector<int> makeBPTreeIndex(int n);
     int take_val(vector<int> index, vector<vector<int> > &node_val);
     double take_val(vector<int> index, vector<vector<double> > &node_val);
     bool take_val(vector<int> index, vector<vector<bool> > &node_val);
     void set_val(bool val, vector<int> locate, vector<vector<bool> > &node_val);
 
-    vector<vector<int> > adjacentIndex(int level, int index);
-    vector<int> makeTreeIndex(int n);
-    vector<int> makeBPTreeIndex(int n);
+    //sc
     vector<int> decode(vector<double> &y, vector<int> &u, vector<int> &A);
-    vector<int> decode_m(vector<vector<double> > &y, vector<int> &u, vector<int> &A);
     double calcL_i(int i, int n ,int cache_i, int lefvel ,vector<double> &y ,vector<int> &u, vector<vector<bool> > &isCache , vector<vector<double> > &cache);
-
-    vector<int> calcBP(vector<int> &param, vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac);
-    vector<int> calcBP_wang(vector<int> p, vector<int> &param, vector<int> &x, vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac);
-    vector<int> calcBP_m(vector<int> &param, vector<vector<double> > &y, vector<int> &u, vector<int> &A);
-    vector<int> calcBP_m_wang(vector<int> p, vector<int> &param, vector<vector<int> > &x, vector<vector<double> > &y, vector<int> &u, vector<int> &A);
-
-    void calc_mp(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
 };
 
 #endif //CHANNEL_POLARIZATION_DECDER_H

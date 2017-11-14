@@ -10,56 +10,42 @@
 //#include "../lib/ps.h"
 
 
-void calcBER(bool mid, bool punc, bool wang, bool mwang){
+void calcBER(){
     Performance performance;
     Decoder decoder;
     Encoder encoder;
     Logger logger;
     Analysor analysor;
 
+    EXP_MODE em = Params::get_exp_mode();
+    string ename;
+    switch (em) {
+        case NORMAL: ename = "";
+        case PUNC: ename = " punc";
+        case QUP: ename = " qup";
+        case WANG: ename = " wang";
+        case M_QUP: ename = " m_qup";
+        case M_WANG: ename = " m_wang";
+        case VALERIO_P: ename = " valerio_p";
+        case VALERIO_S: ename = " valerio_s";
+        case M_VALERIO_P: ename = " m_valerio_p";
+        case M_VALERIO_S: ename = " m_valerio_s";
+    }
+
     time_t now = time(NULL);
     struct tm *pnow = localtime(&now);
-    if (Params::get_s() == BEC || Params::get_s() == BSC) {
-        if (mid) {
-            Params::set_rvbDir("log/"
-                               + to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
-                               + "/N=" + to_string(Params::get_N())
-                               + " e=" + to_string(Params::get_e())
-                               + " channel=" + (Params::get_s()?"BSC":"BEC") + " mid"
-            );
-        } else if(punc) {
-            Params::set_rvbDir("log/"
-                               + to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
-                               + "/N=" + to_string(Params::get_N())
-                               + " e=" + to_string(Params::get_e())
-                               + " channel=" + (Params::get_s()?"BSC":"BEC") + " punc"
-            );
-        } else if(wang) {
-            Params::set_rvbDir("log/"
-                               + to_string(pnow->tm_year + 1900) + to_string(pnow->tm_mon + 1) +
-                               to_string(pnow->tm_mday)
-                               + "/N=" + to_string(Params::get_N())
-                               + " e=" + to_string(Params::get_e())
-                               + " channel=" + (Params::get_s() ? "BSC" : "BEC") + " wang"
-            );
-        } else if(mwang) {
-            Params::set_rvbDir("log/"
-                               + to_string(pnow->tm_year + 1900) + to_string(pnow->tm_mon + 1) +
-                               to_string(pnow->tm_mday)
-                               + "/N=" + to_string(Params::get_N())
-                               + " e=" + to_string(Params::get_e())
-                               + " channel=" + (Params::get_s() ? "BSC" : "BEC") + " mid wang"
-            );
-        } else {
-            Params::set_rvbDir("log/"
-                               + to_string(pnow->tm_year + 1900) + to_string(pnow->tm_mon + 1) +
-                               to_string(pnow->tm_mday)
-                               + "/N=" + to_string(Params::get_N())
-                               + " e=" + to_string(Params::get_e())
-                               + " channel=" + (Params::get_s() ? "BSC" : "BEC")
-            );
-        }
-    } else if (Params::get_s() == AWGN) {
+    CHANNEL_TYPE channel_type = Params::get_s();
+    if (channel_type == BEC || channel_type == BSC) {
+        Params::set_rvbDir("log/"
+                           + to_string(pnow->tm_year + 1900) + to_string(pnow->tm_mon + 1) +
+                           to_string(pnow->tm_mday)
+                           + "/N=" + to_string(Params::get_N())
+                           + " e=" + to_string(Params::get_e())
+                           + " blockNum=" + to_string(Params::get_blockNum())
+                           + " upperblockNum=" + to_string(Params::get_upperBlockErrorNum())
+                           + " channel=" + (Params::get_s() ? "BSC" : "BEC") + ename
+        );
+    } else if (channel_type == AWGN) {
         Params::set_rvbDir("log/"
                            + to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
                            + "/N=" + to_string(Params::get_N())
@@ -67,24 +53,22 @@ void calcBER(bool mid, bool punc, bool wang, bool mwang){
                            + " channel=AWGN"
                            + " monteNum=" + to_string(Params::get_monteNum())
                            + " blockNum=" + to_string(Params::get_blockNum())
+                           + " upperblockNum=" + to_string(Params::get_upperBlockErrorNum()) + ename
         );
     }
 
-//    int divNum = 15;
-//    Params::set_K(Params::get_N() / (divNum * 2));
-//    Params::set_K(16);
 
     performance.startTimer();
 
-    if( mid ){
-        analysor.calcBlockErrorRate_mid_BP(RUN);
-    } else if(wang) {
-        analysor.calcBlockErrorRate_BP_wang(RUN);
-    } else if(mwang) {
-        analysor.calcBlockErrorRate_mid_wang_BP(RUN);
-    } else {
+//    if( mid ){
+//        analysor.calcBlockErrorRate_mid_BP(RUN);
+//    } else if(wang) {
+//        analysor.calcBlockErrorRate_BP_wang(RUN);
+//    } else if(mwang) {
+//        analysor.calcBlockErrorRate_mid_wang_BP(RUN);
+//    } else {
         analysor.calcBlockErrorRate_BP(TEST);
-    }
+//    }
 
 
     performance.stopTimer();
@@ -384,6 +368,7 @@ int main(void) {
     Params::set_rp(70);
     Params::set_blockNum(10000);
     Params::set_upperBlockErrorNum(100);
+    Params::set_exp_mode(NORMAL);
 
 //    vector<int> A;
 //    vector<int> Ac;
@@ -396,22 +381,17 @@ int main(void) {
 //    Common::pp(A);
 //    Common::pp(Ac);
 //    Common::pp(p);
-
-    bool mid = false;
-    bool punc = false;
-    bool wang = false;
-    bool mwang = true;
-
-    if(mid){
+    EXP_MODE em = Params::get_exp_mode();
+    if(em == MID){
 //        Params::set_K(17*2); //中間ノード
         Params::set_K(40); //中間ノード
-    } else if(punc || wang) {
+    } else if(em == QUP || em == WANG || em == PUNC) {
 //        Params::set_K(15*2);
         Params::set_K(24);
     } else {
         Params::set_K(16*2);
     }
-    calcBER(mid, punc, wang, mwang);
+    calcBER();
 
 //    testNormal();
 //    testPunc();

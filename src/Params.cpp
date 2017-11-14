@@ -12,6 +12,7 @@ double Params::e = 0;
 string Params::rvbDir = "";
 CHANNEL_TYPE Params::s = BEC;
 DECODE_MODE Params::dm = BP;
+EXP_MODE Params::exp_mode = NORMAL;
 
 int Params::get_N(){
     return N;
@@ -61,6 +62,10 @@ DECODE_MODE Params::get_decode_mode(){
     return dm;
 }
 
+EXP_MODE Params::get_exp_mode(){
+    return exp_mode;
+}
+
 void Params::set_N(int _N){
     N = _N;
 }
@@ -103,6 +108,10 @@ void Params::set_s(CHANNEL_TYPE _s){
 
 void Params::set_decode_mode(DECODE_MODE _dm){
     dm = _dm;
+}
+
+void Params::set_exp_mode(EXP_MODE _exp_mode){
+    exp_mode = _exp_mode;
 }
 
 void Params::set_is_outlog(bool _is_outlog){

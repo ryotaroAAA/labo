@@ -10,6 +10,7 @@ enum CHANNEL_TYPE{BEC, BSC, AWGN};
 enum SOURCE_TYPE{ALL0, ALL1, RAND};
 enum MODE{TEST, RUN};
 enum DECODE_MODE{BP, SC};
+enum EXP_MODE{NORMAL, PUNC, QUP, WANG, MID, M_WANG, M_QUP, VALERIO_P, VALERIO_S, M_VALERIO_P, M_VALERIO_S};
 
 const static double inf_p =  30.0;
 const static double inf_m = -30.0;
@@ -36,6 +37,7 @@ private:
     static bool is_outlog;
     static CHANNEL_TYPE s;
     static DECODE_MODE dm;
+    static EXP_MODE exp_mode;
     static string rvbDir;
 public:
     static int get_N();
@@ -49,6 +51,7 @@ public:
     static string get_rvbDir();
     static CHANNEL_TYPE get_s();
     static DECODE_MODE get_decode_mode();
+    static EXP_MODE get_exp_mode();
     static int get_rp();
     static void set_N(int _N);
     static void set_M(int _M);
@@ -57,6 +60,7 @@ public:
     static void set_monteNum(int _monteNum);
     static void set_blockNum(int _blockNum);
     static void set_decode_mode(DECODE_MODE _dm);
+    static void set_exp_mode(EXP_MODE _exp_m);
     static void set_upperBlockErrorNum(int _upperBlockErrorNum);
     static void set_e(double _e);
     static void set_rvbDir(string rvbDir);

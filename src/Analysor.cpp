@@ -583,11 +583,7 @@ void Analysor::calcBlockErrorRate_BP_wang(MODE mode) {
 
     vector<int> A;
     vector<int> Ac;
-//    Preseter::preset_A_Ac(A,Ac);
     vector<int> p_0(Params::get_M());
-//    for (int i = 0; i < Params::get_M(); i++) {
-//        p_0[i] = Params::get_N()-i;
-//    }
     vector<int> p = Analysor::get_P(p_0);
 
     double BER = 0.0;
@@ -601,6 +597,7 @@ void Analysor::calcBlockErrorRate_BP_wang(MODE mode) {
     int tmp = Params::get_N()/Params::get_K();
     int tmpK = Params::get_K();
     vector<int> param(2,0);
+
 
     time_t now = time(NULL);
     struct tm *pnow = localtime(&now);
