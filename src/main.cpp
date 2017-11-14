@@ -20,16 +20,17 @@ void calcBER(){
     EXP_MODE em = Params::get_exp_mode();
     string ename;
     switch (em) {
-        case NORMAL: ename = "";
-        case PUNC: ename = " punc";
-        case QUP: ename = " qup";
-        case WANG: ename = " wang";
-        case M_QUP: ename = " m_qup";
-        case M_WANG: ename = " m_wang";
-        case VALERIO_P: ename = " valerio_p";
-        case VALERIO_S: ename = " valerio_s";
-        case M_VALERIO_P: ename = " m_valerio_p";
-        case M_VALERIO_S: ename = " m_valerio_s";
+        case NORMAL: ename = ""; break;
+        case PUNC: ename = " punc"; break;
+        case MID: ename = " mid"; break;
+        case QUP: ename = " qup"; break;
+        case WANG: ename = " wang"; break;
+        case M_QUP: ename = " m_qup"; break;
+        case M_WANG: ename = " m_wang"; break;
+        case VALERIO_P: ename = " valerio_p"; break;
+        case VALERIO_S: ename = " valerio_s"; break;
+        case M_VALERIO_P: ename = " m_valerio_p"; break;
+        case M_VALERIO_S: ename = " m_valerio_s"; break;
     }
 
     time_t now = time(NULL);
@@ -114,7 +115,7 @@ void testNormal() {
             //BP
             Common::bar();
             vector<int> param(2, 0);//param[0]:itr, param[1]:no_checked
-            u_est = decoder.calcBP(param, y_n, u_n, A, Ac);
+//            u_est = decoder.calcBP(param, y_n, u_n, A, Ac);
             Analysor::errorCount(u_n, u_est, &error_count);
 
             cout << "error " << error_count << "/" << Params::get_N() << endl;
@@ -173,7 +174,7 @@ void testPunc() {
     Common::bar();
     vector<int> param(2, 0);//param[0]:itr, param[1]:no_checked
 
-    u_est = decoder.calcBP_wang(p, param, x_n, y_n, u_n, A, Ac);
+//    u_est = decoder.calcBP_wang(p, param, x_n, y_n, u_n, A, Ac);
     Analysor::errorCount(u_n, u_est, &error_count);
 
     cout << "error " << error_count << "/" << Params::get_N() << endl;
@@ -239,7 +240,7 @@ void testMiddleval(){
 
     error_count = 0;
     vector<int> param(2, 0);
-    u_est = decoder.calcBP_m(param, y_n, u_n, A);
+//    u_est = decoder.calcBP_m(param, y_n, u_n, A);
     Analysor::errorCount(u_n, u_est, &error_count);
     bp_error = error_count;
     cout << "error :" << bp_error << "/" << Params::get_N() << endl;
@@ -316,7 +317,7 @@ void testMidWang(){
 
     error_count = 0;
     vector<int> param(2, 0);
-    u_est = decoder.calcBP_m_wang(p, param, x_n, y_n, u_n, A);
+//    u_est = decoder.calcBP_m_wang(p, param, x_n, y_n, u_n, A);
     Analysor::errorCount(u_n, u_est, &error_count);
     bp_error = error_count;
     cout << "error :" << bp_error << "/" << Params::get_N() << endl;
@@ -358,9 +359,9 @@ int main(void) {
 //    Params::set_upperBlockErrorNum(1000);
 
     Params::set_e(0.5);
-    Params::set_N(1024);
-    Params::set_K(30);
-    Params::set_M(256);
+    Params::set_N(32);
+    Params::set_K(1);
+    Params::set_M(3);
     Params::set_s(BEC);
     Params::set_is_outlog(false);
     Params::set_decode_mode(BP);
@@ -389,7 +390,7 @@ int main(void) {
 //        Params::set_K(15*2);
         Params::set_K(24);
     } else {
-        Params::set_K(16*2);
+//        Params::set_K(16*2);
     }
     calcBER();
 
