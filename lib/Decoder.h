@@ -26,9 +26,11 @@ public:
     void send_message(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
     void send_message_m(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y, vector<vector<bool> > &ym_isReceived);
 
-    void BPinit(vector<double> &y, vector<int> &u, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
+    void BPinit(vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
+    void BPinit_wang(vector<int> p, vector<int> &x, vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
     void SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_est, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<vector<message> > > &save_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &save_isChecked);
     void BPinit_m(vector<vector<double> > &y, vector<int> &u, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
+    void BPinit_m_wang(vector<int> p, vector<vector<int> > &x, vector<vector<double> > &y, vector<int> &u, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
 
     bool isTerminate(int &no_checked, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked);
     void confirmIsCheck(vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked);
@@ -48,8 +50,11 @@ public:
     vector<int> decode(vector<double> &y, vector<int> &u, vector<int> &A);
     vector<int> decode_m(vector<vector<double> > &y, vector<int> &u, vector<int> &A);
     double calcL_i(int i, int n ,int cache_i, int lefvel ,vector<double> &y ,vector<int> &u, vector<vector<bool> > &isCache , vector<vector<double> > &cache);
-    vector<int> calcBP(vector<int> &param, vector<double> &y, vector<int> &u, vector<int> &A);
+
+    vector<int> calcBP(vector<int> &param, vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac);
+    vector<int> calcBP_wang(vector<int> p, vector<int> &param, vector<int> &x, vector<double> &y, vector<int> &u, vector<int> &A, vector<int> &Ac);
     vector<int> calcBP_m(vector<int> &param, vector<vector<double> > &y, vector<int> &u, vector<int> &A);
+    vector<int> calcBP_m_wang(vector<int> p, vector<int> &param, vector<vector<int> > &x, vector<vector<double> > &y, vector<int> &u, vector<int> &A);
 
     void calc_mp(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked);
 };

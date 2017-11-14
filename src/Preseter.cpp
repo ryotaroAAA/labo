@@ -14,14 +14,31 @@ void Preseter::represet_A(vector<int> &free, vector<pair<int,double> > &cap_map)
     }
 }
 
+void Preseter::represet_A_wang(vector<int> &free, vector<int> &fixed_0, vector<pair<int,double> > &cap_map){
+    int count = 0;
+    int i = 0;
+    while(count < Params::get_K()){
+        //初期frozen bitに含まれないものだけをdata bitにする
+        if( !Common::containVal(cap_map[i].first, fixed_0)){
+            free[count] = cap_map[i].first;
+            count++;
+        }
+        i++;
+    }
+}
+
 void Preseter::defineFixedAndFree(vector<int> &free, vector<int> &fixed){
     vector<pair<int, double> > cap_map;
     Preseter::makeMutualInfoArray(cap_map);
+    vector<int> temp;
+    int j = 0;
     for(int i = 0; i < Params::get_N(); i++){
         if (i < Params::get_K()){
             free.push_back(cap_map[i].first);
         } else {
-            fixed.push_back(cap_map[i].first);
+            //fixedの方は相互情報量の低い順に入れていく
+            fixed.push_back(cap_map[Params::get_N()-1-j].first);
+            j++;
         }
     }
 }

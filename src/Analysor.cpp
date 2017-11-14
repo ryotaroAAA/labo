@@ -277,6 +277,7 @@ void Analysor::calcBlockErrorRate(MODE mode) {
     int tmp = Params::get_N()/Params::get_K();
     int tmpK = Params::get_K();
     for (int i = 1; i <= (tmp+1)/2; i++) {
+
         performance.startTimer();
         Params::set_K(i * tmpK);
         A.resize(Params::get_K(), -1);
@@ -295,7 +296,7 @@ void Analysor::calcBlockErrorRate(MODE mode) {
 //            Common::pp(u_est);
             Analysor::errorCount(u_n, u_est, &error_count);
             if(error_count > 0) block_error_count++;
-            if (loopi % 10 == 0 ) cout << loopi << " " << error_count << " " << block_error_count << endl;
+            if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count  << (double)block_error_count/loopi << endl;
             error_count = 0;
             rate = (double) Params::get_K() / Params::get_N();
 
@@ -331,7 +332,6 @@ void Analysor::calcBlockErrorRate_BP(MODE mode) {
     Encoder encoder;
     Logger logger;
     logger.setRvbDir(Params::get_rvbDir());
-    vector<int> A(Params::get_K(), -1);
     vector<int> u_n(Params::get_N(), 0);
     vector<int> x_n(Params::get_N(), 0);
     vector<double> y_n(Params::get_N(), 0);
@@ -339,6 +339,10 @@ void Analysor::calcBlockErrorRate_BP(MODE mode) {
     vector<int> u_est(Params::get_N(), 0);
     vector<pair<int, double> > cap_map;
     Preseter::makeMutualInfoArray(cap_map);
+
+    vector<int> A;
+    vector<int> Ac;
+    Preseter::preset_A_Ac(A,Ac);
 
     double BER = 0.0;
     double sumBER = 0.0;
@@ -351,7 +355,25 @@ void Analysor::calcBlockErrorRate_BP(MODE mode) {
     int tmp = Params::get_N()/Params::get_K();
     int tmpK = Params::get_K();
     vector<int> param(2,0);
-    for (int i = 2; i <= 16; i++) {
+
+    time_t now = time(NULL);
+    struct tm *pnow = localtime(&now);
+    string itrfn = "log/"
+                   + to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
+                   + "/N=" + to_string(Params::get_N())
+                   + " e=" + to_string(Params::get_e())
+                   + " channel=" + (Params::get_s()?"BSC":"BEC") + " mean_itr";
+    if(Params::get_M() > 0) itrfn = itrfn + " punc";
+    ofstream itrfile;
+    itrfile.open(itrfn, ios::out);
+    double mitr = 0.0;
+    int itr = 0;
+
+    for (int i = 10; i <= 13; i++) {
+        loopi = 0;
+        sumBER = 0.0;
+        mitr = 0.0;
+        block_error_count = 0;
         performance.startTimer();
         Params::set_K(i * tmpK);
         A.resize(Params::get_K(), -1);
@@ -365,16 +387,23 @@ void Analysor::calcBlockErrorRate_BP(MODE mode) {
             y_n.assign(Params::get_N(), 0);
             u_est.assign(Params::get_N(), 0);
             y_n = Channel::channel_output(x_n);
-            u_est = decoder.calcBP(param, y_n, u_n, A);
+            u_est = decoder.calcBP(param, y_n, u_n, A, Ac);
 
+            itr = param[0];
             Analysor::errorCount(u_n, u_est, &error_count);
             if(error_count > 0) block_error_count++;
-            if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count << endl;
+            if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count  << " " << itr << " " << (double)block_error_count/loopi << endl;
             error_count = 0;
-            rate = (double) Params::get_K() / Params::get_N();
+            rate = (double) Params::get_K() / (Params::get_N());
+
+            mitr += itr; // 0:itr, 1:nochecked
 
             if(loopi >= Params::get_blockNum()) break;
         }
+        mitr = mitr/loopi;
+        itrfile << rate << " " << mitr << endl;
+        cout << "mitr : "<< mitr << endl;
+        cout << "rate : "<< rate << endl;
         performance.stopTimer();
 
         cout << Params::get_rvbDir() << endl;
@@ -390,9 +419,6 @@ void Analysor::calcBlockErrorRate_BP(MODE mode) {
         performance.outHMS();
 
         logger.outLogRVB(rate, BER);
-        loopi = 0;
-        sumBER = 0.0;
-        block_error_count = 0;
         if(mode == TEST) break;
     }
 }
@@ -426,9 +452,25 @@ void Analysor::calcBlockErrorRate_mid_BP(MODE mode) {
     int loopi = 0;
     vector<int> param(2, 0);
 
+    time_t now = time(NULL);
+    struct tm *pnow = localtime(&now);
+    string itrfn = "log/"
+                   + to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
+                   + "/N=" + to_string(Params::get_N())
+                   + " e=" + to_string(Params::get_e())
+                   + " channel=" + (Params::get_s()?"BSC":"BEC") + " mean_itr mid";
+    ofstream itrfile;
+    itrfile.open(itrfn, ios::out);
+    double mitr = 0;
+    int itr = 0;
+
     int tmp = Params::get_N()/Params::get_K();
     int tmpK = Params::get_K();
-    for (int i = 2; i <= 16; i++) {
+    for (int i = 10; i <= 13; i++) {
+        mitr = 0.0;
+        loopi = 0;
+        sumBER = 0.0;
+        block_error_count = 0;
         performance.startTimer();
         Params::set_K(i * tmpK);
         A.resize(Params::get_K(), -1);
@@ -448,20 +490,26 @@ void Analysor::calcBlockErrorRate_mid_BP(MODE mode) {
 
         while (block_error_count < Params::get_upperBlockErrorNum()) {
             loopi++;
-
             u_est.assign(Params::get_N(), 0);
 
             Channel::channel_output_m(x_n, y_n);
             u_est = decoder.calcBP_m(param, y_n, u_n, A);
 
+            itr = param[0];
             Analysor::errorCount(u_n, u_est, &error_count);
             if(error_count > 0) block_error_count++;
-            if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count << endl;
+            if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count  << " " << itr << " " << (double)block_error_count/loopi << endl;
             error_count = 0;
             rate = (double) Params::get_K()/(Params::get_N()+Params::get_M());
+            mitr += itr; // 0:itr, 1:nochecked
 
             if(loopi >= Params::get_blockNum()) break;
         }
+        mitr = (mitr/loopi)>=70 ? 70 : mitr/loopi;
+        itrfile << rate << " " << mitr << endl;
+        cout << "mitr : "<< mitr << endl;
+        cout << "rate : "<< rate << endl;
+
         performance.stopTimer();
 
         cout << Params::get_rvbDir() << endl;
@@ -477,9 +525,263 @@ void Analysor::calcBlockErrorRate_mid_BP(MODE mode) {
         performance.outHMS();
 
         logger.outLogRVB(rate, BER);
+        if(mode == TEST) break;
+    }
+}
+
+inline vector<int>Analysor::makeTable(int n){
+    vector<int> ret(n);
+    if (n == 1) {
+        ret[0] = 1;
+    } else {
+        vector<int> temp = makeTable(n/2);
+        for (int i = 0; i < n ; i++) {
+            if(i < n/2){
+                ret[i] = 2*temp[i]-1;
+            } else {
+                ret[i] = 2*temp[i-n/2];
+            }
+        }
+    }
+    return ret;
+}
+
+vector<int> Analysor::get_P(vector<int> p_0){
+    vector<int> p;
+    vector<int> table = makeTable(Params::get_N());
+    for (int i = 0; i < p_0.size(); i++) {
+        p.push_back(table[p_0[i]-1]-1);
+    }
+    return p;
+}
+
+void Analysor::set_params(vector<pair<int, double> > &cap_map,vector<int> &A, vector<int> &Ac, vector<int> &p_0, vector<int> &p){
+    A.resize(Params::get_K(), -1);
+    Ac.resize(Params::get_N()-Params::get_K(), -1);
+    for (int i = 0; i < Params::get_M(); i++) {
+        p_0[i] = Params::get_N()-i;
+        Ac[i] = Params::get_N()-i-1;
+    }
+    p = Analysor::get_P(p_0);
+    Preseter::represet_A_wang(A, Ac, cap_map);
+}
+
+//rate vs BERのグラフ作成用
+void Analysor::calcBlockErrorRate_BP_wang(MODE mode) {
+    Performance performance;
+    Decoder decoder;
+    Encoder encoder;
+    Logger logger;
+    logger.setRvbDir(Params::get_rvbDir());
+    vector<int> u_n(Params::get_N(), 0);
+    vector<int> x_n(Params::get_N(), 0);
+    vector<double> y_n(Params::get_N(), 0);
+
+    vector<int> u_est(Params::get_N(), 0);
+    vector<pair<int, double> > cap_map;
+    Preseter::makeMutualInfoArray(cap_map);
+
+    vector<int> A;
+    vector<int> Ac;
+//    Preseter::preset_A_Ac(A,Ac);
+    vector<int> p_0(Params::get_M());
+//    for (int i = 0; i < Params::get_M(); i++) {
+//        p_0[i] = Params::get_N()-i;
+//    }
+    vector<int> p = Analysor::get_P(p_0);
+
+    double BER = 0.0;
+    double sumBER = 0.0;
+    double rate = 0.0;
+    int n = Params::get_N();
+    int error_count = 0;
+    int block_error_count = 0;
+    int loopi = 0;
+
+    int tmp = Params::get_N()/Params::get_K();
+    int tmpK = Params::get_K();
+    vector<int> param(2,0);
+
+    time_t now = time(NULL);
+    struct tm *pnow = localtime(&now);
+    string itrfn = "log/"
+                   + to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
+                   + "/N=" + to_string(Params::get_N())
+                   + " e=" + to_string(Params::get_e())
+                   + " channel=" + (Params::get_s()?"BSC":"BEC") + " mean_itr wang";
+    if(Params::get_M() > 0) itrfn = itrfn + " punc";
+    ofstream itrfile;
+    itrfile.open(itrfn, ios::out);
+    double mitr = 0.0;
+    int itr = 0;
+
+    for (int i = 10; i <= 13; i++) {
+        loopi = 0;
+        sumBER = 0.0;
+        mitr = 0.0;
+        block_error_count = 0;
+        performance.startTimer();
+        Params::set_K(i * tmpK);
+
+        Analysor::set_params(cap_map,A,Ac,p_0,p);
+
+        Preseter::preset_u(RAND, u_n);
+        x_n = encoder.encode(Params::get_N(), u_n);
+
+        while (block_error_count < Params::get_upperBlockErrorNum()) {
+            loopi++;
+
+            y_n.assign(Params::get_N(), 0);
+            u_est.assign(Params::get_N(), 0);
+            y_n = Channel::channel_output(x_n);
+            u_est = decoder.calcBP_wang(p, param, x_n, y_n, u_n, A, Ac);
+
+            itr = param[0];
+            Analysor::errorCount(u_n, u_est, &error_count);
+            if(error_count > 0) block_error_count++;
+            if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count  << " " << itr << " " << (double)block_error_count/loopi << endl;
+            error_count = 0;
+            rate = (double) Params::get_K() / (Params::get_N()-Params::get_M());
+
+            mitr += itr; // 0:itr, 1:nochecked
+
+            if(loopi >= Params::get_blockNum()) break;
+        }
+        mitr = (mitr/loopi)>=70 ? 70 : mitr/loopi;
+        itrfile << rate << " " << mitr << endl;
+
+        cout << "mitr : "<< mitr << endl;
+        cout << "rate : "<< rate << endl;
+        performance.stopTimer();
+
+        cout << Params::get_rvbDir() << endl;
+        BER = (double)block_error_count/loopi;
+
+        logger.outLog("=================================");
+        logger.outLog(performance.outTime("処理時間"));
+        logger.outLog("(N,K) = (" + to_string(Params::get_N()) + "," + to_string(Params::get_K()) + ")");
+        logger.outLog("BER:" + to_string(BER));
+        logger.outLog("Rate:" + to_string(rate));
+        logger.outLog(encoder.outCount("encoder_count"));
+        logger.outLog(decoder.outCount("decoder_count"));
+        performance.outHMS();
+
+        logger.outLogRVB(rate, BER);
+        if(mode == TEST) break;
+    }
+}
+
+//rate vs BERのグラフ作成用
+void Analysor::calcBlockErrorRate_mid_wang_BP(MODE mode) {
+    Performance performance;
+    Decoder decoder;
+    Encoder encoder;
+    Logger logger;
+    logger.setRvbDir(Params::get_rvbDir());
+
+    int size = log2(Params::get_N())+1;
+    vector<int> u_n(Params::get_N(), 0);
+
+    vector<int> A;
+    vector<int> Ac;
+
+    vector<int> p_0(Params::get_M());
+    vector<int> p = Analysor::get_P(p_0);
+
+    vector<vector<int> > tmp_x_n(log2(Params::get_N()), vector<int>(Params::get_N(),0) );
+    vector<vector<int> > x_n(size, vector<int>(Params::get_N(),0) );
+    vector<vector<double> > y_n(size, vector<double>(Params::get_N(), 0.0));
+
+    vector<int> u_est(Params::get_N(), 0);
+    vector<pair<int, double> > cap_map;
+    Preseter::makeMutualInfoArray(cap_map);
+
+    double BER = 0.0;
+    double sumBER = 0.0;
+    double rate = 0.0;
+    int n = Params::get_N();
+    int error_count = 0;
+    int block_error_count = 0;
+    int loopi = 0;
+    vector<int> param(2, 0);
+
+    time_t now = time(NULL);
+    struct tm *pnow = localtime(&now);
+    string itrfn = "log/"
+                   + to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
+                   + "/N=" + to_string(Params::get_N())
+                   + " e=" + to_string(Params::get_e())
+                   + " channel=" + (Params::get_s()?"BSC":"BEC") + " mean_itr midwang";
+    ofstream itrfile;
+    itrfile.open(itrfn, ios::out);
+    double mitr = 0;
+    int itr = 0;
+
+    int tmp = Params::get_N()/Params::get_K();
+    int tmpK = Params::get_K();
+    for (int i = 10; i <= 13; i++) {
+        mitr = 0.0;
         loopi = 0;
         sumBER = 0.0;
         block_error_count = 0;
+        performance.startTimer();
+        Params::set_K(i * tmpK);
+        A.resize(Params::get_K(), -1);
+
+        Analysor::set_params(cap_map, A, Ac, p_0, p);
+
+        Preseter::preset_u(RAND, u_n);
+        tmp_x_n[log2(Params::get_N()) - 1] = encoder.encode_m(Params::get_N(), 0, 0, u_n, tmp_x_n);
+
+        //uとxをまとめて送る
+        for (int i = 0; i < log2(Params::get_N()) + 1; i++) {
+            for (int j = 0; j < Params::get_N(); j++) {
+                if (i == 0) {
+                    x_n[i][j] = u_n[j];
+                } else {
+                    x_n[i][j] = tmp_x_n[i - 1][j];
+                }
+            }
+        }
+
+        while (block_error_count < Params::get_upperBlockErrorNum()) {
+            loopi++;
+            u_est.assign(Params::get_N(), 0);
+
+            Channel::channel_output_m(x_n, y_n);
+            u_est = decoder.calcBP_m_wang(p, param, x_n, y_n, u_n, A);
+
+            itr = param[0];
+            Analysor::errorCount(u_n, u_est, &error_count);
+            if(error_count > 0) block_error_count++;
+            if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count  << " " << itr << " " << (double)block_error_count/loopi << endl;
+            error_count = 0;
+            rate = (double) Params::get_K()/(Params::get_N());
+            mitr += itr; // 0:itr, 1:no_checked
+
+            if(loopi >= Params::get_blockNum()) break;
+        }
+
+        mitr = (mitr/loopi)>=70 ? 70 : mitr/loopi;
+        itrfile << rate << " " << mitr << endl;
+        cout << "mitr : "<< mitr << endl;
+        cout << "rate : "<< rate << endl;
+
+        performance.stopTimer();
+
+        cout << Params::get_rvbDir() << endl;
+        BER = (double)block_error_count/loopi;
+
+        logger.outLog("=================================");
+        logger.outLog(performance.outTime("処理時間"));
+        logger.outLog("(N,K) = (" + to_string(Params::get_N()) + "," + to_string(Params::get_K()) + ")");
+        logger.outLog("BER:" + to_string(BER));
+        logger.outLog("Rate:" + to_string(rate));
+        logger.outLog(encoder.outCount("encoder_count"));
+        logger.outLog(decoder.outCount("decoder_count"));
+        performance.outHMS();
+
+        logger.outLogRVB(rate, BER);
         if(mode == TEST) break;
     }
 }

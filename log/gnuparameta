@@ -90,19 +90,90 @@ set yl 'Bhattacharyya parameter'
 plot "bhat_1024bsc" using 1:2
 
 //Palatino Optima
-
 set grid
-set xtics 0.1 font "Arial,25"
+set xtics 0.01 font "Arial,25"
 set ytics 0.1 font "Arial,25"
 set logscale y
 set format y "10^{%L}"
-set xrange[0.0:0.5]
-set yrange[0.0000000001:1]
+set xrange[0.3:0.4]
+set yrange[0.001:1]
 set xlabel font "Arial,25"
 set ylabel font "Arial,25"
 set key font "Arial,20" left top
 set xl 'Rate(bits)'
 set yl 'Block Error Rate'
-plot 'N=512 e=0.500000 channel=BEC' with lines lt 6 title "N=512 e=0.5 BEC"
-replot 'N=512 e=0.500000 channel=BEC mid' with lines lt 7 title "N=512 e=0.5 BEC with mid"
+plot 'N=512 e=0.500000 channel=BEC' with lines lt 1 title "N=512 e=0.5"
+replot 'N=512 e=0.500000 channel=BEC mid' with lines lt 2 title "N=512 e=0.5 with mid"
+replot 'N=512 e=0.500000 channel=BEC wang' with lines lt 6 title "N=512 e=0.5 with wang"
+replot 'N=512 e=0.500000 channel=BEC midwang' with lines lt 7 title "N=512 e=0.5 with midwang"
 
+plot 'N=1024 e=0.500000 channel=BEC mid' with lines lt 2 title "N=512 e=0.5 with mid"
+replot 'N=1024 e=0.500000 channel=BEC wang' with lines lt 6 title "N=512 e=0.5 with wang"
+replot 'N=1024 e=0.500000 channel=BEC mid wang' with lines lt 7 title "N=512 e=0.5 with midwang"
+
+//mean itr
+set xrange[0.0:0.5]
+set yrange[0.0:100]
+set grid
+set xtics 0.1 font "Arial,25"
+set ytics 5.0 font "Arial,25"
+set tics font "Arial,25"
+set xlabel font "Arial,25"
+set ylabel font "Arial,25"
+set key font "Arial,25" left top
+set xl 'Rate'
+set yl 'Average ITR'
+plot 'N=512 e=0.500000 channel=BEC mean_itr' with lines lt 1 title "N=512 e=0.5"
+replot 'N=512 e=0.500000 channel=BEC mean_itr punc' with lines lt 2 title "N=512 e=0.5 with punc"
+replot 'N=512 e=0.500000 channel=BEC mean_itr mid' with lines lt 6 title "N=512 e=0.5 with mid"
+replot 'N=512 e=0.500000 channel=BEC mean_itr wang punc' with lines lt 7 title "N=512 e=0.5 with wang"
+replot 'N=512 e=0.500000 channel=BEC mean_itr midwang' with lines lt 6 title "N=512 e=0.5 with midwang"
+
+set cbtics 16
+set cbrange [1:256]
+//3d error
+set pm3d map
+set xrange [1:256]
+set yrange [1:256]
+set xtics 16 font "Arial,20"
+set ytics 16 font "Arial,20"
+set xl 'error occured index' font "Arial,20"
+set yl 'error occured index' font "Arial,20"
+set palette rgbformula 22,13,-31
+set isosamples 200,200
+splot "erlog2 256"
+
+//3d itr
+set pm3d map
+set xrange [1:256]
+set yrange [1:256]
+set xtics 16 font "Arial,20"
+set ytics 16 font "Arial,20"
+set xl 'error occured index' font "Arial,20"
+set yl 'error occured index' font "Arial,20"
+set palette rgbformula 22,13,-31
+set isosamples 200,200
+splot "itrlog2 256"
+
+
+set pm3d map
+set xrange [1:64]
+set yrange [1:64]
+set xtics 16 font "Arial,20"
+set ytics 16 font "Arial,20"
+set xl 'error occured index' font "Arial,20"
+set yl 'error occured index' font "Arial,20"
+set palette rgbformula 22,13,-31
+set isosamples 200,200
+splot "erlog2 64"
+
+set pm3d map
+set xrange [1:256]
+set yrange [1:256]
+set xtics 16 font "Arial,20"
+set ytics 16 font "Arial,20"
+set xl 'error occured index' font "Arial,20"
+set yl 'error occured index' font "Arial,20"
+set palette rgbformula 22,13,-31
+set isosamples 200,200
+splot "itrlog2 256"

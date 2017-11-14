@@ -27,6 +27,11 @@ public:
 
     static void errorCount(vector<int> &u, vector<int> &u_est, int* error_count);
 
+    static vector<int> get_P(vector<int> p_0);
+    static vector<int> makeTable(int n);
+
+    static void set_params(vector<pair<int, double> > &cap_map,vector<int> &A, vector<int> &Ac, vector<int> &p_0, vector<int> &p);
+
     static void probErrBound();
     static double errorCalc(vector<int> &u, vector<int> &u_est, int* error_count);
     static void makeArrayCapacity(vector<double> &array);
@@ -34,6 +39,8 @@ public:
     static void calcBlockErrorRate(MODE mode);
     static void calcBlockErrorRate_BP(MODE mode);
     static void calcBlockErrorRate_mid_BP(MODE mode);
+    static void calcBlockErrorRate_BP_wang(MODE mode);
+    static void calcBlockErrorRate_mid_wang_BP(MODE mode);
     static void defineFixedAndFree(int n, vector<int> &fixed, vector<int> &free);
 };
 
