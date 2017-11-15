@@ -145,6 +145,7 @@ double Common::get_rate(){
     int k = Params::get_K();
     int m = Params::get_M();
     int mn = Params::get_MN();
+
     switch (Params::get_exp_mode()){
         case NORMAL:
             rate = (double)k/n;

@@ -249,11 +249,19 @@ string Analysor::get_itrfn(){
     struct tm *pnow = localtime(&now);
     stringstream itrfn;
     EXP_MODE em = Params::get_exp_mode();
+    MID_MODE mm = Params::get_m_mode();
     string ename;
     switch (em) {
         case NORMAL: ename = ""; break;
         case PUNC: ename = "punc"; break;
-        case MID: ename = "mid"; break;
+        case MID:
+            switch (mm) {
+                case MID_IU: ename = "mid_iu"; break;
+                case MID_ID: ename = "mid_id"; break;
+                case MID_BU: ename = "mid_bu"; break;
+                case MID_BD: ename = "mid_bd"; break;
+            }
+            break;
         case QUP: ename = "qup"; break;
         case WANG: ename = "wang"; break;
         case M_QUP: ename = "m_qup"; break;
@@ -274,7 +282,7 @@ string Analysor::get_itrfn(){
 }
 
 //rate vs BERのグラフ作成用
-void Analysor::calcBlockErrorRate(MODE mode) {
+void Analysor::calcBlockErrorRate() {
     Performance performance;
     Decoder decoder;
     Encoder encoder;
@@ -346,12 +354,12 @@ void Analysor::calcBlockErrorRate(MODE mode) {
         loopi = 0;
         sumBER = 0.0;
         block_error_count = 0;
-        if(mode == TEST) break;
+//        if(mode == TEST) break;
     }
 }
 
 //rate vs BERのグラフ作成用
-void Analysor::calcBlockErrorRate_BP(MODE mode) {
+void Analysor::calcBlockErrorRate_BP() {
     Performance performance;
     Decoder decoder;
     Encoder encoder;
@@ -385,13 +393,25 @@ void Analysor::calcBlockErrorRate_BP(MODE mode) {
     ofstream itrfile;
     itrfile.open(get_itrfn(), ios::out);
 
-    for (int i = 10; i <= 15; i++) {
+    int start = 0.32/Common::get_rate();
+    int end = 0.37/Common::get_rate();
+    EXP_MODE em = Params::get_exp_mode();
+    if(em == VALERIO_S || em == M_VALERIO_S){
+        start = (Params::get_M()+(Params::get_N()-Params::get_M())*0.32)/Params::get_K();
+        end = (Params::get_M()+(Params::get_N()-Params::get_M())*0.37)/Params::get_K();
+    }
+    cout << "start::" << start << " end::" << end << endl;
+
+    for (int i = start; i <= end; i++) {
         loopi = 0, sumBER = 0.0, mitr = 0.0, block_error_count = 0;
         performance.startTimer();
         //k,u,frozen設定
         Params::set_K(i * tmpK);
         Preseter::preset_u(RAND, u);
         Preseter::set_params(cap_map, A, Ac, p_0, p);
+
+        rate = Common::get_rate();
+        cout << "rate" << rate << endl;
 
         if(Params::get_is_outlog()) {
             cout << "A";
@@ -441,7 +461,6 @@ void Analysor::calcBlockErrorRate_BP(MODE mode) {
 
             if(loopi >= Params::get_blockNum()) break;
         }
-        rate = Common::get_rate();
         mitr = (mitr/loopi)>=70 ? 70 : mitr/loopi;
         itrfile << rate << " " << mitr << endl;
         cout << "mitr : "<< mitr << endl;
@@ -462,6 +481,6 @@ void Analysor::calcBlockErrorRate_BP(MODE mode) {
         performance.outHMS();
 
         logger.outLogRVB(rate, BER);
-        if(mode == TEST) break;
+//        if(mode == TEST) break;
     }
 }

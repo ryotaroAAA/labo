@@ -491,11 +491,41 @@ void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u
 
     //中間ノード設定, yからメッセージを受信するようになる
     if( Common::is_mid_send() ){
-        for (int i = 0; i < Params::get_M(); i++) {
-            ym_isReceived[0][A[i]] = true;
+        MID_MODE mm = Params::get_m_mode();
+        vector<int> Bn_0 = Preseter::makeTable(Params::get_N());
+        vector<int> Bn;
+        for (int i = 0; i < Params::get_N(); i++) {
+            if(Common::containVal(Bn_0[i]-1, A)){
+                Bn.push_back(Bn_0[i]-1);
+            }
         }
-    }
+        int k = Params::get_K();
+        switch (mm) {
+            case MID_IU:
+                for (int i = 0; i < Params::get_M(); i++) {
+                    ym_isReceived[0][A[i]] = true;
+                }
+                break;
+            case MID_ID:
+                for (int i = 0; i < Params::get_M(); i++) {
+                    ym_isReceived[0][A[k-1-i]] = true;
+                }
+                break;
+            case MID_BU:
+                for (int i = 0; i < Params::get_M(); i++) {
+                    ym_isReceived[0][Bn[k-1-i]-1] = true;
+                }
+                break;
+            case MID_BD:
+                for (int i = 0; i < Params::get_M(); i++) {
+                    ym_isReceived[0][Bn[i]-1] = true;
+                }
+                break;
+            default:
+                break;
+        }
 
+    }
 }
 
 void Decoder::BPinit(vector<int> &p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived){

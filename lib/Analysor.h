@@ -34,12 +34,8 @@ public:
     static void makeArrayCapacity(vector<double> &array);
     static void makeArrayBhat(vector<double> &array);
 
-    static void calcBlockErrorRate(MODE mode);
-
-    static void calcBlockErrorRate_BP(MODE mode);
-    static void calcBlockErrorRate_mid_BP(MODE mode);
-    static void calcBlockErrorRate_BP_wang(MODE mode);
-    static void calcBlockErrorRate_mid_wang_BP(MODE mode);
+    static void calcBlockErrorRate();
+    static void calcBlockErrorRate_BP();
     static void defineFixedAndFree(int n, vector<int> &fixed, vector<int> &free);
 };
 
