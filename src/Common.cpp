@@ -138,3 +138,60 @@ bool Common::containNumInArray(int i, int n, vector<int> &array){
     }
     return false;
 }
+
+double Common::get_rate(){
+    double rate;
+    int n = Params::get_N();
+    int k = Params::get_K();
+    int m = Params::get_M();
+    int mn = Params::get_MN();
+    switch (Params::get_exp_mode()){
+        case NORMAL:
+            rate = (double)k/n;
+            break;
+        case PUNC:
+        case QUP:
+        case WANG:
+        case VALERIO_P:
+            rate = (double)k/(n-m);
+            break;
+        case VALERIO_S:
+            rate = (double)(k-m)/(n-m);
+            break;
+        case MID:
+            rate = (double)k/(n+mn);
+            break;
+        case M_WANG:
+        case M_QUP:
+        case M_VALERIO_P:
+            rate = (double)k/(n-m+mn);
+            break;
+        case M_VALERIO_S:
+            rate = (double)(k-m)/(n-m+mn);
+            break;
+        default:
+            rate = 0.0;
+            break;
+    }
+    return rate;
+}
+
+bool Common::is_mid_send(){
+    switch (Params::get_exp_mode()){
+        case NORMAL:
+        case PUNC:
+        case QUP:
+        case WANG:
+        case VALERIO_P:
+        case VALERIO_S:
+            return false;
+        case MID:
+        case M_WANG:
+        case M_QUP:
+        case M_VALERIO_P:
+        case M_VALERIO_S:
+            return true;
+        default:
+            break;
+    }
+}

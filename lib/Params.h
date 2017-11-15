@@ -29,6 +29,7 @@ private:
     static int N;
     static int M;
     static int K;
+    static int MN;
     static double e;
     static int rp;
     static int monteNum;
@@ -43,6 +44,7 @@ public:
     static int get_N();
     static int get_M();
     static int get_K();
+    static int get_MN();
     static double get_e();
     static int get_monteNum();
     static int get_blockNum();
@@ -56,6 +58,7 @@ public:
     static void set_N(int _N);
     static void set_M(int _M);
     static void set_K(int _K);
+    static void set_MN(int _MN);
     static void set_is_outlog(bool _is_outlog);
     static void set_monteNum(int _monteNum);
     static void set_blockNum(int _blockNum);

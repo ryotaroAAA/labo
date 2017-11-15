@@ -18,7 +18,7 @@ public:
 
     //main BP
     vector<int> calcBP(vector<int> p, vector<int> &param, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac);
-    vector<int> calcSConBP(int itr, int count, ofstream &val_file, ofstream &check_file, vector<int> &u, vector<double> &y , vector<int> &u_n_est, vector<double> &tmp_u, vector<int> &A, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
+    void calcSConBP(int itr, int count, ofstream &val_file, ofstream &check_file, vector<int> &u, vector<double> &y , vector<int> &u_n_est, vector<double> &tmp_u, vector<int> &A, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
 
     //BP init
     void init_message(vector<bool> &puncFlag, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list);

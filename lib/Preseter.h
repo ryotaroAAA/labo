@@ -13,9 +13,12 @@ public:
     static void preset_A_Ac(vector<int> &free, vector<int> &fixed);
     static void preset_u(SOURCE_TYPE mode, vector<int> &u);
     static void defineFixedAndFree(vector<int> &free, vector<int> &fixed);
-    static void represet_A(vector<int> &free, vector<pair<int,double> > &cap_map);
-    static void represet_A_wang(vector<int> &free, vector<int> &fixed_0, vector<pair<int,double> > &cap_map);
+    static void represet_A(vector<int> &free, vector<int> &fixed_0, vector<pair<int,double> > &cap_map);
     static void makeMutualInfoArray(vector<pair<int, double> > &cap_map);
     static vector<int> generateUi(SOURCE_TYPE set, vector<int> &x);
+    static void set_params(vector<pair<int, double> > &cap_map,vector<int> &A, vector<int> &Ac, vector<int> &p_0, vector<int> &p);
+    static vector<int> makeTable(int n);
+    static vector<int> get_bitReversal(vector<int> p_0);
+
 };
 #endif //CHANNEL_POLARIZATION_PRESETER_H

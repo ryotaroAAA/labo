@@ -176,7 +176,7 @@ void Decoder::send_message(int i, int j, vector<vector<vector<message> > > &mess
     int size = 2*log2(Params::get_N())+2;
     double wc,wp,llr = 0.0,val = 0.0;
     bool is_send = false;
-    if(is_mid_send()){
+    if(Common::is_mid_send()){
         if (ym_isReceived[i][j]) {
             wc = Channel::calcW(y[i][j],0);
             wp = Channel::calcW(y[i][j],1);
@@ -434,13 +434,15 @@ void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u
     //実験モード
     EXP_MODE em = Params::get_exp_mode();
 
-    //パンクチャ設定
+    //punc(shorten)flg設定
     for (int i = 0; i < Params::get_N(); i++) {
-        if( em == WANG || em == M_WANG ){
+        if( em == QUP || em == M_QUP || em == WANG || em == M_WANG ||
+                em == VALERIO_P || em == VALERIO_S || em == M_VALERIO_P || em == M_VALERIO_S ){
             if(Common::containVal(i,p)){
                 puncFlag[i] = true;
             }
-        } else if(em == PUNC) {
+        }
+        else if(em == PUNC) {
             puncFlag[Ac[i]] = true;
         }
     }
@@ -448,7 +450,8 @@ void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u
     //val_node frozen shorten設定
     for (int i = 0; i < Params::get_N(); i++) {
         if(!puncFlag[i]){
-            if( is_mid_send() ){
+            //puncなし
+            if( Common::is_mid_send() ){
                 wc = Channel::calcW(ym[ysize-1][i],0);
                 wp = Channel::calcW(ym[ysize-1][i],1);
             } else {
@@ -459,15 +462,18 @@ void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u
             node_val[size-2][i] = llr;
 
         } else {
-            //shortening
-            if( em == WANG ){
+            //punc(shorten)あり
+            if( em == WANG || em == VALERIO_S){
                 llr = (x[i]==0)? inf_p : inf_m;
                 node_val[size-2][i] = llr;
-            } else if( em == M_WANG ){
+                node_isChecked[size-2][i] = true;
+            } else if( em == M_WANG || em == M_VALERIO_S){
                 llr = (xm[ysize-1][i]==0)? inf_p : inf_m;
                 node_val[size-2][i] = llr;
+                node_isChecked[size-2][i] = true;
             }
         }
+        //channelファクターノード
         node_isChecked[size-1][i] = true;
 
         //frozen_bitのllr設定
@@ -484,11 +490,12 @@ void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u
     }
 
     //中間ノード設定, yからメッセージを受信するようになる
-    if( is_mid_send() ){
+    if( Common::is_mid_send() ){
         for (int i = 0; i < Params::get_M(); i++) {
             ym_isReceived[0][A[i]] = true;
         }
     }
+
 }
 
 void Decoder::BPinit(vector<int> &p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived){
@@ -545,7 +552,7 @@ void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vect
         }
     }
 
-    if( is_mid_send() ){
+    if( Common::is_mid_send() ){
         for (int i = 0; i < ysize; i++) {
             for (int j = 0; j < Params::get_N(); j++) {
                 if (ym_isReceived[i][j]) {
@@ -632,26 +639,6 @@ vector<int> Decoder::calcBP(vector<int> p, vector<int> &param, vector<int> &u, v
     outLog(itr, no_checked, u, u_n_est, val_file, check_file , node_value, node_isChecked);
 
     return u_n_est;
-}
-
-bool Decoder::is_mid_send(){
-    switch (Params::get_exp_mode()){
-        case NORMAL:
-        case PUNC:
-        case QUP:
-        case WANG:
-            return false;
-        case MID:
-        case M_WANG:
-        case M_QUP:
-        case VALERIO_P:
-        case VALERIO_S:
-        case M_VALERIO_P:
-        case M_VALERIO_S:
-            return true;
-        default:
-            break;
-    }
 }
 
 void Decoder::init_outLog(ofstream &val_file, ofstream &check_file){
@@ -876,7 +863,7 @@ double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<double> &y,
 
 }
 
-vector<int> Decoder::calcSConBP(int itr, int count, ofstream &val_file, ofstream &check_file, vector<int> &u, vector<double> &y , vector<int> &u_n_est, vector<double> &tmp_u, vector<int> &A, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived) {
+void Decoder::calcSConBP(int itr, int count, ofstream &val_file, ofstream &check_file, vector<int> &u, vector<double> &y , vector<int> &u_n_est, vector<double> &tmp_u, vector<int> &A, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived) {
     int size = 2 * log2(Params::get_N()) + 2;
 
     vector<vector<vector<message> > > save_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));

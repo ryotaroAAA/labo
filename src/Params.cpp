@@ -3,6 +3,7 @@
 int Params::N = 0;
 int Params::M = 0;
 int Params::K = 0;
+int Params::MN = 0;
 int Params::monteNum = 0;
 int Params::blockNum = 0;
 int Params::upperBlockErrorNum = 0;
@@ -24,6 +25,10 @@ int Params::get_M(){
 
 int Params::get_K(){
     return K;
+}
+
+int Params::get_MN(){
+    return MN;
 }
 
 int Params::get_monteNum(){
@@ -76,6 +81,10 @@ void Params::set_M(int _M){
 
 void Params::set_K(int _K){
     K = _K;
+}
+
+void Params::set_MN(int _MN){
+    MN = _MN;
 }
 
 void Params::set_monteNum(int _monteNum){

@@ -15,6 +15,7 @@
 #include "Params.h"
 #include "sys/stat.h"
 #include <unistd.h>
+#include <sstream>
 
 using namespace std;
 
@@ -43,5 +44,8 @@ public:
     static vector<int> index_o(int n, vector<int> &x);
     static vector<int> index_e(int n, vector<int> &x);
     static vector<int> retBinary(int n, vector<int> &x);
+
+    static bool is_mid_send();
+    static double get_rate();
 };
 #endif //CHANNEL_POLARIZATION_COMMON_H

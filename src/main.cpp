@@ -21,57 +21,47 @@ void calcBER(){
     string ename;
     switch (em) {
         case NORMAL: ename = ""; break;
-        case PUNC: ename = " punc"; break;
-        case MID: ename = " mid"; break;
-        case QUP: ename = " qup"; break;
-        case WANG: ename = " wang"; break;
-        case M_QUP: ename = " m_qup"; break;
-        case M_WANG: ename = " m_wang"; break;
-        case VALERIO_P: ename = " valerio_p"; break;
-        case VALERIO_S: ename = " valerio_s"; break;
-        case M_VALERIO_P: ename = " m_valerio_p"; break;
-        case M_VALERIO_S: ename = " m_valerio_s"; break;
+        case PUNC: ename = "punc"; break;
+        case MID: ename = "mid"; break;
+        case QUP: ename = "qup"; break;
+        case WANG: ename = "wang"; break;
+        case M_QUP: ename = "m_qup"; break;
+        case M_WANG: ename = "m_wang"; break;
+        case VALERIO_P: ename = "valerio_p"; break;
+        case VALERIO_S: ename = "valerio_s"; break;
+        case M_VALERIO_P: ename = "m_valerio_p"; break;
+        case M_VALERIO_S: ename = "m_valerio_s"; break;
     }
 
     time_t now = time(NULL);
     struct tm *pnow = localtime(&now);
     CHANNEL_TYPE channel_type = Params::get_s();
+
+    stringstream fn;
     if (channel_type == BEC || channel_type == BSC) {
-        Params::set_rvbDir("log/"
-                           + to_string(pnow->tm_year + 1900) + to_string(pnow->tm_mon + 1) +
-                           to_string(pnow->tm_mday)
-                           + "/N=" + to_string(Params::get_N())
-                           + " e=" + to_string(Params::get_e())
-                           + " blockNum=" + to_string(Params::get_blockNum())
-                           + " upperblockNum=" + to_string(Params::get_upperBlockErrorNum())
-                           + " channel=" + (Params::get_s() ? "BSC" : "BEC") + ename
-        );
+        fn << "log/"
+             << to_string(pnow->tm_year + 1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
+             << "/N" << to_string(Params::get_N())
+             << "e" << Params::get_e()
+             << "BNum" << to_string(Params::get_blockNum())
+             << "UPBn" << to_string(Params::get_upperBlockErrorNum())
+             << "c" << (Params::get_s() ? "BSC" : "BEC") << ":" << ename;
+        Params::set_rvbDir(fn.str());
     } else if (channel_type == AWGN) {
-        Params::set_rvbDir("log/"
-                           + to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
-                           + "/N=" + to_string(Params::get_N())
-                           + " sdiv=" + to_string(Params::get_e())
-                           + " channel=AWGN"
-                           + " monteNum=" + to_string(Params::get_monteNum())
-                           + " blockNum=" + to_string(Params::get_blockNum())
-                           + " upperblockNum=" + to_string(Params::get_upperBlockErrorNum()) + ename
-        );
+        fn << "log/"
+           << to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
+           << "/N=" + to_string(Params::get_N())
+           << "sdiv" << Params::get_e()
+           << "c=AWGN"
+           << "MNum=" + to_string(Params::get_monteNum())
+           << "BNum=" + to_string(Params::get_blockNum())
+           << "upperBn=" + to_string(Params::get_upperBlockErrorNum()) +  ":" + ename;
+        Params::set_rvbDir(fn.str());
     }
 
 
     performance.startTimer();
-
-//    if( mid ){
-//        analysor.calcBlockErrorRate_mid_BP(RUN);
-//    } else if(wang) {
-//        analysor.calcBlockErrorRate_BP_wang(RUN);
-//    } else if(mwang) {
-//        analysor.calcBlockErrorRate_mid_wang_BP(RUN);
-//    } else {
-        analysor.calcBlockErrorRate_BP(TEST);
-//    }
-
-
+    analysor.calcBlockErrorRate_BP(TEST);
     performance.stopTimer();
 
     performance.outHMS();
@@ -152,7 +142,7 @@ void testPunc() {
     Preseter::makeMutualInfoArray(cap_map);
     vector<int> p_0(Params::get_M());
     vector<int> p(Params::get_M());
-    Analysor::set_params(cap_map,A,Ac,p_0,p);
+    Preseter::set_params(cap_map,A,Ac,p_0,p);
     cout << "A";
     Common::pp(A);
     cout << "Ac";
@@ -267,7 +257,7 @@ void testMidWang(){
     Preseter::makeMutualInfoArray(cap_map);
     vector<int> p_0(Params::get_M());
     vector<int> p(Params::get_M());
-    Analysor::set_params(cap_map,A,Ac,p_0,p);
+    Preseter::set_params(cap_map,A,Ac,p_0,p);
     cout << "A";
     Common::pp(A);
     cout << "Ac";
@@ -346,58 +336,52 @@ bool checkFileExistence(const std::string& str)
 }
 
 //mid>normal
+//enum EXP_MODE{NORMAL, PUNC, QUP, WANG, MID, M_WANG, M_QUP, VALERIO_P, VALERIO_S, M_VALERIO_P, M_VALERIO_S};
 int main(void) {
-//    Params::set_e(0.5);
-//    Params::set_N(512);
-//    Params::set_M(32);
-//    Params::set_s(BEC);
-//    Params::set_is_outlog(false);
-//    Params::set_decode_mode(BP);
-//    Params::set_monteNum(20);
-//    Params::set_rp(100);
-//    Params::set_blockNum(1000);
-//    Params::set_upperBlockErrorNum(1000);
-
     Params::set_e(0.5);
     Params::set_N(32);
     Params::set_K(1);
-    Params::set_M(3);
+    Params::set_M(8);
+    Params::set_MN(8);
     Params::set_s(BEC);
-    Params::set_is_outlog(false);
+    Params::set_is_outlog(true);
     Params::set_decode_mode(BP);
     Params::set_monteNum(1);
-    Params::set_rp(70);
-    Params::set_blockNum(10000);
-    Params::set_upperBlockErrorNum(100);
-    Params::set_exp_mode(NORMAL);
+    Params::set_rp(30);
+    Params::set_blockNum(1);
+    Params::set_upperBlockErrorNum(1000);
 
+    Params::set_exp_mode(NORMAL);
+//    Params::set_exp_mode(QUP);
+//    Params::set_exp_mode(MID);
+//    Params::set_exp_mode(WANG);
+//    Params::set_exp_mode(VALERIO_P);
+//    Params::set_exp_mode(VALERIO_S);
+
+//    Params::set_exp_mode(M_WANG);
+//    Params::set_exp_mode(M_VALERIO_P);
+//    Params::set_exp_mode(M_VALERIO_S);
+//
 //    vector<int> A;
 //    vector<int> Ac;
 //    vector<pair<int, double> > cap_map;
 //    Preseter::makeMutualInfoArray(cap_map);
-//    vector<int> p_0(Params::get_M());
-//    vector<int> p(Params::get_M());
-//    Analysor::set_params(cap_map,A,Ac,p_0,p);
-//
-//    Common::pp(A);
-//    Common::pp(Ac);
-//    Common::pp(p);
-    EXP_MODE em = Params::get_exp_mode();
-    if(em == MID){
-//        Params::set_K(17*2); //中間ノード
-        Params::set_K(40); //中間ノード
-    } else if(em == QUP || em == WANG || em == PUNC) {
-//        Params::set_K(15*2);
-        Params::set_K(24);
-    } else {
-//        Params::set_K(16*2);
-    }
-    calcBER();
+//    vector<int> p_0(Params::get_M(), -1);
+//    vector<int> p(Params::get_M(), -1);
+//    Preseter::set_params(cap_map,A,Ac,p_0,p);
 
-//    testNormal();
-//    testPunc();
-//    testMiddleval();
-//    testMidWang();
+    EXP_MODE em = Params::get_exp_mode();
+
+//    if(em == MID){
+////        Params::set_K(17*2); //中間ノード
+//        Params::set_K(40); //中間ノード
+//    } else if(em == QUP || em == WANG || em == PUNC) {
+////        Params::set_K(15*2);
+//        Params::set_K(24);
+//    } else {
+////        Params::set_K(16*2);
+//    }
+    calcBER();
 
     return 0;
 }
