@@ -11,7 +11,7 @@ void Preseter::preset_u(SOURCE_TYPE mode, vector<int> &u){
 void Preseter::represet_A(vector<int> &free, vector<int> &fixed_0, vector<pair<int,double> > &cap_map){
     int count = 0;
     int i = 0;
-    while(count < Params::get_K()){
+    while(count < Params::get_K() && i < cap_map.size()){
         //初期frozen bitに含まれないものだけをdata bitにする
         if( !Common::containVal(cap_map[i].first, fixed_0)){
             free[count] = cap_map[i].first;
@@ -66,9 +66,35 @@ void Preseter::makeMutualInfoArray(vector<pair<int, double> > &cap_map){
     }
 }
 
+void Preseter::makeManyValTableAs(bool sortflg, vector<int> &table){
+    vector<int> u(Params::get_N());
+    vector<int> x(Params::get_N());
+    Preseter::preset_u(ALL1, u);
+
+    Encoder encoder;
+    x = encoder.enc(Params::get_N(),u);
+//    Common::pp(u);
+//    Common::pp(x);
+    vector<pair<int, int> > table_map;;
+
+    for(int i=0; i<Params::get_N(); i++){
+        table_map.push_back(pair<int, int>(i, x[i]));
+    }
+
+    //昇順ソート
+    if(sortflg) {
+        sort(begin(table_map), end(table_map), Common::sort_greater);
+    } else {
+        sort(begin(table_map), end(table_map), Common::sort_less);
+    }
+
+    for (int i = 0; i < Params::get_N(); i++) {
+        table[i] = table_map[i].first;
+    }
+}
+
 vector<int> Preseter::generateUi(SOURCE_TYPE set, vector<int> &x){
     vector<int> ret;
-    init_genrand((int) time(NULL));
 //    srand(0);
     for (int i = 0; i < Params::get_N(); i++) {
         if (set == ALL0) {
@@ -82,6 +108,18 @@ vector<int> Preseter::generateUi(SOURCE_TYPE set, vector<int> &x){
     return ret;
 }
 
+inline vector<int>Preseter::makeTreeIndex(int n){
+    vector<int> ret(n);
+    if (n == 1) {
+        ret[0] = 1;
+    } else {
+        for (int i = 0; i < n/2 ; i++) {
+            ret[2*i] = i+1;
+            ret[2*i+1] = i+1 + n/2;
+        }
+    }
+    return ret;
+}
 
 inline vector<int>Preseter::makeTable(int n){
     vector<int> ret(n);
@@ -107,6 +145,66 @@ vector<int> Preseter::get_bitReversal(vector<int> p_0){
         p.push_back(table[p_0[i]-1]-1);
     }
     return p;
+}
+
+void Preseter::set_zin_all(vector<int> &A, vector<vector<int> > &sortedZn, vector<vector<bool> > &ym_isReceived){
+    //1. 各ノードを一次元で解釈し, 全ノードのバタチャリア求める [] = z^i_2n
+    //長さは(2log2+1)*N
+    int size = log2(Params::get_N())+1;
+    int tempSize = size*Params::get_N();
+    int tempN = Params::get_N();
+    vector<double> tempZn;
+    vector<double> cap;
+    int n = Params::get_N();
+    for (int i = 0; i < size; i++) {
+        cap.resize(n);
+        Params::set_N(n);
+        Analysor::makeArrayBhat(cap);
+//        for(int j = 0; j < cap.size(); j++){
+        int tempi = pow(2,i)-1, j = 0;
+        while(j < cap.size()){
+            tempZn.push_back(cap[j]);
+            j++;
+            if (j == cap.size()) {
+                if(tempi == 0){
+                    break;
+                } else {
+                    tempi--;
+                    j = 0;
+                }
+            }
+        }
+        n = n/2;
+    }
+    Params::set_N(tempN);
+
+    //2. ソートする　[] = 順位
+    vector<pair<int, double> > zin_map;
+    for(int i=0; i<tempZn.size(); i++){
+        zin_map.push_back(pair<int, double>(i, tempZn[i]));
+    }
+    sort(begin(zin_map), end(zin_map), Common::sort_greater);
+//    Common::pp(tempZn);
+
+    int N = Params::get_N();
+    int sorted_i = 0;
+    int count = 1;
+    vector<int> temp_i;
+    for (int i = 0; i < zin_map.size(); i++) {
+        sorted_i = zin_map[i].first;
+        if( (sorted_i < Params::get_N() && Common::containVal(sorted_i, A)) || sorted_i >= Params::get_N()) {
+            temp_i.push_back(sorted_i);
+            if(count == Params::get_MN()) break;
+            count++;
+        }
+    }
+
+    //3. 一次元データを多次元に変換し, 上から送信フラグつけていく [][] = 順位
+    //[i] => [i/N][i%N]として変換可能なはず
+    for (int i = 0; i < Params::get_MN(); i++) {
+        sorted_i = temp_i[i];
+        ym_isReceived[sorted_i/N][sorted_i%N] = true;
+    }
 }
 
 void Preseter::set_params(vector<pair<int, double> > &cap_map,vector<int> &A, vector<int> &Ac_0, vector<int> &p_0, vector<int> &p){

@@ -28,7 +28,10 @@ public:
     static void dispArray(double *x);
     static void dispArray(int n,int *x);
     static void dispArray(int n,double *x);
-    static void pp(vector<int> &collection);
+    static void pp(vector<int> &a);
+    static void rpp(vector<int> &a);
+    static void dpp(vector<int> &a);
+    static void drpp(vector<int> &a);
     static void pp(vector<double> &a);
 
     static int ithIndexDesc(int i, double *array, double *descArray);

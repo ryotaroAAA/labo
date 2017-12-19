@@ -8,7 +8,7 @@ using namespace std;
 
 enum CHANNEL_TYPE{BEC, BSC, AWGN};
 enum SOURCE_TYPE{ALL0, ALL1, RAND};
-enum MID_MODE{MID_IU, MID_ID, MID_BU, MID_BD};
+enum MID_MODE{MID_BLUTE, MID_ADOR, MID_AOR, MID_DOR, MID_AOB, MID_DOB, MID_AOV, MID_DOV};
 enum DECODE_MODE{BP, SC};
 enum EXP_MODE{NORMAL, PUNC, QUP, WANG, MID, M_WANG, M_QUP, VALERIO_P, VALERIO_S, M_VALERIO_P, M_VALERIO_S};
 
@@ -30,12 +30,14 @@ private:
     static int M;
     static int K;
     static int MN;
+    static int Bloop;
     static double e;
     static int rp;
     static int monteNum;
     static int blockNum;
     static int upperBlockErrorNum;
     static bool is_outlog;
+    static bool is_calc_bloop;
     static CHANNEL_TYPE s;
     static DECODE_MODE dm;
     static EXP_MODE exp_mode;
@@ -46,11 +48,13 @@ public:
     static int get_M();
     static int get_K();
     static int get_MN();
+    static int get_Bloop();
     static double get_e();
     static int get_monteNum();
     static int get_blockNum();
     static int get_upperBlockErrorNum();
     static bool get_is_outlog();
+    static bool get_is_calc_bloop();
     static string get_rvbDir();
     static CHANNEL_TYPE get_s();
     static DECODE_MODE get_decode_mode();
@@ -61,7 +65,9 @@ public:
     static void set_M(int _M);
     static void set_K(int _K);
     static void set_MN(int _MN);
+    static void set_Bloop(int _Bloop);
     static void set_is_outlog(bool _is_outlog);
+    static void set_is_calc_bloop(bool _is_calc_bloop);
     static void set_monteNum(int _monteNum);
     static void set_blockNum(int _blockNum);
     static void set_decode_mode(DECODE_MODE _dm);

@@ -4,17 +4,19 @@ int Params::N = 0;
 int Params::M = 0;
 int Params::K = 0;
 int Params::MN = 0;
+int Params::Bloop = 0;
 int Params::monteNum = 0;
 int Params::blockNum = 0;
 int Params::upperBlockErrorNum = 0;
 int Params::rp = 0;
 bool Params::is_outlog = false;
+bool Params::is_calc_bloop = false;
 double Params::e = 0;
 string Params::rvbDir = "";
 CHANNEL_TYPE Params::s = BEC;
 DECODE_MODE Params::dm = BP;
 EXP_MODE Params::exp_mode = NORMAL;
-MID_MODE Params::m_mode = MID_ID;
+MID_MODE Params::m_mode = MID_DOR;
 
 int Params::get_N(){
     return N;
@@ -30,6 +32,10 @@ int Params::get_K(){
 
 int Params::get_MN(){
     return MN;
+}
+
+int Params::get_Bloop(){
+    return Bloop;
 }
 
 int Params::get_monteNum(){
@@ -54,6 +60,10 @@ int Params::get_rp(){
 
 bool Params::get_is_outlog(){
     return is_outlog;
+}
+
+bool Params::get_is_calc_bloop(){
+    return is_calc_bloop;
 }
 
 string Params::get_rvbDir() {
@@ -90,6 +100,10 @@ void Params::set_K(int _K){
 
 void Params::set_MN(int _MN){
     MN = _MN;
+}
+
+void Params::set_Bloop(int _Bloop){
+    Bloop = _Bloop;
 }
 
 void Params::set_monteNum(int _monteNum){
@@ -134,5 +148,9 @@ void Params::set_m_mode(MID_MODE _m_mode){
 
 void Params::set_is_outlog(bool _is_outlog){
     is_outlog = _is_outlog;
+}
+
+void Params::set_is_calc_bloop(bool _is_calc_bloop){
+    is_calc_bloop = _is_calc_bloop;
 }
 

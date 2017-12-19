@@ -17,14 +17,14 @@ public:
     ~Decoder();
 
     //main BP
-    vector<int> calcBP(vector<int> p, vector<int> &param, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac);
+    vector<int> calcBP(int loop_num, vector<int> p, vector<int> &param, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<int> > &node_error_count, ofstream &val_error_file, vector<vector<int> > &B);
     void calcSConBP(int itr, int count, ofstream &val_file, ofstream &check_file, vector<int> &u, vector<double> &y , vector<int> &u_n_est, vector<double> &tmp_u, vector<int> &A, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
 
     //BP init
     void init_message(vector<bool> &puncFlag, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list);
-    void init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
+    void init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived, vector<vector<int> > &B);
     void SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_est, vector<int> &A, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<vector<message> > > &save_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &save_isChecked);
-    void BPinit(vector<int> &p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym,vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived);
+    void BPinit(vector<int> &p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym,vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived, vector<vector<int> > &B);
 
     //calc message
     double calc_message(int mode, vector<double> val);
@@ -40,9 +40,10 @@ public:
     bool isChanged(vector<vector<bool> > &old_node_isChecked, vector<vector<bool> > &new_node_isChecked2);
 
     //log
-    void init_outLog(ofstream &val_file, ofstream &check_file);
+    void init_outLog(ofstream &val_file, ofstream &check_file, ofstream &val_error_file);
     void outLog(int itr, int no_checked, vector<int> &u, vector<int> &u_est, ofstream &val_file, ofstream &check_file ,vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked);
     void printDecodeProgress(int count, vector<vector<bool> > &node_value, ofstream &w_file);
+    void printDecodeProgress(int count, vector<vector<int> > &node_value, ofstream &w_file);
     void printDecodeProgress(int count, vector<vector<double> > &node_value, ofstream &w_file);
 
     //gear

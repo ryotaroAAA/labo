@@ -28,11 +28,13 @@ public:
     static void errorCount(vector<int> &u, vector<int> &u_est, int* error_count);
 
     static string get_itrfn();
+    static int get_eachK(double from);
 
     static void probErrBound();
     static double errorCalc(vector<int> &u, vector<int> &u_est, int* error_count);
     static void makeArrayCapacity(vector<double> &array);
     static void makeArrayBhat(vector<double> &array);
+    static void printDecodeProgress(int count, vector<vector<int> > &node_value, ofstream &w_file);
 
     static void calcBlockErrorRate();
     static void calcBlockErrorRate_BP();

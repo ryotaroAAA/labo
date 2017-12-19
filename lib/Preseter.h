@@ -18,7 +18,10 @@ public:
     static vector<int> generateUi(SOURCE_TYPE set, vector<int> &x);
     static void set_params(vector<pair<int, double> > &cap_map,vector<int> &A, vector<int> &Ac, vector<int> &p_0, vector<int> &p);
     static vector<int> makeTable(int n);
+    static void makeManyValTableAs(bool sortflg, vector<int> &table_map);
     static vector<int> get_bitReversal(vector<int> p_0);
+    static vector<int> makeTreeIndex(int n);
+    static void set_zin_all(vector<int> &A, vector<vector<int> > &tempZn, vector<vector<bool> > &ym_isReceived);
 
 };
 #endif //CHANNEL_POLARIZATION_PRESETER_H

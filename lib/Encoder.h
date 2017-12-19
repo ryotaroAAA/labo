@@ -10,6 +10,7 @@ public:
     ~Encoder();
 
     vector<int> encode(int n, vector<int> &input);
+    vector<int> enc(int n, vector<int> &input);
     vector<int> encode_m(int n, int m, int level, vector<int>  &input, vector<vector<int> > &x);
 };
 

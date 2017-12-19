@@ -70,6 +70,42 @@ void Common::pp(vector<int> &a){
     cout << "}" << endl;
 }
 
+void Common::rpp(vector<int> &a){
+    bar();
+    cout << "{";
+    int count = 1;
+    for (int i = 0; i < a.size(); ++i) {
+        cout << a[a.size()-1-i];
+        if(count != a.size()) cout << ",";
+        count++;
+    }
+    cout << "}" << endl;
+}
+
+void Common::dpp(vector<int> &a){
+    bar();
+    cout << "{";
+    int count = 1;
+    for(auto var : a){
+        cout << var-1;
+        if(count != a.size()) cout << ",";
+        count++;
+    }
+    cout << "}" << endl;
+}
+
+void Common::drpp(vector<int> &a){
+    bar();
+    cout << "{";
+    int count = 1;
+    for (int i = 0; i < a.size(); ++i) {
+        cout << a[a.size()-1-i]-1;
+        if(count != a.size()) cout << ",";
+        count++;
+    }
+    cout << "}" << endl;
+}
+
 void Common::pp(vector<double> &a){
     bar();
     cout << "{";

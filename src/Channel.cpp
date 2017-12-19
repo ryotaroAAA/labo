@@ -3,16 +3,15 @@
 vector<double> Channel::channel_output(vector<int> &input){
     vector<double> y;
 
-    init_genrand((int) time(NULL));
-//    init_genrand(0);
-
     for (auto val : input) {
         if( Params::get_s() == AWGN ){
             random_device seed_gen;
             default_random_engine engine(seed_gen());
-            normal_distribution<> dist(0.0, Params::get_e());
+            normal_distribution<> dist(0.0, Params::get_e()*Params::get_e());
 //            cout << dist(engine) << endl;
             y.push_back(val + dist(engine));
+//            double temp = dist(engine);
+//            cout << val << " " << temp << " " << val + temp << endl;
         } else {
             if(genrand_real1() < Params::get_e()){
                 if( Params::get_s() == BEC){
@@ -29,9 +28,6 @@ vector<double> Channel::channel_output(vector<int> &input){
 }
 
 void Channel::channel_output_m(vector<vector<int> > &input, vector<vector<double> > &y) {
-    init_genrand((int) time(NULL));
-//    init_genrand(12345);
-
     for (int i=0; i<log2(Params::get_N())+1; i++) {
         for (int j=0; j < Params::get_N(); j++) {
             if( Params::get_s() == AWGN ){

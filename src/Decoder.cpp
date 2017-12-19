@@ -7,6 +7,39 @@ Decoder::Decoder(){
 Decoder::~Decoder(){
 
 }
+void Decoder::printDecodeProgress(int count, vector<vector<int> > &node_value, ofstream &w_file){
+    int size = 2*log2(Params::get_N())+2;
+    if(count >0 ){
+        w_file << "\t}," << endl;
+    }
+    w_file << "\t\"" << count << "\"" << ":{" << endl;
+    for (int i = 0; i < size; i++) {
+        w_file << "\t\t\"" << i << "\"" << ":{" << endl;
+        for (int j = 0; j < Params::get_N(); j++) {
+            double temp = node_value[i][j];
+            if(isinf(temp) && temp > 0){
+                temp = inf_p;
+                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+            } else if(isinf(temp) && temp < 0){
+                temp = inf_m;
+                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+            } else if(isnan(temp)){
+                w_file << "\t\t\t\"" << j << "\"" << ":" << "\"NAN\"";
+            } else {
+                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+            }
+            if (j != Params::get_N()-1) {
+                w_file << ",";
+            }
+            w_file << endl;
+        }
+        if (i != size-1) {
+            w_file << "\t\t}," << endl;
+        } else {
+            w_file << "\t\t}" << endl;
+        }
+    }
+}
 
 void Decoder::printDecodeProgress(int count, vector<vector<bool> > &node_value, ofstream &w_file){
     int size = 2*log2(Params::get_N())+2;
@@ -255,6 +288,11 @@ double Decoder::calc_message(int mode, vector<double> val) {
         for (int i = 0; i < val.size(); i++) {
             llr += val[i];
         }
+        if (isnan(llr)) {
+            llr = 0.0;
+            Common::pp(val);
+            cout << "val" << endl;
+        }
     } else {
         //check
         if(val.size() == 1){
@@ -262,9 +300,13 @@ double Decoder::calc_message(int mode, vector<double> val) {
         } else {
             llr = 1.0;
             for (int i = 0; i < val.size(); i++) {
-                llr *= tanh(val[i]/2.0);
+                llr *= tanh((double)val[i]/2.0);
             }
-            llr = 2*atanh(llr);
+            llr = (double)2.0*atanh(llr);
+        }
+        if (isnan(llr)) {
+            Common::pp(val);
+            cout << "check" << endl;
         }
     }
     return llr;
@@ -297,7 +339,7 @@ void Decoder::confirmIsCheck(vector<vector<double> > &node_value, vector<vector<
             if(tempCheck%2 == 0 && !zero_flag){
                 node_isChecked[i][j] = true;
             } else if(i != size-1) {
-//                node_isChecked[i][j] = false; //なんのため？
+                node_isChecked[i][j] = false;
             }
         }
     }
@@ -425,7 +467,7 @@ void Decoder::SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_es
     }
 }
 
-void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived){
+void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived, vector<vector<int> > &B){
     double wc, wp, llr = 0.0, val = 0.0;
     int size = 2*log2(Params::get_N())+2;
     int ysize = log2(Params::get_N())+1;
@@ -448,44 +490,61 @@ void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u
     }
 
     //val_node frozen shorten設定
-    for (int i = 0; i < Params::get_N(); i++) {
-        if(!puncFlag[i]){
-            //puncなし
-            if( Common::is_mid_send() ){
-                wc = Channel::calcW(ym[ysize-1][i],0);
-                wp = Channel::calcW(ym[ysize-1][i],1);
+    if(!Params::get_is_calc_bloop()){
+        for (int i = 0; i < Params::get_N(); i++) {
+            if(!puncFlag[i]){
+                //puncなし
+                if( Common::is_mid_send() ){
+                    wc = Channel::calcW(ym[ysize-1][i],0);
+                    wp = Channel::calcW(ym[ysize-1][i],1);
+                } else {
+                    wc = Channel::calcW(y[i],0);
+                    wp = Channel::calcW(y[i],1);
+                }
+                llr = 1.0 * log(wc / wp);
+                node_val[size-2][i] = llr;
+
             } else {
-                wc = Channel::calcW(y[i],0);
-                wp = Channel::calcW(y[i],1);
+                //punc(shorten)あり
+                if( em == WANG || em == VALERIO_S){
+                    llr = (x[i]==0)? inf_p : inf_m;
+                    node_val[size-2][i] = llr;
+                    node_isChecked[size-2][i] = true;
+                } else if( em == M_WANG || em == M_VALERIO_S){
+                    llr = (xm[ysize-1][i]==0)? inf_p : inf_m;
+                    node_val[size-2][i] = llr;
+                    node_isChecked[size-2][i] = true;
+                }
             }
-            llr = 1.0 * log(wc / wp);
-            node_val[size-2][i] = llr;
+            //channelファクターノード
+            node_isChecked[size-1][i] = true;
 
-        } else {
-            //punc(shorten)あり
-            if( em == WANG || em == VALERIO_S){
-                llr = (x[i]==0)? inf_p : inf_m;
-                node_val[size-2][i] = llr;
-                node_isChecked[size-2][i] = true;
-            } else if( em == M_WANG || em == M_VALERIO_S){
-                llr = (xm[ysize-1][i]==0)? inf_p : inf_m;
-                node_val[size-2][i] = llr;
-                node_isChecked[size-2][i] = true;
+            //frozen_bitのllr設定
+            databit_flag = false;
+            for (int j = 0; j < Params::get_K(); j++) {
+                if(i == A[j]){
+                    databit_flag = true;
+                }
+            }
+            if(databit_flag == false){
+                node_val[0][i] = (u[i] == 0) ? inf_p : inf_m;
+                node_isChecked[0][i] = true;
             }
         }
+    } else {
         //channelファクターノード
-        node_isChecked[size-1][i] = true;
-
-        //frozen_bitのllr設定
-        databit_flag = false;
-        for (int j = 0; j < Params::get_K(); j++) {
-            if(i == A[j]){
-                databit_flag = true;
-            }
+        for (int i = 0; i < Params::get_N(); i++) {
+            node_isChecked[size - 1][i] = true;
         }
-        if(databit_flag == false){
-            node_val[0][i] = (u[i] == 0) ? inf_p : inf_m;
-            node_isChecked[0][i] = true;
+        //任意の位置をショートン
+        for (int i = 0; i < B.size(); i=i+2) {
+            for (int j = 0; j < B[0].size(); j++) {
+                 if(B[i][j]){
+                     llr = (xm[i/2][j]==0)? inf_p : inf_m;
+                     node_val[i][j] = llr;
+                     node_isChecked[i][j] = true;
+                 }
+            }
         }
     }
 
@@ -493,45 +552,94 @@ void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u
     if( Common::is_mid_send() ){
         MID_MODE mm = Params::get_m_mode();
         vector<int> Bn_0 = Preseter::makeTable(Params::get_N());
-        vector<int> Bn;
+        vector<int> v_table_0(Params::get_N());
+
+        bool sortflg = (Params::get_m_mode() == MID_DOV);
+        Preseter::makeManyValTableAs(sortflg, v_table_0);
+        vector<int> Bn, v_table;
         for (int i = 0; i < Params::get_N(); i++) {
             if(Common::containVal(Bn_0[i]-1, A)){
                 Bn.push_back(Bn_0[i]-1);
             }
+            if(Common::containVal(v_table_0[i], A)){
+                v_table.push_back(v_table_0[i]);
+            }
         }
         int k = Params::get_K();
+        int zsize = log2(Params::get_N())+1;
+        int tmpSize = log2(Params::get_N())+1;
+        vector<vector<int> > sortedZn(zsize, vector<int>(Params::get_N(), 0));
         switch (mm) {
-            case MID_IU:
+            case MID_BLUTE:{
+                    vector<int> bl;
+                    string bloop_fn = "save_b/N_"
+                                      + to_string(Params::get_N())
+                                      + "/Bloop_" + to_string(Params::get_Bloop());;
+                    ifstream ifs(bloop_fn);
+                    string str;
+                    while(getline(ifs,str)) {
+                        cout<< str << endl;
+                        bl.push_back(stoi(str));
+                    }
+                    int n = Params::get_N();
+                    for (int i = 0; i < Params::get_M(); i++) {
+                        ym_isReceived[bl[i]/n][bl[i]%n] = true;
+                    }
+                }
+                break;
+            case MID_ADOR:
+                Preseter::set_zin_all(A, sortedZn, ym_isReceived);
+                break;
+            case MID_DOR:
                 for (int i = 0; i < Params::get_M(); i++) {
                     ym_isReceived[0][A[i]] = true;
                 }
                 break;
-            case MID_ID:
+            case MID_AOR:
                 for (int i = 0; i < Params::get_M(); i++) {
                     ym_isReceived[0][A[k-1-i]] = true;
                 }
                 break;
-            case MID_BU:
+            case MID_DOB:
                 for (int i = 0; i < Params::get_M(); i++) {
                     ym_isReceived[0][Bn[k-1-i]-1] = true;
                 }
                 break;
-            case MID_BD:
+            case MID_AOB:
                 for (int i = 0; i < Params::get_M(); i++) {
                     ym_isReceived[0][Bn[i]-1] = true;
+                }
+                break;
+            case MID_DOV:
+                for (int i = 0; i < Params::get_M(); i++) {
+                    ym_isReceived[0][v_table[i]] = true;
+                }
+                break;
+            case MID_AOV:
+                for (int i = 0; i < Params::get_M(); i++) {
+                    ym_isReceived[0][v_table[k-1-i]] = true;
                 }
                 break;
             default:
                 break;
         }
-
+//        for (int i = 0; i < ym_isReceived.size(); i++) {
+//            for (int j = 0; j < ym_isReceived[0].size(); j++) {
+//                 if(ym_isReceived[i][j]){
+//                     wc = Channel::calcW(ym[i][j],0);
+//                     wp = Channel::calcW(ym[i][j],1);
+//                     llr = 1.0 * log(wc / wp);
+//                     node_val[i][j] = llr;
+//                 }
+//            }
+//        }
     }
 }
 
-void Decoder::BPinit(vector<int> &p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived){
+void Decoder::BPinit(vector<int> &p, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &ym_isReceived, vector<vector<int> > &B){
     vector<bool> puncFlag(Params::get_N(),false);
     //init node frozen punc etc pattern
-    init_params(puncFlag, p, u, x, y, xm, ym, A, Ac, node_val, node_isChecked, ym_isReceived);
+    init_params(puncFlag, p, u, x, y, xm, ym, A, Ac, node_val, node_isChecked, ym_isReceived, B);
     init_message(puncFlag, node_val, message_list);
 }
 
@@ -606,7 +714,7 @@ void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vect
     }
 }
 
-vector<int> Decoder::calcBP(vector<int> p, vector<int> &param, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac) {
+vector<int> Decoder::calcBP(int loop_num, vector<int> p, vector<int> &param, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<int> &A, vector<int> &Ac, vector<vector<int> > &node_error_count, ofstream &val_error_file, vector<vector<int> > &B) {
     vector<double> tmp_u(Params::get_N(),0.0);
     vector<int> u_n_est(Params::get_N());
     vector<vector<int> > adjacent;
@@ -626,10 +734,11 @@ vector<int> Decoder::calcBP(vector<int> p, vector<int> &param, vector<int> &u, v
 
     ofstream val_file;
     ofstream check_file;
-    init_outLog(val_file, check_file);
+
+    init_outLog(val_file, check_file, val_error_file);
     if (Params::get_decode_mode() == BP) {
         vector<vector<vector<message> > > message_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
-        BPinit(p, u, x, y, xm, ym, A, Ac, node_value, message_list, node_isChecked, ym_isReceived);
+        BPinit(p, u, x, y, xm, ym, A, Ac, node_value, message_list, node_isChecked, ym_isReceived, B);
 
         for (int i = 0; i < Params::get_rp(); i++) {
             if(isTerminate(no_checked, node_value, node_isChecked)) break;
@@ -643,13 +752,6 @@ vector<int> Decoder::calcBP(vector<int> p, vector<int> &param, vector<int> &u, v
             confirmIsCheck(node_value, node_isChecked);
             count++;
         }
-
-        for (int i = 0; i < Params::get_N(); i++) {
-            if(Params::get_is_outlog()) {
-                cout << "BP: " << i+1 << " " << node_value[0][i] << endl;
-            }
-            u_n_est[i] = (node_value[0][i]>=0.0) ? 0 : 1;
-        }
     } else {
         calcSConBP(itr, count, val_file, check_file, u, y, u_n_est, tmp_u, A, node_value, node_isChecked, ym_isReceived);
     }
@@ -661,9 +763,22 @@ vector<int> Decoder::calcBP(vector<int> p, vector<int> &param, vector<int> &u, v
 
     for (int i = 0; i < Params::get_N(); i++) {
         if(Params::get_is_outlog()) {
-            cout << "BP: " << i + 1 << " " << node_value[0][i] << endl;
+//            cout << "BP: " << i + 1 << " " << node_value[0][i] << endl;
         }
         u_n_est[i] = (node_value[0][i] > 0) ? 0 : 1;
+    }
+
+    if(Common::is_mid_send() && true){
+        for (int i = 0; i < size; i=i+2) {
+            for (int j = 0; j < Params::get_N(); j++) {
+                int temp = (node_value[i][j] >= 0.0)?0:1;
+//                int temp_x = xm[i/2][j];
+                if(xm[i/2][j] != temp){
+                    node_error_count[i][j]++;
+                }
+            }
+        }
+        printDecodeProgress(loop_num-1, node_error_count, val_error_file);
     }
 
     outLog(itr, no_checked, u, u_n_est, val_file, check_file , node_value, node_isChecked);
@@ -671,7 +786,7 @@ vector<int> Decoder::calcBP(vector<int> p, vector<int> &param, vector<int> &u, v
     return u_n_est;
 }
 
-void Decoder::init_outLog(ofstream &val_file, ofstream &check_file){
+void Decoder::init_outLog(ofstream &val_file, ofstream &check_file, ofstream &val_error_file){
     if(Params::get_is_outlog()) {
         string val_fn = "/Users/ryotaro/Dropbox/labo/graph_js/val.json";
         string check_fn = "/Users/ryotaro/Dropbox/labo/graph_js/check.json";
@@ -777,7 +892,9 @@ vector<int> Decoder::decode(vector<double> &y, vector<int> &u, vector<int> &A){
         // Aに含まれないindexなら既知
         if (Common::containNumInArray(i, Params::get_N()-Params::get_K(), A) == false) {
             u_n_est[i] = u[i];
-            cout << "SC: " << i+1 << " " << ((u[i] == 1)?(inf_m):(inf_p)) << endl;
+            if(Params::get_is_outlog()) {
+                cout << "SC: " << i+1 << " " << ((u[i] == 1)?(inf_m):(inf_p)) << endl;
+            }
         } else {
             this->startTimer();
 
@@ -794,7 +911,9 @@ vector<int> Decoder::decode(vector<double> &y, vector<int> &u, vector<int> &A){
                 h_i[i] = 1;
             }
             u_n_est[i] = h_i[i];
-            cout << "SC: " << i+1 << " " << llr << endl;
+            if(Params::get_is_outlog()) {
+                cout << "SC: " << i + 1 << " " << llr << endl;
+            }
 //            printf("%05f\n", llr);
         }
     }
@@ -996,7 +1115,7 @@ void Decoder::calcSConBP(int itr, int count, ofstream &val_file, ofstream &check
 
     if(Params::get_is_outlog()) {
         for (int i = 0; i < Params::get_N(); i++) {
-            cout << "BP: " << i+1 << " " << tmp_u[i] << endl;
+            cout << "SConBP: " << i+1 << " " << tmp_u[i] << endl;
         }
     }
 }
