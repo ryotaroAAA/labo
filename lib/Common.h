@@ -33,6 +33,11 @@ public:
     static void dpp(vector<int> &a);
     static void drpp(vector<int> &a);
     static void pp(vector<double> &a);
+    static double calcRank(vector<int> &A, vector<int> &S);
+    static void addRow(vector<int> &p, vector<vector<int> > &mat );
+    static vector<int> makeTreeIndex(int temp_n, int n);
+    static int rankOfMatrix(vector<vector<int> > &mat);
+    static void swap(vector<vector<int> > &mat, int row1, int row2, int col);
 
     static int ithIndexDesc(int i, double *array, double *descArray);
     static bool containVal(int value, vector<int> m_array);
@@ -49,6 +54,6 @@ public:
     static vector<int> retBinary(int n, vector<int> &x);
 
     static bool is_mid_send();
-    static double get_rate();
+    static double get_rate(vector<int> &A, vector<int> &S);
 };
 #endif //CHANNEL_POLARIZATION_COMMON_H

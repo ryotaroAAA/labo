@@ -241,13 +241,28 @@ set xtics 0.05 font "Arial,25"
 set ytics 0.1 font "Arial,25"
 set logscale y
 set format y "10^{%L}"
-set xrange[0.15:0.45]
-set yrange[0.001:1]
+set xrange[0.2:0.45]
+set yrange[0.1:1]
 set xlabel font "Arial,25"
 set ylabel font "Arial,25"
-set key font "Arial,15" left top
+set key font "Arial,25" right bottom
 set xl 'Rate(bits)'
 set yl 'Block Error Rate'
+plot   'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_blute' with lines lt 1 title "N256MN16sd0.6:blute"
+replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dob' with lines lt 2 title "N256MN16sd0.6:dor"
+replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dor' with lines lt 6 title "N256MN16sd0.6:dob"
+replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dov' with lines lt 7 title "N256MN16sd0.6:dov"
+replot   'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_blute' with lines  dt 5 lt 1 title "N256MN32AWGNsd0.6:blute"
+replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dob' with lines  dt 5 lt 2 title "N256MN32AWGNsd0.6:dor"
+replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dor' with lines  dt 5 lt 6 title "N256MN32AWGNsd0.6:dob"
+replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dov' with lines  dt 5 lt 7 title "N256MN32AWGNsd0.6:dov"
+
+plot   'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_blute' with lines lt 1 title "N256MN32AWGNsd0.6:blute"
+replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dob' with lines lt 2 title "N256MN32AWGNsd0.6:dor"
+replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dor' with lines lt 6 title "N256MN32AWGNsd0.6:dob"
+replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dov' with lines lt 7 title "N256MN32AWGNsd0.6:dov"
+
+
 plot   'N256M32MN64e0.5BNum2000UPBn2000cBEC:mid_dor' with lines lt 1 title "N256MN64e0.5:dor"
 replot 'N256M32MN64e0.5BNum2000UPBn2000cBEC:mid_aor' with lines lt 2 title "N256MN64e0.5:aor"
 replot 'N256M32MN64e0.5BNum2000UPBn2000cBEC:mid_dob' with lines lt 5 title "N256MN64e0.5:dob"
@@ -261,3 +276,13 @@ replot 'N256M32MN32e0.5BNum1000UPBn2000cBEC:mid_bu' with lines lt 5 title "N256M
 replot 'N256M32MN32e0.5BNum1000UPBn2000cBEC:mid_bd' with lines lt 6 title "N256M32MN32e0.5:aob"
 replot 'N256M32MN32e0.5BNum1000UPBn2000cBEC:mid_vd' with lines lt 7 title "N256M32MN32e0.5:dov"
 replot 'N256M32MN32e0.5BNum1000UPBn2000cBEC:mid_vu' with lines lt 8 title "N256M32MN32e0.5:aov"
+
+
+plot   'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_blute' with lines lt 1 title "MN16:BF"
+replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dob' with lines lt 2 title "MN16:DOR"
+replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dor' with lines lt 7 title "MN16:DOB"
+replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dov' with lines lt 8 title "MN16:DOV"
+replot   'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_blute' with lines  dt 5 lt 1 title "MN32:BF"
+replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dob' with lines  dt 5 lt 2 title "MN32:DOR"
+replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dor' with lines  dt 5 lt 7 title "MN32:DOB"
+replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dov' with lines  dt 5 lt 8 title "MN32:DOV"

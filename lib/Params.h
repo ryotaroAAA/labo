@@ -31,6 +31,7 @@ private:
     static int K;
     static int MN;
     static int Bloop;
+    static double point[3];
     static double e;
     static int rp;
     static int monteNum;
@@ -43,12 +44,14 @@ private:
     static EXP_MODE exp_mode;
     static MID_MODE m_mode;
     static string rvbDir;
+//    static vector<int> test;
 public:
     static int get_N();
     static int get_M();
     static int get_K();
     static int get_MN();
     static int get_Bloop();
+    static void get_point(double temp[3]);
     static double get_e();
     static int get_monteNum();
     static int get_blockNum();
@@ -66,6 +69,7 @@ public:
     static void set_K(int _K);
     static void set_MN(int _MN);
     static void set_Bloop(int _Bloop);
+    static void set_point(double _point[3]);
     static void set_is_outlog(bool _is_outlog);
     static void set_is_calc_bloop(bool _is_calc_bloop);
     static void set_monteNum(int _monteNum);

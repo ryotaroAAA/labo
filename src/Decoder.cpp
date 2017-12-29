@@ -569,21 +569,30 @@ void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u
         int zsize = log2(Params::get_N())+1;
         int tmpSize = log2(Params::get_N())+1;
         vector<vector<int> > sortedZn(zsize, vector<int>(Params::get_N(), 0));
+
+        vector<int> bl;
+        string bloop_fn = "save_b/N_"
+                          + to_string(Params::get_N())
+                          + "/Bloop_" + to_string(Params::get_Bloop());;
+        ifstream ifs(bloop_fn);
+        string str;
+        while(getline(ifs,str)) {
+//            cout<< str << endl;
+            bl.push_back(stoi(str));
+        }
         switch (mm) {
             case MID_BLUTE:{
-                    vector<int> bl;
-                    string bloop_fn = "save_b/N_"
-                                      + to_string(Params::get_N())
-                                      + "/Bloop_" + to_string(Params::get_Bloop());;
-                    ifstream ifs(bloop_fn);
-                    string str;
-                    while(getline(ifs,str)) {
-                        cout<< str << endl;
-                        bl.push_back(stoi(str));
-                    }
                     int n = Params::get_N();
-                    for (int i = 0; i < Params::get_M(); i++) {
-                        ym_isReceived[bl[i]/n][bl[i]%n] = true;
+                    int t = 0;
+                    for (int i = 0; i < bl.size(); i++) {
+                        if(t <= Params::get_MN() && bl.size()>0){
+                            //if(Common::containVal(bl[t],Ac) && Common::containVal(bl[t],p)){ ?　左ノードならAに含まれるもののみ
+                            if((bl[i] < n && bl[i] && Common::containVal(bl[i],A)) || n <= bl[i]){
+                                ym_isReceived[bl[i]/n][bl[i]%n] = true;
+//                            cout << "[" << bl[t]/n << "]" << "[" << bl[t]%n << "]" << endl;
+                                t++;
+                            }
+                        }
                     }
                 }
                 break;
@@ -591,32 +600,32 @@ void Decoder::init_params(vector<bool> &puncFlag, vector<int> &p, vector<int> &u
                 Preseter::set_zin_all(A, sortedZn, ym_isReceived);
                 break;
             case MID_DOR:
-                for (int i = 0; i < Params::get_M(); i++) {
+                for (int i = 0; i < Params::get_MN(); i++) {
                     ym_isReceived[0][A[i]] = true;
                 }
                 break;
             case MID_AOR:
-                for (int i = 0; i < Params::get_M(); i++) {
+                for (int i = 0; i < Params::get_MN(); i++) {
                     ym_isReceived[0][A[k-1-i]] = true;
                 }
                 break;
             case MID_DOB:
-                for (int i = 0; i < Params::get_M(); i++) {
+                for (int i = 0; i < Params::get_MN(); i++) {
                     ym_isReceived[0][Bn[k-1-i]-1] = true;
                 }
                 break;
             case MID_AOB:
-                for (int i = 0; i < Params::get_M(); i++) {
+                for (int i = 0; i < Params::get_MN(); i++) {
                     ym_isReceived[0][Bn[i]-1] = true;
                 }
                 break;
             case MID_DOV:
-                for (int i = 0; i < Params::get_M(); i++) {
+                for (int i = 0; i < Params::get_MN(); i++) {
                     ym_isReceived[0][v_table[i]] = true;
                 }
                 break;
             case MID_AOV:
-                for (int i = 0; i < Params::get_M(); i++) {
+                for (int i = 0; i < Params::get_MN(); i++) {
                     ym_isReceived[0][v_table[k-1-i]] = true;
                 }
                 break;

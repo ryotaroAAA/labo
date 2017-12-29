@@ -9,6 +9,7 @@ int Params::monteNum = 0;
 int Params::blockNum = 0;
 int Params::upperBlockErrorNum = 0;
 int Params::rp = 0;
+double Params::point[] = {1,1,1};
 bool Params::is_outlog = false;
 bool Params::is_calc_bloop = false;
 double Params::e = 0;
@@ -52,6 +53,12 @@ int Params::get_upperBlockErrorNum(){
 
 double Params::get_e(){
     return e;
+}
+
+void Params::get_point(double temp[3]){
+    temp[0] = point[0];
+    temp[1] = point[1];
+    temp[2] = point[2];
 }
 
 int Params::get_rp(){
@@ -100,6 +107,12 @@ void Params::set_K(int _K){
 
 void Params::set_MN(int _MN){
     MN = _MN;
+}
+
+void Params::set_point(double _point[3]){
+    point[0] = _point[0];
+    point[1] = _point[1];
+    point[2] = _point[2];
 }
 
 void Params::set_Bloop(int _Bloop){

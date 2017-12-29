@@ -259,6 +259,7 @@ string Analysor::get_itrfn(){
         case PUNC: ename = "punc"; break;
         case MID:
             switch (mm) {
+                case MID_BLUTE: ename = "mid_blute"; break;
                 case MID_ADOR: ename = "mid_ador"; break;
                 case MID_AOR: ename = "mid_aor"; break;
                 case MID_DOR: ename = "mid_dor"; break;
@@ -480,9 +481,11 @@ void Analysor::calcBlockErrorRate_BP() {
     itrfile.open(get_itrfn(), ios::out);
 
     int bloop = Params::get_Bloop();
-    int pointNum = 1;
-    double from = 1;
-    double to = 1;
+    double point[3];
+    Params::get_point(point);
+    int pointNum = point[0];
+    double from = point[1];
+    double to = point[2];
     int startK = get_eachK(from);
     int endK = get_eachK(to);
     double interval = (double)(endK-startK)/pointNum;
@@ -498,18 +501,21 @@ void Analysor::calcBlockErrorRate_BP() {
     b_file.open(b_fn, ios::out);
     b_file << "{" << endl;
 
+
     ofstream saveb_file;
     struct stat st;
-    string dir = "save_b/N_"+to_string(Params::get_N());
-    int ret = stat(dir.data(), &st);
-    if (ret == -1) {
-        mkdir(dir.data(), S_IRUSR | S_IWUSR | S_IXUSR);
-        cout <<dir.data()<<endl;
+    if(Params::get_is_calc_bloop()){
+        string dir = "save_b/N_"+to_string(Params::get_N());
+        int ret = stat(dir.data(), &st);
+        if (ret == -1) {
+            mkdir(dir.data(), S_IRUSR | S_IWUSR | S_IXUSR);
+            cout <<dir.data()<<endl;
+        }
+        string saveb_fn = "save_b/N_"
+                          + to_string(Params::get_N())
+                          + "/Bloop_" + to_string(bloop);
+        saveb_file.open(saveb_fn, ios::out);
     }
-    string saveb_fn = "save_b/N_"
-                + to_string(Params::get_N())
-                + "/Bloop_" + to_string(bloop);
-    saveb_file.open(saveb_fn, ios::out);
 
     EXP_MODE em = Params::get_exp_mode();
     vector<int> saveb;
@@ -522,7 +528,7 @@ void Analysor::calcBlockErrorRate_BP() {
         Params::set_K(startK + i * interval);
         Preseter::set_params(cap_map, A, Ac, p_0, p);
 
-        rate = Common::get_rate();
+        rate = Common::get_rate(A,p);
         cout << "rate::" << rate << endl;
 
         if(Params::get_is_outlog()) {
@@ -570,12 +576,14 @@ void Analysor::calcBlockErrorRate_BP() {
                 y = Channel::channel_output(x);
             }
 
-            if(loopi % bloop == 0 ){
+            if(loopi % bloop == 0 && Params::get_is_calc_bloop()){
                 //1. error_countを一次元化
                 int size = log2(Params::get_N())+1;
                 int tempSize = size*Params::get_N();
                 vector<int> temp_er;
-                for (int i = 0; i < node_error_count.size(); i=i+2) {
+
+                //node_error_count.size()-2だと右ノードは見ない
+                for (int i = 0; i < node_error_count.size()-2; i=i+2) {
                     for (int j = 0; j < node_error_count[0].size(); j++) {
                         temp_er.push_back(node_error_count[i][j]);
                     }
