@@ -1,5 +1,8 @@
 #include "../lib/Params.h"
-
+#include <cmath>
+#include <iostream>
+//int size = 2*log2(Params::get_N())+2;
+//int n = Params::get_N();
 int Params::N = 0;
 int Params::M = 0;
 int Params::K = 0;
@@ -9,6 +12,11 @@ int Params::monteNum = 0;
 int Params::blockNum = 0;
 int Params::upperBlockErrorNum = 0;
 int Params::rp = 0;
+//vector<vector<bool> > Params::T(ysize, vector<bool>(n, false));
+vector<vector<bool> > Params::T;
+vector<int> Params::A;
+vector<int> Params::Ac;
+vector<int> Params::p;
 double Params::point[] = {1,1,1};
 bool Params::is_outlog = false;
 bool Params::is_calc_bloop = false;
@@ -53,6 +61,27 @@ int Params::get_upperBlockErrorNum(){
 
 double Params::get_e(){
     return e;
+}
+
+void Params::get_T(vector<vector<bool>> &temp){
+    for (int i = 0; i < temp.size(); i++) {
+        for (int j = 0; j < temp[0].size(); j++) {
+            temp[i][j] = T[i][j];
+//            std::cout << "a";
+        }
+    }
+}
+
+void Params::get_A(vector<int> &temp){
+    temp = A;
+}
+
+void Params::get_Ac(vector<int> &temp){
+    temp = Ac;
+}
+
+void Params::get_p(vector<int> &temp){
+    temp = p;
 }
 
 void Params::get_point(double temp[3]){
@@ -113,6 +142,30 @@ void Params::set_point(double _point[3]){
     point[0] = _point[0];
     point[1] = _point[1];
     point[2] = _point[2];
+}
+
+void Params::set_T(vector<vector<bool> > &temp){
+    for (int i = 0; i < temp.size(); i++) {
+        T.push_back(temp[i]);
+    }
+//    for (int i = 0; i < temp.size(); i++) {
+//        for (int j = 0; j < temp[0].size(); j++) {
+//            T[i][j] = temp[i][j];
+//        }
+//    }
+
+}
+
+void Params::set_A(vector<int> &temp){
+    A = temp;
+}
+
+void Params::set_Ac(vector<int> &temp){
+    Ac = temp;
+}
+
+void Params::set_p(vector<int> &temp){
+    p = temp;
 }
 
 void Params::set_Bloop(int _Bloop){

@@ -376,7 +376,7 @@ void Analysor::calcBlockErrorRate() {
             y_n.assign(Params::get_N(), 0);
             u_est.assign(Params::get_N(), 0);
             y_n = Channel::channel_output(x_n);
-            u_est = decoder.decode(y_n, u_n, A);
+            u_est = decoder.decode(y_n, u_n);
 
 //            Common::pp(u_est);
             Analysor::errorCount(u_n, u_est, &error_count);
@@ -458,8 +458,8 @@ void Analysor::calcBlockErrorRate_BP() {
     double BER = 0.0, sumBER = 0.0, rate = 0.0, mitr = 0.0;;
 
     vector<int> A;
-    vector<vector<int> > B(2*log2(Params::get_N())+2, vector<int>(Params::get_N(),0));
     vector<int> Ac;
+    vector<vector<int> > B(2*log2(Params::get_N())+2, vector<int>(Params::get_N(),0));
     vector<int> u(Params::get_N(), 0);
     vector<int> x(Params::get_N(), 0);
     vector<double> y(Params::get_N(), 0);
@@ -473,7 +473,7 @@ void Analysor::calcBlockErrorRate_BP() {
     Preseter::preset_A_Ac(A, Ac);
 
     vector<int> param(2, 0);
-    //パンクチャorショートンパターンをp
+    //右ノードのパンクチャorショートン位置を指定
     vector<int> p_0(Params::get_M(), -1);
     vector<int> p(Params::get_M(), -1);
 
@@ -501,7 +501,6 @@ void Analysor::calcBlockErrorRate_BP() {
     b_file.open(b_fn, ios::out);
     b_file << "{" << endl;
 
-
     ofstream saveb_file;
     struct stat st;
     if(Params::get_is_calc_bloop()){
@@ -526,12 +525,21 @@ void Analysor::calcBlockErrorRate_BP() {
         performance.startTimer();
         //k,u,frozen設定
         Params::set_K(startK + i * interval);
+        //実質TPS設定
         Preseter::set_params(cap_map, A, Ac, p_0, p);
 
-        rate = Common::get_rate(A,p);
-        cout << "rate::" << rate << endl;
+        rate = Common::get_rate();
+        Common::bar();
 
         if(Params::get_is_outlog()) {
+            cout << "T";
+            int size = log2(Params::get_N())+2;
+            int n = Params::get_N();
+            vector<vector<bool>> T(2*log2(Params::get_N())+2, vector<bool>(n, false));
+            Params::get_T(T);
+            for (int j = 0; j < T.size(); ++j) {
+                Common::pp(T[j]);
+            }
             cout << "A";
             Common::pp(A);
             cout << "Ac";
@@ -613,13 +621,14 @@ void Analysor::calcBlockErrorRate_BP() {
                 //[i] => [i/N][i%N]として変換可能なはず
                 sorted_i = temp_i[0];
                 saveb.push_back(sorted_i);
+                //Bに高いindexを入れていく
                 B[(sorted_i/N)*2][sorted_i%N] = 1;
                 vector<vector<int> > temp(2*log2(Params::get_N())+2, vector<int>(Params::get_N(),0));
                 node_error_count = temp;
                 Analysor::printDecodeProgress(loopi/bloop, B, b_file);
             }
 
-            u_est = decoder.calcBP(loopi, p, param, u, x, y, xm, ym, A, Ac, node_error_count, val_error_file, B);
+            u_est = decoder.calcBP(loopi, param, u, x, y, xm, ym, node_error_count, val_error_file, B);
             itr = param[0];
             Analysor::errorCount(u, u_est, &error_count);
             if (error_count > 0) block_error_count++;

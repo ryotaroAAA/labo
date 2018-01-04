@@ -207,7 +207,8 @@ void Preseter::set_zin_all(vector<int> &A, vector<vector<int> > &sortedZn, vecto
     }
 }
 
-void Preseter::set_params(vector<pair<int, double> > &cap_map,vector<int> &A, vector<int> &Ac_0, vector<int> &p_0, vector<int> &p){
+
+void Preseter::set_params(vector<pair<int, double> > &cap_map, vector<int> &A, vector<int> &Ac_0, vector<int> &p_0, vector<int> &p){
     A.resize(Params::get_K(), -1);
 //    Ac_0.resize(Params::get_N()-Params::get_K(), -1);
     Ac_0 = {};
@@ -263,4 +264,97 @@ void Preseter::set_params(vector<pair<int, double> > &cap_map,vector<int> &A, ve
         default:
             break;
     }
+    Params::set_A(A);
+    Params::set_Ac(Ac_0);
+    Params::set_p(p);
+
+    //中間ノード設定, yからメッセージを受信するようになる
+    int size = 2*log2(Params::get_N())+2;
+    int n = Params::get_N();
+    vector<vector<bool> > T(size, vector<bool>(n, false));
+    if( Common::is_mid_send() ){
+        MID_MODE mm = Params::get_m_mode();
+        vector<int> Bn_0 = Preseter::makeTable(Params::get_N());
+        vector<int> v_table_0(Params::get_N());
+        cout << "size::" << size << endl;
+
+        bool sortflg = (Params::get_m_mode() == MID_DOV);
+        Preseter::makeManyValTableAs(sortflg, v_table_0);
+        vector<int> Bn, v_table;
+        for (int i = 0; i < Params::get_N(); i++) {
+            if(Common::containVal(Bn_0[i]-1, A)){
+                Bn.push_back(Bn_0[i]-1);
+            }
+            if(Common::containVal(v_table_0[i], A)){
+                v_table.push_back(v_table_0[i]);
+            }
+        }
+        int k = Params::get_K();
+        int zsize = log2(Params::get_N())+1;
+        int tmpSize = log2(Params::get_N())+1;
+        vector<vector<int> > sortedZn(zsize, vector<int>(Params::get_N(), 0));
+
+        vector<int> bl;
+        string bloop_fn = "save_b/N_"
+                          + to_string(Params::get_N())
+                          + "/Bloop_" + to_string(Params::get_Bloop());
+        ifstream ifs(bloop_fn);
+        string str;
+        while(getline(ifs,str)) {
+//            cout<< str << endl;
+            bl.push_back(stoi(str));
+        }
+        switch (mm) {
+            case MID_BLUTE:{
+                int t = 0;
+                for (int i = 0; i < bl.size(); i++) {
+                    if(t <= Params::get_MN() && bl.size()>0){
+                        //if(Common::containVal(bl[t],Ac) && Common::containVal(bl[t],p)){ ?　左ノードならAに含まれるもののみ
+                        if((bl[i] < n && bl[i] && Common::containVal(bl[i],A)) || n <= bl[i]){
+                            T[(bl[i]/n)*2][bl[i]%n] = true;
+//                            cout << "[" << bl[t]/n << "]" << "[" << bl[t]%n << "]" << endl;
+                            t++;
+                        }
+                    }
+                }
+            }
+                break;
+            case MID_ADOR:
+                Preseter::set_zin_all(A, sortedZn, T);
+                break;
+            case MID_DOR:
+                for (int i = 0; i < Params::get_MN(); i++) {
+                    T[0][A[i]] = true;
+                }
+                break;
+            case MID_AOR:
+                for (int i = 0; i < Params::get_MN(); i++) {
+                    T[0][A[k-1-i]] = true;
+                }
+                break;
+            case MID_DOB:
+                for (int i = 0; i < Params::get_MN(); i++) {
+                    T[0][Bn[k-1-i]-1] = true;
+                }
+                break;
+            case MID_AOB:
+                for (int i = 0; i < Params::get_MN(); i++) {
+                    T[0][Bn[i]-1] = true;
+                }
+                break;
+            case MID_DOV:
+                for (int i = 0; i < Params::get_MN(); i++) {
+                    T[0][v_table[i]] = true;
+                }
+                break;
+            case MID_AOV:
+                for (int i = 0; i < Params::get_MN(); i++) {
+                    T[0][v_table[k-1-i]] = true;
+                }
+                break;
+            default:
+                break;
+        }
+    }
+    Params::set_T(T);
 }

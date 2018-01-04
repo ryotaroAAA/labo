@@ -113,20 +113,20 @@ int main(void) {
     Params::set_N(256);
     Params::set_K(1);
     Params::set_M(0);
-    Params::set_MN(64);
+    Params::set_MN(0);
     Params::set_s(AWGN);
-    Params::set_is_outlog(false);
+//    Params::set_is_outlog(true);
     Params::set_decode_mode(BP);
     Params::set_monteNum(1);
     Params::set_rp(50);
     Params::set_Bloop(200);
 
-    Params::set_blockNum(3000);
-    Params::set_upperBlockErrorNum(100);
+    Params::set_blockNum(1000);
+    Params::set_upperBlockErrorNum(100000);
 
-//    double point[3] = {1,1,1};
-    double point[3] = {7,0.2,0.5};
-    Params::set_is_calc_bloop(false);
+    double point[3] = {1,1,1};
+//    double point[3] = {4,0.2,1.0};
+    Params::set_is_calc_bloop(true);
     Params::set_point(point);
 
     //IDかBD
@@ -152,9 +152,10 @@ int main(void) {
 //    Params::set_exp_mode(M_VALERIO_P);
 //    Params::set_exp_mode(M_VALERIO_S);
 
-//    calcBER();
+    calcBER();
 //    vector<int> t1;
 //    vector<int> t2;
+
 //    Common::get_rate(t1,t2);
 //    Analysor::calcBlockErrorRate();
     return 0;

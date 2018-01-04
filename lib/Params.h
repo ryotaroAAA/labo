@@ -3,6 +3,7 @@
 #define CHANNEL_POLARIZATION_PARAMS_H
 
 #include <string>
+#include <vector>
 
 using namespace std;
 
@@ -44,7 +45,10 @@ private:
     static EXP_MODE exp_mode;
     static MID_MODE m_mode;
     static string rvbDir;
-//    static vector<int> test;
+    static vector<vector<bool> > T;
+    static vector<int> A;
+    static vector<int> Ac;
+    static vector<int> p;
 public:
     static int get_N();
     static int get_M();
@@ -52,6 +56,10 @@ public:
     static int get_MN();
     static int get_Bloop();
     static void get_point(double temp[3]);
+    static void get_T(vector<vector<bool> > &temp);
+    static void get_A(vector<int> &temp);
+    static void get_Ac(vector<int> &temp);
+    static void get_p(vector<int> &temp);
     static double get_e();
     static int get_monteNum();
     static int get_blockNum();
@@ -67,6 +75,10 @@ public:
     static void set_N(int _N);
     static void set_M(int _M);
     static void set_K(int _K);
+    static void set_T(vector<vector<bool> > &temp);
+    static void set_A(vector<int> &temp);
+    static void set_Ac(vector<int> &temp);
+    static void set_p(vector<int> &temp);
     static void set_MN(int _MN);
     static void set_Bloop(int _Bloop);
     static void set_point(double _point[3]);
