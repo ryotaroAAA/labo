@@ -114,7 +114,7 @@ int main(void) {
     Params::set_K(1);
     Params::set_M(0);
     Params::set_MN(0);
-    Params::set_s(AWGN);
+    Params::set_s(BEC);
 //    Params::set_is_outlog(true);
     Params::set_decode_mode(BP);
     Params::set_monteNum(1);
@@ -124,9 +124,9 @@ int main(void) {
     Params::set_blockNum(1000);
     Params::set_upperBlockErrorNum(100000);
 
-    double point[3] = {1,1,1};
-//    double point[3] = {4,0.2,1.0};
-    Params::set_is_calc_bloop(true);
+//    double point[3] = {1,1,1};
+    double point[3] = {4,0.2,1.0};
+//    Params::set_is_calc_bloop(true);
     Params::set_point(point);
 
     //IDかBD
