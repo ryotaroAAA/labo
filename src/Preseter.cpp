@@ -301,7 +301,7 @@ void Preseter::set_params(vector<pair<int, double> > &cap_map, vector<int> &A, v
         ifstream ifs(bloop_fn);
         string str;
         while(getline(ifs,str)) {
-//            cout<< str << endl;
+            cout<< str << endl;
             bl.push_back(stoi(str));
         }
         switch (mm) {

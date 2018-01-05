@@ -119,18 +119,20 @@ int main(void) {
     Params::set_decode_mode(BP);
     Params::set_monteNum(1);
     Params::set_rp(50);
-    Params::set_Bloop(200);
+    Params::set_Bloop(500);
 
-    Params::set_blockNum(1000);
+    Params::set_blockNum(34000);
     Params::set_upperBlockErrorNum(100000);
 
-    double point[3] = {1,1,1};
 //    double point[3] = {4,0.2,1.0};
+    //calc_bloopを計算したいときにtrue, 単にBFするだけならやらない
+    double point[3] = {1,1,1};
     Params::set_is_calc_bloop(true);
+
     Params::set_point(point);
 
     //IDかBD
-    Params::set_m_mode(MID_BLUTE);
+//    Params::set_m_mode(MID_BLUTE);
 //    Params::set_m_mode(MID_DOR);
 //    Params::set_m_mode(MID_DOB);
 //    Params::set_m_mode(MID_DOV);

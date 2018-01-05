@@ -64,12 +64,13 @@ double Params::get_e(){
 }
 
 void Params::get_T(vector<vector<bool>> &temp){
-    for (int i = 0; i < temp.size(); i++) {
-        for (int j = 0; j < temp[0].size(); j++) {
-            temp[i][j] = T[i][j];
-//            std::cout << "a";
-        }
-    }
+    temp=T;
+//    for (int i = 0; i < temp.size(); i++) {
+//        for (int j = 0; j < temp[0].size(); j++) {
+//            temp[i][j] = T[i][j];
+////            std::cout << "a";
+//        }
+//    }
 }
 
 void Params::get_A(vector<int> &temp){
@@ -145,9 +146,10 @@ void Params::set_point(double _point[3]){
 }
 
 void Params::set_T(vector<vector<bool> > &temp){
-    for (int i = 0; i < temp.size(); i++) {
-        T.push_back(temp[i]);
-    }
+    T=temp;
+//    for (int i = 0; i < temp.size(); i++) {
+//        T.push_back(temp[i]);
+//    }
 //    for (int i = 0; i < temp.size(); i++) {
 //        for (int j = 0; j < temp[0].size(); j++) {
 //            T[i][j] = temp[i][j];
