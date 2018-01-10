@@ -19,6 +19,7 @@ replot 'e18' using 1:3 with lines lt 7 dt'.'
 
 (y^{4}_1,\hat{u}^{4}_{1,e} \oplus \hat{u}^{4}_{1,o})
 
+
 // block error rate plot
 unset key
 set grid
@@ -196,33 +197,6 @@ set key font "Arial,15" left top
 set xl 'Rate(bits)'
 set yl 'Block Error Rate'
 
-plot 'N32e0.5BNum2000UPBn1000cBEC:' with lines lt 1 title "N512e0.5:normal"
-replot 'N32e0.5BNum2000UPBn1000cBEC:qup' with lines lt 2 title "N512e0.5:qup"
-replot 'N32e0.5BNum2000UPBn1000cBEC:wang' with lines lt 4 title "N512e0.5:wang"
-replot 'N32e0.5BNum2000UPBn1000cBEC:mid' with lines lt 5 title "N512e0.5:mid"
-replot 'N32e0.5BNum2000UPBn1000cBEC:valerio_p' with lines lt 6 title "N512e0.5:valerioP"
-replot 'N32e0.5BNum2000UPBn1000cBEC:valerio_s' with lines lt 7 title "N512e0.5:valerioS"
-
-plot 'N256e0.5BNum1000UPBn1000cBEC:' with lines lt 1 title "N256e0.5:normal"
-replot 'N256e0.5BNum1000UPBn1000cBEC:qup' with lines lt 2 title "N256e0.5:qup"
-replot 'N256e0.5BNum1000UPBn1000cBEC:wang' with lines lt 3 title "N256e0.5:wang"
-replot 'N256e0.5BNum1000UPBn1000cBEC:mid_id' with lines lt 4  title "N256e0.5:mid"
-replot 'N256e0.5BNum1000UPBn1000cBEC:valerio_p' with lines lt 5 title "N256e0.5:valerioP"
-replot 'N256e0.5BNum1000UPBn1000cBEC:valerio_s' with lines lt 6 title "N256e0.5:valerioS"
-replot 'N256e0.5BNum1000UPBn1000cBEC:m_valerio_p' with lines lt 7 title "N256e0.5:MvalerioP"
-replot 'N256e0.5BNum1000UPBn1000cBEC:m_valerio_s' with lines lt 8 title "N256e0.5:MvalerioS"
-
-plot   'N256e0.5BNum1000UPBn1000cBEC:' with lines lt 1 title "N256e0.5:normal"
-replot 'N256e0.5BNum1000UPBn1000cBEC:qup' with lines lt 2 title "N256e0.5:qup"
-replot 'N256e0.5BNum1000UPBn1000cBEC:wang' with lines lt 4 title "N256e0.5:wang"
-replot 'N256e0.5BNum1000UPBn1000cBEC:m_qup' with lines dt 5 lt 2 title "N256e0.5:Mqup"
-replot 'N256e0.5BNum1000UPBn1000cBEC:m_wang' with lines dt 5 lt 4 title "N256e0.5:Mwang"
-replot 'N256e0.5BNum1000UPBn1000cBEC:mid_id' with lines dt 5 lt 1  title "N256e0.5:mid"
-replot 'N256e0.5BNum1000UPBn1000cBEC:valerio_p' with lines lt 7 title "N256e0.5:valerioP"
-replot 'N256e0.5BNum1000UPBn1000cBEC:valerio_s' with lines lt 8 title "N256e0.5:valerioS"
-replot 'N256e0.5BNum1000UPBn1000cBEC:m_valerio_p' with lines dt 5 lt 7 title "N256e0.5:MvalerioP"
-replot 'N256e0.5BNum1000UPBn1000cBEC:m_valerio_s' with lines dt 5 lt 8 title "N256e0.5:MvalerioS"
-
 plot   'N256M32MN32e0.5BNum1000UPBn1000cBEC:' with lines lt 1 title "N256M32MN32e0.5:normal"
 replot 'N256M32MN32e0.5BNum1000UPBn1000cBEC:qup' with lines lt 2 title "N256M32MN32e0.5:qup"
 replot 'N256M32MN32e0.5BNum1000UPBn1000cBEC:wang' with lines lt 4 title "N256M32MN32e0.5:wang"
@@ -241,13 +215,93 @@ set xtics 0.05 font "Arial,25"
 set ytics 0.1 font "Arial,25"
 set logscale y
 set format y "10^{%L}"
-set xrange[0.2:0.45]
-set yrange[0.1:1]
+set xrange[0.15:0.4]
+set yrange[0.01:1]
 set xlabel font "Arial,25"
 set ylabel font "Arial,25"
-set key font "Arial,25" right bottom
+set key font "Arial,15" right bottom
 set xl 'Rate(bits)'
 set yl 'Block Error Rate'
+
+
+#blute比較
+plot   'N256M0MN0sdiv0.6AWGNrp30MNum1BNum1000UPBn100_' with lines lt 1 title        "m0:r30"
+replot 'N256M0MN0sdiv0.6AWGNrp50MNum1BNum1000UPBn100_' with lines dt 2 lt 1 title        "m0:r50"
+replot 'N256M0MN0sdiv0.6AWGNrp100MNum1BNum1000UPBn100_' with lines dt 5 lt 1 title        "m0:r100"
+replot 'N256M0MN32sdiv0.6AWGNrp30MNum1BNum1000UPBn100_mid_blute50' with lines lt 1 title        "m32:r30:blute50"
+replot 'N256M0MN32sdiv0.6AWGNrp30MNum1BNum1000UPBn100_mid_blute100' with lines dt 5 lt 1 title   "m32:r30:blute100"
+replot 'N256M0MN32sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_blute50' with lines lt 2 title        "m32:r50:blute50"
+replot 'N256M0MN32sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_blute100' with lines dt 5 lt 2 title   "m32:r50:blute100"
+replot 'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute50' with lines lt 4 title       "m32:r100:blute50"
+replot 'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute100' with lines dt 5 lt 4 title  "m32:r100:blute100"
+plot   'N256M0MN0sdiv0.6AWGNrp30MNum1BNum1000UPBn100_' with lines lt 1 title        "m0:r30"
+replot 'N256M0MN0sdiv0.6AWGNrp50MNum1BNum1000UPBn100_' with lines dt 2 lt 1 title        "m0:r50"
+replot 'N256M0MN0sdiv0.6AWGNrp100MNum1BNum1000UPBn100_' with lines dt 5 lt 1 title        "m0:r100"
+replot 'N256M0MN64sdiv0.6AWGNrp30MNum1BNum1000UPBn100_mid_blute50' with lines lt 5 title        "m64:r30:blute50"
+replot 'N256M0MN64sdiv0.6AWGNrp30MNum1BNum1000UPBn100_mid_blute100' with lines dt 5 lt 5 title   "m64:r30:blute100"
+replot 'N256M0MN64sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_blute50' with lines lt 6 title        "m64:r50:blute50"
+replot 'N256M0MN64sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_blute100' with lines dt 5 lt 6 title   "m64:r50:blute100"
+replot 'N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute50' with lines lt 7 title       "m64:r100:blute50"
+replot 'N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute100' with lines dt 5 lt 7 title  "m64:r100:blute100"
+
+#中間ノード数比較
+plot   'N256M0MN0sdiv0.6AWGNrp50MNum1BNum1000UPBn100_'          with lines lt 1 title     "m0:r50"
+replot 'N256M0MN1sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dor'  with lines lt 6 title       "m1:r50:dor"
+replot 'N256M0MN5sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dor'  with lines dt 2 lt 6 title  "m5:r50:dor"
+replot 'N256M0MN10sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dor' with lines dt 2 lt 6 title  "m10:r50:dor"
+replot 'N256M0MN20sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dor' with lines dt 5 lt 7 title  "m20:r50:dor"
+replot 'N256M0MN32sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dor' with lines dt 5 lt 7 title  "m32:r50:dor"
+replot 'N256M0MN64sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dor' with lines dt 5 lt 7 title  "m64:r50:dor"
+
+replot 'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dob' with lines lt 4 title  "m32:r100:dob"
+replot 'N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dob' with lines dt 5 lt 4 title  "m64:r100:dob"
+
+plot   'N256M0MN0sdiv0.6AWGNrp50MNum1BNum1000UPBn100_'          with lines lt 1 title  "m0:r50"
+replot 'N256M0MN1sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dov'  with lines lt 2 title        "m1:r50:dov"
+replot 'N256M0MN5sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dov'  with lines lt 3 title   "m5:r50:dov"
+replot 'N256M0MN10sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dov' with lines lt 4 title   "m10:r50:dov"
+replot 'N256M0MN20sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dov' with lines lt 5 title   "m20:r50:dov"
+replot 'N256M0MN32sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dov' with lines lt 6 title   "m32:r50:dov"
+replot 'N256M0MN64sdiv0.6AWGNrp50MNum1BNum1000UPBn100_mid_dov' with lines lt 7 title   "m64:r50:dov"
+
+replot 'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute50' with lines lt 6 title  "m32:r100:blute50"
+replot 'N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute50' with lines dt 5 lt 6 title  "m64:r100:blute50"
+
+replot 'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute100' with lines lt 7 title  "m32:r100:blute100"
+replot 'N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute100' with lines dt 5 lt 7 title  "m64:r100:blute100"
+
+#中間ノード数比較
+plot   'N256M0MN0sdiv0.6AWGNrp30MNum1BNum1000UPBn100_' with lines lt 1 title        "m0:r30"
+replot 'N256M0MN0sdiv0.6AWGNrp50MNum1BNum1000UPBn100_' with lines dt 2 lt 1 title        "m0:r50"
+replot 'N256M0MN0sdiv0.6AWGNrp100MNum1BNum1000UPBn100_' with lines dt 5 lt 1 title        "m0:r100"
+replot 'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dor' with lines lt 2 title  "m32:r100:dor"
+replot 'N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dor' with lines dt 5 lt 2 title  "m64:r100:dor"
+replot 'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dob' with lines lt 4 title  "m32:r100:dob"
+replot 'N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dob' with lines dt 5 lt 4 title  "m64:r100:dob"
+replot 'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dov' with lines lt 5 title  "m32:r100:dov"
+replot 'N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dov' with lines dt 5 lt 5 title  "m64:r100:dov"
+replot 'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute50' with lines lt 6 title  "m32:r100:blute50"
+replot 'N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute50' with lines dt 5 lt 6 title  "m64:r100:blute50"
+replot 'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute100' with lines lt 7 title  "m32:r100:blute100"
+replot 'N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_blute100' with lines dt 5 lt 7 title  "m64:r100:blute100"
+
+#中間ノード数比較
+
+
+
+plot   'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dor' with lines lt 1 title "N256MN16sd0.6:blute"
+replot   'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dob' with lines lt 1 title "N256MN16sd0.6:blute"
+replot   'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dov' with lines lt 1 title "N256MN16sd0.6:blute"
+replot   'N256M0MN32sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dov' with lines lt 1 title "N256MN16sd0.6:blute"
+
+
+
+plot   'N256M0MN0sdiv0.6AWGNrp30MNum1BNum1000UPBn100_' with lines lt 1 title  "m0:r30"
+replot 'N256M0MN0sdiv0.6AWGNrp50MNum1BNum1000UPBn100_' with lines lt 2 title  "m0:r50"
+replot 'N256M0MN0sdiv0.6AWGNrp100MNum1BNum1000UPBn100_' with lines lt 6 title "m0:r100"
+
+
+
 plot   'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_blute' with lines lt 1 title "N256MN16sd0.6:blute"
 replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dob' with lines lt 2 title "N256MN16sd0.6:dor"
 replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dor' with lines lt 6 title "N256MN16sd0.6:dob"
@@ -262,27 +316,3 @@ replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dob' with lines lt 2 ti
 replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dor' with lines lt 6 title "N256MN32AWGNsd0.6:dob"
 replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dov' with lines lt 7 title "N256MN32AWGNsd0.6:dov"
 
-
-plot   'N256M32MN64e0.5BNum2000UPBn2000cBEC:mid_dor' with lines lt 1 title "N256MN64e0.5:dor"
-replot 'N256M32MN64e0.5BNum2000UPBn2000cBEC:mid_aor' with lines lt 2 title "N256MN64e0.5:aor"
-replot 'N256M32MN64e0.5BNum2000UPBn2000cBEC:mid_dob' with lines lt 5 title "N256MN64e0.5:dob"
-replot 'N256M32MN64e0.5BNum2000UPBn2000cBEC:mid_aob' with lines lt 6 title "N256MN64e0.5:aob"
-replot 'N256M32MN64e0.5BNum2000UPBn2000cBEC:mid_dov' with lines lt 7 title "N256MN64e0.5:dov"
-replot 'N256M32MN64e0.5BNum2000UPBn2000cBEC:mid_aov' with lines lt 8 title "N256MN64e0.5:aov"
-
-plot   'N256M32MN32e0.5BNum1000UPBn2000cBEC:mid_iu' with lines lt 1 title "N256M32MN32e0.5:dor"
-replot 'N256M32MN32e0.5BNum1000UPBn2000cBEC:mid_id' with lines lt 2 title "N256M32MN32e0.5:aor"
-replot 'N256M32MN32e0.5BNum1000UPBn2000cBEC:mid_bu' with lines lt 5 title "N256M32MN32e0.5:dob"
-replot 'N256M32MN32e0.5BNum1000UPBn2000cBEC:mid_bd' with lines lt 6 title "N256M32MN32e0.5:aob"
-replot 'N256M32MN32e0.5BNum1000UPBn2000cBEC:mid_vd' with lines lt 7 title "N256M32MN32e0.5:dov"
-replot 'N256M32MN32e0.5BNum1000UPBn2000cBEC:mid_vu' with lines lt 8 title "N256M32MN32e0.5:aov"
-
-
-plot   'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_blute' with lines lt 1 title "MN16:BF"
-replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dob' with lines lt 2 title "MN16:DOR"
-replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dor' with lines lt 7 title "MN16:DOB"
-replot 'N256M0MN16sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dov' with lines lt 8 title "MN16:DOV"
-replot   'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_blute' with lines  dt 5 lt 1 title "MN32:BF"
-replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dob' with lines  dt 5 lt 2 title "MN32:DOR"
-replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dor' with lines  dt 5 lt 7 title "MN32:DOB"
-replot 'N256M0MN32sdiv0.6_AWGN_MNum1BNum3000UPBn1000:mid_dov' with lines  dt 5 lt 8 title "MN32:DOV"

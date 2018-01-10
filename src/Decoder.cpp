@@ -607,6 +607,7 @@ void Decoder::calc_check_to_val(int size, vector<vector<double> > &node_value, v
     }
 }
 
+//val nodeへメッセージを集める　　
 void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vector<message> >> &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &y){
     int size = 2*log2(Params::get_N())+2;
     int ysize = log2(Params::get_N())+1;
@@ -614,8 +615,6 @@ void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vect
     vector<vector<double> > temp(size, vector<double>(Params::get_N(),0.0));
 
     int n = Params::get_N();
-    vector<vector<bool>> T(size, vector<bool>(n, false));
-    Params::get_T(T);
 
     //check nodeからのメッセージをあつめる
     //check nodeが出力したメッセージをtempに集めておく
@@ -629,7 +628,10 @@ void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vect
         }
     }
 
+    //中間ノードからのメッセージを引き上げる
     if( Common::is_mid_send() ){
+        vector<vector<bool>> T(size, vector<bool>(n, false));
+        Params::get_T(T);
         for (int i = 0; i < ysize; i++) {
             for (int j = 0; j < Params::get_N(); j++) {
                 if (T[i][j]) {
@@ -643,7 +645,7 @@ void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vect
         }
     }
 
-    //更新
+    //val node更新
     for (int i = 0; i < size; i=i+2) {
         for (int j = 0; j < Params::get_N(); j++) {
             if(temp[i][j] != 0.0 && !node_isChecked[i][j]){
@@ -675,7 +677,6 @@ vector<int> Decoder::calcBP(int loop_num, vector<int> &param, vector<int> &u, ve
 
     init_outLog(val_file, check_file, val_error_file);
     if (Params::get_decode_mode() == BP) {
-        vector<vector<vector<message> > > message_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
         BPinit(u, x, y, xm, ym, node_value, message_list, node_isChecked, B);
 
         for (int i = 0; i < Params::get_rp(); i++) {
@@ -706,7 +707,7 @@ vector<int> Decoder::calcBP(int loop_num, vector<int> &param, vector<int> &u, ve
         u_n_est[i] = (node_value[0][i] > 0) ? 0 : 1;
     }
 
-    if(Common::is_mid_send() && true){
+    if(Common::is_mid_send() && Params::get_is_calc_bloop()){
         for (int i = 0; i < size; i=i+2) {
             for (int j = 0; j < Params::get_N(); j++) {
                 int temp = (node_value[i][j] >= 0.0)?0:1;

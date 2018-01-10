@@ -26,7 +26,14 @@ void calcBER(){
         case PUNC: ename = "punc"; break;
         case MID:
             switch (mm) {
-                case MID_BLUTE: ename = "mid_blute"; break;
+                case MID_BLUTE: {
+                    int bl = 0;
+                    if(Params::get_Bloop()){
+                        bl = Params::get_Bloop();
+                    }
+                    ename = "mid_blute" + to_string(bl);
+                    break;
+                }
                 case MID_ADOR: ename = "mid_ador"; break;
                 case MID_AOR: ename = "mid_aor"; break;
                 case MID_DOR: ename = "mid_dor"; break;
@@ -45,7 +52,8 @@ void calcBER(){
         case M_VALERIO_P: ename = "m_valerio_p"; break;
         case M_VALERIO_S: ename = "m_valerio_s"; break;
     }
-    cout << "[[" << ename << "]]" << endl;
+    cout << ename << endl;
+//    cout << "aaaaaaaaaaa" << endl;
 
     time_t now = time(NULL);
     struct tm *pnow = localtime(&now);
@@ -59,9 +67,10 @@ void calcBER(){
              << "M" << to_string(Params::get_M())
              << "MN" << to_string(Params::get_MN())
              << "e" << Params::get_e()
+             << "rp" + to_string(Params::get_rp())
              << "BNum" << to_string(Params::get_blockNum())
              << "UPBn" << to_string(Params::get_upperBlockErrorNum())
-             << "c" << (Params::get_s() ? "BSC" : "BEC") << ":" << ename;
+             << "_" << (Params::get_s() ? "BSC" : "BEC") << "_" << ename;
         Params::set_rvbDir(fn.str());
     } else if (channel_type == AWGN) {
         fn << "log/"
@@ -70,12 +79,14 @@ void calcBER(){
            << "M" << to_string(Params::get_M())
            << "MN" << to_string(Params::get_MN())
            << "sdiv" << Params::get_e()
-           << "_AWGN_"
+           << "AWGN"
+           << "rp" + to_string(Params::get_rp())
            << "MNum" + to_string(Params::get_monteNum())
            << "BNum" + to_string(Params::get_blockNum())
-           << "UPBn" + to_string(Params::get_upperBlockErrorNum()) +  ":" + ename;
+           << "UPBn" + to_string(Params::get_upperBlockErrorNum()) +  "_" + ename;
         Params::set_rvbDir(fn.str());
     }
+    cout << fn.str() << endl;
 
     performance.startTimer();
     analysor.calcBlockErrorRate_BP();
@@ -119,20 +130,19 @@ int main(void) {
     Params::set_decode_mode(BP);
     Params::set_monteNum(1);
     Params::set_rp(50);
-    Params::set_Bloop(500);
+    Params::set_Bloop(1000);
+    Params::set_blockNum(64000);
+    Params::set_upperBlockErrorNum(100);
 
-    Params::set_blockNum(34000);
-    Params::set_upperBlockErrorNum(100000);
-
-//    double point[3] = {4,0.2,1.0};
-    //calc_bloopを計算したいときにtrue, 単にBFするだけならやらない
+//    double point[3] = {5,0.15,0.45};
+    //calc_bloopを計算したいときにtrue, それ以外は必ずコメントアウト
+//    double point[3] = {1,0.27,0.27};
     double point[3] = {1,1,1};
     Params::set_is_calc_bloop(true);
-
     Params::set_point(point);
 
     //IDかBD
-//    Params::set_m_mode(MID_BLUTE);
+    Params::set_m_mode(MID_BLUTE);
 //    Params::set_m_mode(MID_DOR);
 //    Params::set_m_mode(MID_DOB);
 //    Params::set_m_mode(MID_DOV);
@@ -150,7 +160,6 @@ int main(void) {
 //    Params::set_exp_mode(VALERIO_S);
 //    Params::set_exp_mode(M_WANG);
 //    Params::set_exp_mode(M_QUP);
-//    Params::set_exp_mode(M_WANG);
 //    Params::set_exp_mode(M_VALERIO_P);
 //    Params::set_exp_mode(M_VALERIO_S);
 

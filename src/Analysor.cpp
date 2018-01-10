@@ -207,15 +207,15 @@ void Analysor::makeArrayBhat(vector<double> &array) {
     }
 
     if(Params::get_m_mode() != MID_ADOR){
-        string filename = Params::get_rvbDir() + " Bhat";
-        ofstream w_file;
-        w_file.open(filename, ios::out);
-        for (int i = 0; i < Params::get_N(); i++)
-        {
-            w_file << i << " " << array[i] << endl;
-            cout << i << " " << array[i] << endl;
-        }
-        Common::bar();
+//        string filename = Params::get_rvbDir() + " Bhat";
+//        ofstream w_file;
+//        w_file.open(filename, ios::out);
+//        for (int i = 0; i < Params::get_N(); i++)
+//        {
+//            w_file << i << " " << array[i] << endl;
+//            cout << i << " " << array[i] << endl;
+//        }
+//        Common::bar();
     }
 }
 
@@ -631,8 +631,13 @@ void Analysor::calcBlockErrorRate_BP() {
             u_est = decoder.calcBP(loopi, param, u, x, y, xm, ym, node_error_count, val_error_file, B);
             itr = param[0];
             Analysor::errorCount(u, u_est, &error_count);
-            if (error_count > 0) block_error_count++;
+            if (error_count > 0) {
+                block_error_count++;
+            }
             if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count  << " " << itr << " " << (double)block_error_count/loopi << endl;
+//            if (error_count > 0) {
+//                break;
+//            }
             error_count = 0;
             mitr += itr; // 0:itr, 1:nochecked
 

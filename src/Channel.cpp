@@ -7,7 +7,7 @@ vector<double> Channel::channel_output(vector<int> &input){
         if( Params::get_s() == AWGN ){
             random_device seed_gen;
             default_random_engine engine(seed_gen());
-            normal_distribution<> dist(0.0, Params::get_e()*Params::get_e());
+            normal_distribution<> dist(0.0, Params::get_e());
 //            cout << dist(engine) << endl;
             y.push_back(val + dist(engine));
 //            double temp = dist(engine);
@@ -34,7 +34,7 @@ void Channel::channel_output_m(vector<vector<int> > &input, vector<vector<double
                 random_device seed_gen;
                 default_random_engine engine(seed_gen());
                 normal_distribution<> dist(0.0, Params::get_e());
-//            cout << dist(engine) << endl;
+//                cout << dist(engine) << endl;
                 y[i][j] = (input[i][j] + dist(engine));
             } else {
                 if(genrand_real1() < Params::get_e()){

@@ -1,4 +1,5 @@
 #include "../lib/Common.h"
+#include "../lib/Performance.h"
 
 void Common::bar(){
     cout << "======================" << endl;
@@ -189,7 +190,7 @@ bool Common::containNumInArray(int i, int n, vector<int> &array){
 
 double Common::get_rate(){
     double rate;
-    double tmp_rate;
+    double tmp_rate = 0.0;
     int n = Params::get_N();
     int k = Params::get_K();
     int m = Params::get_M();
@@ -234,7 +235,16 @@ double Common::get_rate(){
             break;
     }
     if(rate < 0.0) rate = 0.0;
-//    tmp_rate = Common::calcRate();z
+
+    if(Common::is_mid_send() && !Params::get_is_calc_bloop()){
+//        Performance performance;
+//        performance.startTimer();
+//        tmp_rate = Common::calcRate();
+//        rate = tmp_rate;
+//        performance.stopTimer();
+//        performance.outHMS();
+    }
+
     cout << "new::" << tmp_rate << endl;
     cout << "old::" << rate << endl;
 //    return tmp_rate;
