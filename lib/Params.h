@@ -33,12 +33,14 @@ private:
     static int MN;
     static int Bloop;
     static double point[3];
+    static double awgn_p[3];
     static double e;
     static int rp;
     static int monteNum;
     static int blockNum;
     static int upperBlockErrorNum;
     static bool is_outlog;
+    static bool is_exp_awgn;
     static bool is_calc_bloop;
     static CHANNEL_TYPE s;
     static DECODE_MODE dm;
@@ -56,6 +58,7 @@ public:
     static int get_MN();
     static int get_Bloop();
     static void get_point(double temp[3]);
+    static void get_awgn_p(double temp[3]);
     static void get_T(vector<vector<bool> > &temp);
     static void get_A(vector<int> &temp);
     static void get_Ac(vector<int> &temp);
@@ -65,6 +68,7 @@ public:
     static int get_blockNum();
     static int get_upperBlockErrorNum();
     static bool get_is_outlog();
+    static bool get_is_exp_awgn();
     static bool get_is_calc_bloop();
     static string get_rvbDir();
     static CHANNEL_TYPE get_s();
@@ -82,7 +86,9 @@ public:
     static void set_MN(int _MN);
     static void set_Bloop(int _Bloop);
     static void set_point(double _point[3]);
+    static void set_awgn_p(double _awgn_p[3]);
     static void set_is_outlog(bool _is_outlog);
+    static void set_is_exp_awgn(bool _is_exp_awgn);
     static void set_is_calc_bloop(bool _is_calc_bloop);
     static void set_monteNum(int _monteNum);
     static void set_blockNum(int _blockNum);

@@ -73,17 +73,35 @@ void calcBER(){
              << "_" << (Params::get_s() ? "BSC" : "BEC") << "_" << ename;
         Params::set_rvbDir(fn.str());
     } else if (channel_type == AWGN) {
-        fn << "log/"
-           << to_string(pnow->tm_year+1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
-           << "/N" + to_string(Params::get_N())
-           << "M" << to_string(Params::get_M())
-           << "MN" << to_string(Params::get_MN())
-           << "sdiv" << Params::get_e()
-           << "AWGN"
-           << "rp" + to_string(Params::get_rp())
-           << "MNum" + to_string(Params::get_monteNum())
-           << "BNum" + to_string(Params::get_blockNum())
-           << "UPBn" + to_string(Params::get_upperBlockErrorNum()) +  "_" + ename;
+        if(Params::get_is_exp_awgn()) {
+            double p[3];
+            Params::get_awgn_p(p);
+            double rate = p[0];
+            fn << "log/"
+               << to_string(pnow->tm_year + 1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
+               << "/N" + to_string(Params::get_N())
+               << "M" << to_string(Params::get_M())
+               << "MN" << to_string(Params::get_MN())
+               << "R" << (rate)
+               << "K" << (Analysor::get_eachK(rate))
+               << "AWGN"
+               << "rp" + to_string(Params::get_rp())
+               << "MNum" + to_string(Params::get_monteNum())
+               << "BNum" + to_string(Params::get_blockNum())
+               << "UPBn" + to_string(Params::get_upperBlockErrorNum()) + "_" + ename;
+        } else {
+            fn << "log/"
+               << to_string(pnow->tm_year + 1900) + to_string(pnow->tm_mon + 1) + to_string(pnow->tm_mday)
+               << "/N" + to_string(Params::get_N())
+               << "M" << to_string(Params::get_M())
+               << "MN" << to_string(Params::get_MN())
+               << "sdiv" << Params::get_e()
+               << "AWGN"
+               << "rp" + to_string(Params::get_rp())
+               << "MNum" + to_string(Params::get_monteNum())
+               << "BNum" + to_string(Params::get_blockNum())
+               << "UPBn" + to_string(Params::get_upperBlockErrorNum()) + "_" + ename;
+        }
         Params::set_rvbDir(fn.str());
     }
     cout << fn.str() << endl;
@@ -124,25 +142,33 @@ int main(void) {
     Params::set_N(256);
     Params::set_K(1);
     Params::set_M(0);
+//    Params::set_M(96);
     Params::set_MN(0);
     Params::set_s(AWGN);
 //    Params::set_is_outlog(true);
     Params::set_decode_mode(BP);
+    Params::set_is_exp_awgn(true);
     Params::set_monteNum(1);
     Params::set_rp(50);
     Params::set_Bloop(1000);
-    Params::set_blockNum(64000);
+    Params::set_blockNum(3000);
     Params::set_upperBlockErrorNum(100);
 
-//    double point[3] = {5,0.15,0.45};
+    //point設定
+//    double p[3] = {5,0.15,0.45};
+//    double p[3] = {1,0.27,0.27};
+    double p[3] = {1,0.5,0.5};
+    Params::set_point(p);
+    //awgn_p設定
+    //{0.25,1.5,3.0},{0.5,1.5,3.0},{0.75,2.5,4.5}
+    double awgn_p[3] = {0.25,1.5,3.0};
+//    double awgn_p[3] = {0.5,1.5,3.0};
+//    double awgn_p[3] = {0.75,1.5,3.0};
+    Params::set_awgn_p(awgn_p);
     //calc_bloopを計算したいときにtrue, それ以外は必ずコメントアウト
-//    double point[3] = {1,0.27,0.27};
-    double point[3] = {1,1,1};
-    Params::set_is_calc_bloop(true);
-    Params::set_point(point);
+//    Params::set_is_calc_bloop(true);
 
-    //IDかBD
-    Params::set_m_mode(MID_BLUTE);
+//    Params::set_m_mode(MID_BLUTE);
 //    Params::set_m_mode(MID_DOR);
 //    Params::set_m_mode(MID_DOB);
 //    Params::set_m_mode(MID_DOV);
@@ -152,9 +178,9 @@ int main(void) {
 //    Params::set_m_mode(MID_AOB);
 //    Params::set_m_mode(MID_AOV);
 
-//    Params::set_exp_mode(NORMAL);
+    Params::set_exp_mode(NORMAL);
 //    Params::set_exp_mode(QUP);
-    Params::set_exp_mode(MID);
+//    Params::set_exp_mode(MID);
 //    Params::set_exp_mode(WANG);
 //    Params::set_exp_mode(VALERIO_P);
 //    Params::set_exp_mode(VALERIO_S);
@@ -164,10 +190,6 @@ int main(void) {
 //    Params::set_exp_mode(M_VALERIO_S);
 
     calcBER();
-//    vector<int> t1;
-//    vector<int> t2;
 
-//    Common::get_rate(t1,t2);
-//    Analysor::calcBlockErrorRate();
     return 0;
 }

@@ -18,6 +18,8 @@ vector<int> Params::A;
 vector<int> Params::Ac;
 vector<int> Params::p;
 double Params::point[] = {1,1,1};
+double Params::awgn_p[] = {1,1,1};
+bool Params::is_exp_awgn = false;
 bool Params::is_outlog = false;
 bool Params::is_calc_bloop = false;
 double Params::e = 0;
@@ -91,8 +93,18 @@ void Params::get_point(double temp[3]){
     temp[2] = point[2];
 }
 
+void Params::get_awgn_p(double temp[3]){
+    temp[0] = awgn_p[0];
+    temp[1] = awgn_p[1];
+    temp[2] = awgn_p[2];
+}
+
 int Params::get_rp(){
     return rp;
+}
+
+bool Params::get_is_exp_awgn(){
+    return is_exp_awgn;
 }
 
 bool Params::get_is_outlog(){
@@ -143,6 +155,12 @@ void Params::set_point(double _point[3]){
     point[0] = _point[0];
     point[1] = _point[1];
     point[2] = _point[2];
+}
+
+void Params::set_awgn_p(double _point[3]){
+    awgn_p[0] = _point[0];
+    awgn_p[1] = _point[1];
+    awgn_p[2] = _point[2];
 }
 
 void Params::set_T(vector<vector<bool> > &temp){
@@ -212,6 +230,10 @@ void Params::set_exp_mode(EXP_MODE _exp_mode){
 
 void Params::set_m_mode(MID_MODE _m_mode){
     m_mode = _m_mode;
+}
+
+void Params::set_is_exp_awgn(bool _is_exp_awgn){
+    is_exp_awgn = _is_exp_awgn;
 }
 
 void Params::set_is_outlog(bool _is_outlog){

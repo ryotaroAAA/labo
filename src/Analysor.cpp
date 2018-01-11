@@ -406,6 +406,7 @@ void Analysor::calcBlockErrorRate() {
     }
 }
 
+//fromで得たいレートを渡すと対応するKを返す
 int Analysor::get_eachK(double from){
     EXP_MODE em = Params::get_exp_mode();
     int retK = 0;
@@ -518,13 +519,32 @@ void Analysor::calcBlockErrorRate_BP() {
 
     EXP_MODE em = Params::get_exp_mode();
     vector<int> saveb;
-    cout << "startK::" << startK << " interval::" << interval << endl;
+
+    //AWWGNの場合
+    double awgn_p[3];
+    if(Params::get_is_exp_awgn()){
+        Params::get_awgn_p(awgn_p);
+        pointNum = (awgn_p[2] - awgn_p[1])/0.5 + 1.0;
+    }
 
     for (int i = 0; i < pointNum; i++) {
         loopi = 0, sumBER = 0.0, mitr = 0.0, block_error_count = 0.0;
         performance.startTimer();
-        //k,u,frozen設定
-        Params::set_K(startK + i * interval);
+
+        double h = 0.0;
+        //AWWGNの場合
+        if(Params::get_is_exp_awgn()){
+            double sig = 0.0;
+            double rate = awgn_p[0];
+            h = awgn_p[1] + 0.5*i;
+            sig = sqrt(2.0/(rate*pow(10,h)));
+            Params::set_e(sig);
+            Params::set_K(get_eachK(rate));
+            cout << "Rate " <<  rate << ", K " <<  get_eachK(rate) << ", Eb/N0 " << h << ", interval " << 0.5 << ", sig " << sig <<   endl;
+        } else{
+            Params::set_K(startK + i * interval);
+        }
+
         //実質TPS設定
         Preseter::set_params(cap_map, A, Ac, p_0, p);
 
@@ -578,6 +598,7 @@ void Analysor::calcBlockErrorRate_BP() {
             }
             loopi++;
             u_est.assign(Params::get_N(), 0);
+
             if( Common::is_mid_send() ){
                 Channel::channel_output_m(xm, ym);
             } else {
@@ -635,9 +656,7 @@ void Analysor::calcBlockErrorRate_BP() {
                 block_error_count++;
             }
             if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count  << " " << itr << " " << (double)block_error_count/loopi << endl;
-//            if (error_count > 0) {
-//                break;
-//            }
+
             error_count = 0;
             mitr += itr; // 0:itr, 1:nochecked
 
@@ -651,8 +670,14 @@ void Analysor::calcBlockErrorRate_BP() {
 
         mitr = (mitr/loopi) >= 70 ? 70 : mitr/loopi;
         itrfile << rate << " " << mitr << endl;
-        cout << "mitr : "<< mitr << endl;
-        cout << "rate : "<< rate << endl;
+
+        if(Params::get_is_exp_awgn()) {
+            cout << "mitr : " << mitr << endl;
+            cout << "Eb/N0 : " << h << endl;
+        } else {
+            cout << "mitr : " << mitr << endl;
+            cout << "rate : " << rate << endl;
+        }
 
         performance.stopTimer();
 
@@ -663,12 +688,16 @@ void Analysor::calcBlockErrorRate_BP() {
         logger.outLog(performance.outTime("処理時間"));
         logger.outLog("(N,K,M,MN) = (" + to_string(Params::get_N()) + "," + to_string(Params::get_K())  + "," + to_string(Params::get_M())  + "," + to_string(Params::get_MN())+ ")");
         logger.outLog("BER:" + to_string(BER));
-        logger.outLog("Rate:" + to_string(rate));
+        if(Params::get_is_exp_awgn()){
+            logger.outLog("Eb/N0:" + to_string(h));
+            logger.outLogRVB(h, BER);
+        } else {
+            logger.outLog("Rate:" + to_string(rate));
+            logger.outLogRVB(rate, BER);
+        }
         logger.outLog(encoder.outCount("encoder_count"));
         logger.outLog(decoder.outCount("decoder_count"));
         performance.outHMS();
-
-        logger.outLogRVB(rate, BER);
 //        break;
     }
     for (int i = 0; i < saveb.size(); i++) {

@@ -245,8 +245,8 @@ double Common::get_rate(){
 //        performance.outHMS();
     }
 
-    cout << "new::" << tmp_rate << endl;
-    cout << "old::" << rate << endl;
+    cout << "n::" << tmp_rate << endl;
+    cout << "o::" << rate << endl;
 //    return tmp_rate;
     return rate;
 }
@@ -452,6 +452,7 @@ double Common::calcRate(){
             S.push_back(Ac[i]);
         }
     }
+
     //右ノード
     if(em == WANG || em == VALERIO_S || em == M_WANG || em == M_VALERIO_S){
         for (int i = 0; i < p.size(); i++) {
