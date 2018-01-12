@@ -522,9 +522,10 @@ void Analysor::calcBlockErrorRate_BP() {
 
     //AWWGNの場合
     double awgn_p[3];
+    double interval_x = 0.5;
     if(Params::get_is_exp_awgn()){
         Params::get_awgn_p(awgn_p);
-        pointNum = (awgn_p[2] - awgn_p[1])/0.5 + 1.0;
+        pointNum = (awgn_p[2] - awgn_p[1])/interval_x + 1.0;
     }
 
     for (int i = 0; i < pointNum; i++) {
@@ -536,11 +537,11 @@ void Analysor::calcBlockErrorRate_BP() {
         if(Params::get_is_exp_awgn()){
             double sig = 0.0;
             double rate = awgn_p[0];
-            h = awgn_p[1] + 0.5*i;
-            sig = sqrt(2.0/(rate*pow(10,h)));
+            h = awgn_p[1] + interval_x*i;
+            sig = sqrt(1.0/(2.0*rate*pow(10,(1.0*h/10))));
             Params::set_e(sig);
             Params::set_K(get_eachK(rate));
-            cout << "Rate " <<  rate << ", K " <<  get_eachK(rate) << ", Eb/N0 " << h << ", interval " << 0.5 << ", sig " << sig <<   endl;
+            cout << "Rate " <<  rate << ", K " <<  get_eachK(rate) << ", Eb/N0 " << h << ", interval " << interval_x << ", sig " << sig <<   endl;
         } else{
             Params::set_K(startK + i * interval);
         }
@@ -578,7 +579,7 @@ void Analysor::calcBlockErrorRate_BP() {
         }
 
         //decode
-        while (block_error_count < Params::get_upperBlockErrorNum()) {
+        while (block_error_count < Params::get_upperBlockErrorNum() && loopi < Params::get_blockNum()) {
             //encode
             Preseter::preset_u(RAND, u);
             if( Common::is_mid_send() ){
@@ -660,7 +661,6 @@ void Analysor::calcBlockErrorRate_BP() {
             error_count = 0;
             mitr += itr; // 0:itr, 1:nochecked
 
-            if(loopi >= Params::get_blockNum()) break;
 //            break;
         }
         val_error_file << "\t}" << endl;

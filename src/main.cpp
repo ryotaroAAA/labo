@@ -143,27 +143,27 @@ int main(void) {
     Params::set_K(1);
     Params::set_M(0);
 //    Params::set_M(96);
-    Params::set_MN(0);
+    Params::set_MN(40);
     Params::set_s(AWGN);
 //    Params::set_is_outlog(true);
     Params::set_decode_mode(BP);
     Params::set_is_exp_awgn(true);
     Params::set_monteNum(1);
-    Params::set_rp(50);
-    Params::set_Bloop(1000);
-    Params::set_blockNum(3000);
+    Params::set_rp(100);
+    Params::set_Bloop(500);
+    Params::set_blockNum(2000);
     Params::set_upperBlockErrorNum(100);
 
     //point設定
 //    double p[3] = {5,0.15,0.45};
 //    double p[3] = {1,0.27,0.27};
-    double p[3] = {1,0.5,0.5};
+    double p[3] = {1,1,1};
     Params::set_point(p);
     //awgn_p設定
     //{0.25,1.5,3.0},{0.5,1.5,3.0},{0.75,2.5,4.5}
-    double awgn_p[3] = {0.25,1.5,3.0};
-//    double awgn_p[3] = {0.5,1.5,3.0};
-//    double awgn_p[3] = {0.75,1.5,3.0};
+//    double awgn_p[3] = {0.25,1.0,2.0};
+//    double awgn_p[3] = {0.5,1.0,2.5};
+    double awgn_p[3] = {0.75,2.5,4.5};
     Params::set_awgn_p(awgn_p);
     //calc_bloopを計算したいときにtrue, それ以外は必ずコメントアウト
 //    Params::set_is_calc_bloop(true);
@@ -171,16 +171,16 @@ int main(void) {
 //    Params::set_m_mode(MID_BLUTE);
 //    Params::set_m_mode(MID_DOR);
 //    Params::set_m_mode(MID_DOB);
-//    Params::set_m_mode(MID_DOV);
+    Params::set_m_mode(MID_DOV);
 
 //    Params::set_m_mode(MID_ADOR);
 //    Params::set_m_mode(MID_AOR);
 //    Params::set_m_mode(MID_AOB);
 //    Params::set_m_mode(MID_AOV);
 
-    Params::set_exp_mode(NORMAL);
+//    Params::set_exp_mode(NORMAL);
 //    Params::set_exp_mode(QUP);
-//    Params::set_exp_mode(MID);
+    Params::set_exp_mode(MID);
 //    Params::set_exp_mode(WANG);
 //    Params::set_exp_mode(VALERIO_P);
 //    Params::set_exp_mode(VALERIO_S);
@@ -190,6 +190,7 @@ int main(void) {
 //    Params::set_exp_mode(M_VALERIO_S);
 
     calcBER();
+//    Common::gauss_dist(, -1.0, 0.6);
 
     return 0;
 }

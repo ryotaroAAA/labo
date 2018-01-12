@@ -15,6 +15,7 @@ enum EXP_MODE{NORMAL, PUNC, QUP, WANG, MID, M_WANG, M_QUP, VALERIO_P, VALERIO_S,
 
 const static double inf_p =  30.0;
 const static double inf_m = -30.0;
+const static int send_0 = -1;
 
 #define PRINT(X) cout << #X << ":\n" << setprecision(10) << X << endl << endl;
 #define ARR(array)     (sizeof(array) / sizeof(array[0]));

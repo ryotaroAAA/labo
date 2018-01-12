@@ -216,7 +216,7 @@ void Decoder::send_message(int i, int j, vector<vector<vector<message> > > &mess
     //中間ノードはここでおくる
     if(Common::is_mid_send()){
         if (T[i][j]) {
-            wc = Channel::calcW(y[i/2][j],0);
+            wc = Channel::calcW(y[i/2][j],send_0);
             wp = Channel::calcW(y[i/2][j],1);
             llr = 1.0 * log(wc / wp);
         }
@@ -295,8 +295,8 @@ double Decoder::calc_message(int mode, vector<double> val) {
         }
         if (isnan(llr)) {
             llr = 0.0;
-            Common::pp(val);
-            cout << "val" << endl;
+//            Common::pp(val);
+//            cout << "val" << endl;
         }
     } else {
         //check
@@ -310,8 +310,8 @@ double Decoder::calc_message(int mode, vector<double> val) {
             llr = (double)2.0*atanh(llr);
         }
         if (isnan(llr)) {
-            Common::pp(val);
-            cout << "check" << endl;
+//            Common::pp(val);
+//            cout << "check" << endl;
         }
     }
     return llr;
@@ -342,8 +342,13 @@ void Decoder::confirmIsCheck(vector<vector<double> > &node_value, vector<vector<
                 }
             }
             if(tempCheck%2 == 0 && !zero_flag){
+                //足して0ならtrue
                 node_isChecked[i][j] = true;
             } else if(i != size-1) {
+                //チャンネルファクター
+                node_isChecked[i][j] = false;
+            } else if(zero_flag){
+                //ゼロがあると終わらない
                 node_isChecked[i][j] = false;
             }
         }
@@ -425,7 +430,7 @@ void Decoder::SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_es
         }
     }
     for (int i = 0; i < Params::get_N(); i++) {
-        wc = Channel::calcW(y[i],0);
+        wc = Channel::calcW(y[i],send_0);
         wp = Channel::calcW(y[i],1);
         llr = 1.0 * log(wc / wp);
         node_val[size-1][i] = llr;
@@ -509,10 +514,10 @@ void Decoder::init_params(vector<bool> &puncFlag, vector<int> &u, vector<int> &x
             if(!puncFlag[i]){
                 //puncなし
                 if( Common::is_mid_send() ){
-                    wc = Channel::calcW(ym[ysize-1][i],0);
+                    wc = Channel::calcW(ym[ysize-1][i],send_0);
                     wp = Channel::calcW(ym[ysize-1][i],1);
                 } else {
-                    wc = Channel::calcW(y[i],0);
+                    wc = Channel::calcW(y[i],send_0);
                     wp = Channel::calcW(y[i],1);
                 }
                 llr = 1.0 * log(wc / wp);
@@ -635,7 +640,7 @@ void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vect
         for (int i = 0; i < ysize; i++) {
             for (int j = 0; j < Params::get_N(); j++) {
                 if (T[i][j]) {
-                    double wc = Channel::calcW(y[i][j],0);
+                    double wc = Channel::calcW(y[i][j],send_0);
                     double wp = Channel::calcW(y[i][j],1);
                     double llr = 1.0 * log(wc / wp);
                     //val nodeへ送るから, 2*iでいい
@@ -865,7 +870,7 @@ double Decoder::calcL_i(int i, int n, int cache_i, int level, vector<double> &y,
     double llr = 0.0;
     this->addCount();
     if ( n == 1 ) {
-        double wc = Channel::calcW(y[0],0);
+        double wc = Channel::calcW(y[0],send_0);
         double wp = Channel::calcW(y[0],1);
         llr = 1.0 * log(wc / wp);
 

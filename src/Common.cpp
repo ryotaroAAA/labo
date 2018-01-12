@@ -6,7 +6,7 @@ void Common::bar(){
 }
 
 double Common::gauss_dist(double x, double mean, double sigma){
-    return exp(-1.0*pow(x - mean, 2)/(2 * sigma)) / (sqrt(2*M_PI*sigma));
+    return exp(-1.0*pow(x - mean, 2)/(2.0 * sigma*sigma)) / (sqrt(2.0*M_PI*sigma*sigma));
 }
 
 bool Common::containVal(int value, vector<int> m_array) {

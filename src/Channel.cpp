@@ -2,6 +2,7 @@
 
 vector<double> Channel::channel_output(vector<int> &input){
     vector<double> y;
+    int temp = 0;
 
     for (auto val : input) {
         if( Params::get_s() == AWGN ){
@@ -9,8 +10,10 @@ vector<double> Channel::channel_output(vector<int> &input){
             default_random_engine engine(seed_gen());
             normal_distribution<> dist(0.0, Params::get_e());
 //            cout << dist(engine) << endl;
-            y.push_back(val + dist(engine));
-//            double temp = dist(engine);
+            temp = (val) ? 1:send_0;
+//            y.push_back(val + dist(engine));
+            y.push_back(temp + dist(engine));
+
 //            cout << val << " " << temp << " " << val + temp << endl;
         } else {
             if(genrand_real1() < Params::get_e()){
@@ -28,14 +31,16 @@ vector<double> Channel::channel_output(vector<int> &input){
 }
 
 void Channel::channel_output_m(vector<vector<int> > &input, vector<vector<double> > &y) {
+    int temp = 0;
     for (int i=0; i<log2(Params::get_N())+1; i++) {
         for (int j=0; j < Params::get_N(); j++) {
             if( Params::get_s() == AWGN ){
                 random_device seed_gen;
                 default_random_engine engine(seed_gen());
                 normal_distribution<> dist(0.0, Params::get_e());
+                temp = (input[i][j]) ? 1:send_0;
 //                cout << dist(engine) << endl;
-                y[i][j] = (input[i][j] + dist(engine));
+                y[i][j] = (temp + dist(engine));
             } else {
                 if(genrand_real1() < Params::get_e()){
                     if( Params::get_s() == BEC){
@@ -54,8 +59,8 @@ void Channel::channel_output_m(vector<vector<int> > &input, vector<vector<double
 double Channel::calcW(double y, int x) {
     double retVal = 0.0;
     if( Params::get_s() == AWGN ){
-        if(x == 0){
-            retVal = Common::gauss_dist(y, 0.0, Params::get_e());
+        if(x == send_0){
+            retVal = Common::gauss_dist(y, send_0, Params::get_e());
         } else {
             retVal = Common::gauss_dist(y, 1.0, Params::get_e());
         }
