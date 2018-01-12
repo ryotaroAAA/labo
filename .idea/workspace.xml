@@ -92,8 +92,8 @@
       <file leaf-file-name="Decoder.cpp" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/Decoder.cpp">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-5698">
-              <caret line="455" column="40" lean-forward="true" selection-start-line="455" selection-start-column="40" selection-end-line="455" selection-end-column="40" />
+            <state relative-caret-position="616">
+              <caret line="350" column="29" lean-forward="true" selection-start-line="350" selection-start-column="29" selection-end-line="350" selection-end-column="29" />
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
               </folding>
@@ -201,7 +201,6 @@
         <option value="$PROJECT_DIR$/CMakeLists.txt" />
         <option value="$PROJECT_DIR$/lib/Analysor.h" />
         <option value="$PROJECT_DIR$/log/gnuparameta" />
-        <option value="$PROJECT_DIR$/lib/Decoder.h" />
         <option value="$PROJECT_DIR$/lib/Common.h" />
         <option value="$PROJECT_DIR$/src/Preseter.cpp" />
         <option value="$PROJECT_DIR$/log/201817/N256M0MN64sdiv0.6AWGNrp100MNum1BNum1000UPBn100_mid_dov" />
@@ -213,6 +212,7 @@
         <option value="$PROJECT_DIR$/lib/Params.h" />
         <option value="$PROJECT_DIR$/src/main.cpp" />
         <option value="$PROJECT_DIR$/src/Decoder.cpp" />
+        <option value="$PROJECT_DIR$/lib/Decoder.h" />
       </list>
     </option>
   </component>
@@ -224,10 +224,10 @@
   </component>
   <component name="OCFindUsagesOptions" text="true" ivars="false" properties="true" derivedClasses="false" />
   <component name="ProjectFrameBounds">
-    <option name="x" value="-110" />
-    <option name="y" value="23" />
-    <option name="width" value="1680" />
-    <option name="height" value="1023" />
+    <option name="x" value="-150" />
+    <option name="y" value="-1057" />
+    <option name="width" value="1819" />
+    <option name="height" value="1057" />
   </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
@@ -289,6 +289,20 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="src" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="channel_polarization" />
+              <option name="myItemType" value="com.jetbrains.cidr.projectView.CidrFilesViewHelper$MyProjectTreeStructure$1" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="labo" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lib" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -465,12 +479,12 @@
       <workItem from="1515471610168" duration="12445000" />
       <workItem from="1515500964703" duration="24998000" />
       <workItem from="1515584944516" duration="26079000" />
-      <workItem from="1515746886775" duration="10722000" />
+      <workItem from="1515746886775" duration="11205000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="1639393000" />
+    <option name="totallyTimeSpent" value="1639876000" />
   </component>
   <component name="TodoView" selected-index="3">
     <todo-panel id="selected-file">
@@ -482,16 +496,16 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-110" y="23" width="1680" height="1023" extended-state="0" />
+    <frame x="-150" y="-1057" width="1819" height="1057" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.16849817" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15531795" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.21816283" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25745857" sideWeight="0.49724898" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.24813631" sideWeight="0.49724898" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="CMake" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.2413793" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.17519182" sideWeight="0.50275105" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3275862" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3998779" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.3494654" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24969475" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3275862" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
@@ -567,7 +581,7 @@
         </breakpoint>
         <line-breakpoint enabled="true" type="com.jetbrains.cidr.execution.debugger.OCBreakpointType">
           <url>file://$PROJECT_DIR$/src/Decoder.cpp</url>
-          <line>649</line>
+          <line>583</line>
           <option name="timeStamp" value="762" />
         </line-breakpoint>
       </breakpoints>
@@ -664,14 +678,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1344">
           <caret line="96" column="29" lean-forward="false" selection-start-line="96" selection-start-column="29" selection-end-line="96" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/lib/Decoder.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="336">
-          <caret line="26" column="122" lean-forward="false" selection-start-line="26" selection-start-column="122" selection-end-line="26" selection-end-column="122" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -852,10 +858,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/lib/Decoder.h">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="168">
+          <caret line="30" column="33" lean-forward="false" selection-start-line="30" selection-start-column="33" selection-end-line="30" selection-end-column="33" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/Decoder.cpp">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-5698">
-          <caret line="455" column="40" lean-forward="true" selection-start-line="455" selection-start-column="40" selection-end-line="455" selection-end-column="40" />
+        <state relative-caret-position="616">
+          <caret line="350" column="29" lean-forward="true" selection-start-line="350" selection-start-column="29" selection-end-line="350" selection-end-column="29" />
           <folding>
             <element signature="e#0#27#0" expanded="true" />
           </folding>
