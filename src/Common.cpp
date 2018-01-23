@@ -213,23 +213,23 @@ double Common::get_rate(){
         case PUNC:
         case QUP:
         case VALERIO_P:
-            rate = (double)k/(n-m);
-            break;
         case VALERIO_S:
         case WANG:
-            rate = (double)(k-m)/(n-m);
+            rate = (double)k/(n-m);
             break;
+//            rate = (double)(k-m)/(n-m);
+//            break;
         case MID:
             rate = (double)k/(n+mn);
             break;
         case M_WANG:
         case M_QUP:
         case M_VALERIO_P:
+        case M_VALERIO_S:
             rate = (double)k/(n-m+mn);
             break;
-        case M_VALERIO_S:
-            rate = (double)(k-m)/(n-m+mn);
-            break;
+//            rate = (double)(k-m)/(n-m+mn);
+//            break;
         default:
             rate = 0.0;
             break;

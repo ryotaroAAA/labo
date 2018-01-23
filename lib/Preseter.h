@@ -11,11 +11,11 @@ public:
     explicit Preseter();
     ~Preseter();
     static void preset_A_Ac(vector<int> &free, vector<int> &fixed);
-    static void preset_u(SOURCE_TYPE mode, vector<int> &u);
+    static void preset_u(SOURCE_TYPE mode, vector<int> &u, vector<int> &A);
     static void defineFixedAndFree(vector<int> &free, vector<int> &fixed);
     static void represet_A(vector<int> &free, vector<int> &fixed_0, vector<pair<int,double> > &cap_map);
     static void makeMutualInfoArray(vector<pair<int, double> > &cap_map);
-    static vector<int> generateUi(SOURCE_TYPE set, vector<int> &x);
+    static vector<int> generateUi(SOURCE_TYPE set, vector<int> &x, vector<int> &A);
     static void set_params(vector<pair<int, double> > &cap_map,vector<int> &A, vector<int> &Ac, vector<int> &p_0, vector<int> &p);
     static vector<int> makeTable(int n);
     static void makeManyValTableAs(bool sortflg, vector<int> &table_map);

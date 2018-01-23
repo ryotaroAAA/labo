@@ -15,7 +15,6 @@ void Analysor::errorCount(vector<int> &u, vector<int> &u_est, int* error_count){
         }
     }
 }
-
 double Analysor::errorCalc(vector<int> &u, vector<int> &u_est, int* error_count){
     for(int i=0; i<Params::get_N(); i++){
         if(u[i] != u_est[i]){
@@ -25,7 +24,6 @@ double Analysor::errorCalc(vector<int> &u, vector<int> &u_est, int* error_count)
 
     return (double)(*error_count)/Params::get_N();
 }
-
 double Analysor::calcCapacity(int i, int n) {
     double cap =0.0;
     if(Params::get_s() == BEC){
@@ -44,7 +42,6 @@ double Analysor::calcCapacity(int i, int n) {
     }
     return cap;
 }
-
 double Analysor::calcBhatforBEC(int i, int n){
     double bha =0.0;
 
@@ -60,13 +57,11 @@ double Analysor::calcBhatforBEC(int i, int n){
     }
     return bha;
 }
-
 void Analysor::makeArrayCapacity(vector<double> &array) {
     for(int i = 0; i < Params::get_N(); i++) {
         array[i] = Analysor::calcCapacity(i, Params::get_N());
     }
 }
-
 double Analysor::calc_inv(double y){
     double x1 = 10.0;
     double x2 = 500.0;
@@ -86,7 +81,6 @@ double Analysor::calc_inv(double y){
     }
     return x3;
 }
-
 double Analysor::inv_m_func(double y){
     double ret = 0.0;
     const double a = -0.4527;
@@ -103,7 +97,6 @@ double Analysor::inv_m_func(double y){
     }
     return ret;
 }
-
 double Analysor::m_func(double x){
     double ret = 0.0;
     const double a = -0.4527;
@@ -122,7 +115,6 @@ double Analysor::m_func(double x){
     }
     return ret;
 }
-
 double Analysor::calc_m_in(int i, int n){
     double ret = 0.0;
     double temp1 = 0.0;
@@ -142,7 +134,6 @@ double Analysor::calc_m_in(int i, int n){
 //    cout << "[" << temp_i << "][" << n  << "] "  << ret << endl;
     return ret;
 }
-
 void Analysor::makeArrayBhat(vector<double> &array) {
 //    if ( Params::get_s() == BSC) {
     if ( 1 ) {
@@ -163,14 +154,21 @@ void Analysor::makeArrayBhat(vector<double> &array) {
         vector<vector<bool> > isCache (size, vector<bool>(Params::get_N(),false));
         vector<vector<double> > cache (size, vector<double>(Params::get_N(),0.0));
 
-        double lr;
+        double lr = 0.0;
+        double llr = 0.0;
         int cache_i = 0;
         int repeatNum = Params::get_monteNum();
+        //Aは空集合
+        vector<int> A = {};
+//        for (int j = 0; j < Params::get_N(); ++j) {
+//            A.push_back(j);
+//        }
+
 
         for (int m = 1; m <= repeatNum; m++) {
             performance.startTimer();
 //            cout << "[" << m << "]" << endl;
-            Preseter::preset_u(RAND, u);
+            Preseter::preset_u(ALL0, u, A);
             vector<int> temp_u = u;
             x = encoder.encode(Params::get_N(), u);
 
@@ -182,11 +180,15 @@ void Analysor::makeArrayBhat(vector<double> &array) {
                 y = Channel::channel_output(x);
                 cache_i = decoder.makeTreeIndex(Params::get_N())[i] - 1;
                 lr = exp(decoder.calcL_i(i+1, Params::get_N(), cache_i, 0, y, temp_u, isCache, cache));
-                lr = pow(lr, -1+2 * u_n);
+//                llr = decoder.calcL_i(i+1, Params::get_N(), cache_i, 0, y, temp_u, isCache, cache);
+//                lr = pow(lr, -1+2 * u_n);
+                lr = 1.0/lr;
+//                tempbha = llr;
                 tempbha = sqrt(lr);
-                if (tempbha > 1.0) tempbha = 1.0/tempbha;
-                if (isnan(tempbha)) tempbha = 0.0;
-                array[i] += 1.0 * tempbha/repeatNum;
+
+//                if (tempbha > 1.0) tempbha = 1.0/tempbha;
+//                if (isnan(tempbha)) tempbha = 0.0;
+                array[i] += 1.0*tempbha/repeatNum;
             }
         }
     } else {
@@ -210,15 +212,14 @@ void Analysor::makeArrayBhat(vector<double> &array) {
 //        string filename = Params::get_rvbDir() + " Bhat";
 //        ofstream w_file;
 //        w_file.open(filename, ios::out);
-//        for (int i = 0; i < Params::get_N(); i++)
-//        {
+        for (int i = 0; i < Params::get_N(); i++)
+        {
 //            w_file << i << " " << array[i] << endl;
-//            cout << i << " " << array[i] << endl;
-//        }
+            cout << i << " " << array[i] << endl;
+        }
 //        Common::bar();
     }
 }
-
 void Analysor::probErrBound() {
     int count = 0;
     vector<double> tempArr;
@@ -245,8 +246,6 @@ void Analysor::probErrBound() {
         cout << (double)i/Params::get_N() << " " << sumArr[i] << " " << tempArr[i] << endl;
     }
 }
-
-
 string Analysor::get_itrfn(){
     time_t now = time(NULL);
     struct tm *pnow = localtime(&now);
@@ -287,7 +286,6 @@ string Analysor::get_itrfn(){
        << "c" << (Params::get_s() ? "BSC" : "BEC") << ":" << ename;
     return itrfn.str();
 }
-
 void Analysor::printDecodeProgress(int count, vector<vector<int> > &node_value, ofstream &w_file){
     int size = 2*log2(Params::get_N())+2;
     if(count >0 ){
@@ -334,8 +332,6 @@ void Analysor::calcBlockErrorRate() {
     vector<double> y_n(Params::get_N(), 0);
 
     vector<int> u_est(Params::get_N(), 0);
-    vector<pair<int, double> > cap_map;
-    Preseter::makeMutualInfoArray(cap_map);
 
     double BER = 0.0;
     double sumBER = 0.0;
@@ -345,9 +341,11 @@ void Analysor::calcBlockErrorRate() {
     int block_error_count = 0;
     int loopi = 0;
 
-    int pointNum = 10;
-    double from = 0.0;
-    double to = 0.7;
+    double point[3];
+    Params::get_point(point);
+    int pointNum = point[0];
+    double from = point[1];
+    double to = point[2];
     int startK = get_eachK(from);
     int endK = get_eachK(to);
     double interval = (double)(endK-startK)/pointNum;
@@ -365,11 +363,15 @@ void Analysor::calcBlockErrorRate() {
         vector<int> A(Params::get_K(), -1);
         vector<int> Ac;
 
+        vector<pair<int, double> > cap_map;
+        Preseter::makeMutualInfoArray(cap_map);
         Preseter::represet_A(A, Ac, cap_map);
+        Params::set_A(A);
+        Params::set_Ac(Ac);
         cout << "k : " << Params::get_K() << endl;
 
         while (block_error_count < Params::get_upperBlockErrorNum()) {
-            Preseter::preset_u(RAND, u_n);
+            Preseter::preset_u(RAND, u_n, A);
             x_n = encoder.encode(Params::get_N(), u_n);
             loopi++;
 
@@ -381,12 +383,13 @@ void Analysor::calcBlockErrorRate() {
 //            Common::pp(u_est);
             Analysor::errorCount(u_n, u_est, &error_count);
             if(error_count > 0) block_error_count++;
-            if (loopi % 50 == 0 ) cout << loopi << " " << error_count << " " << block_error_count << " " << (double)block_error_count/loopi << endl;
+            if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count << " " << (double)block_error_count/loopi << endl;
             error_count = 0;
 
 //            if(loopi >= repeatNum || i * tmpK < Params::get_N()/7) break;
             if(loopi >= Params::get_blockNum()) break;
         }
+
         performance.stopTimer();
         rate = (double) Params::get_K() / Params::get_N();
         cout << Params::get_rvbDir() << endl;
@@ -421,24 +424,26 @@ int Analysor::get_eachK(double from){
             break;
         case PUNC:
         case QUP:
-        case WANG:
         case VALERIO_P:
+        case VALERIO_S:
+        case WANG:
             retK = (n-m)*from;
             break;
-        case VALERIO_S:
-            retK = m+(n-m)*from;
-            break;
+
+//            retK = m+(n-m)*from;
+//            break;
         case MID:
             retK = (n+mn)*from;
             break;
         case M_WANG:
         case M_QUP:
         case M_VALERIO_P:
+        case M_VALERIO_S:
             retK = (n-m+mn)*from;
             break;
-        case M_VALERIO_S:
-            retK = m+(n-m+mn)*from;
-            break;
+//
+//            retK = m+(n-m+mn)*from;
+//            break;
         default:
             break;
     }
@@ -456,7 +461,44 @@ void Analysor::calcBlockErrorRate_BP() {
     int n = Params::get_N(), error_count = 0, block_error_count = 0, loopi = 0, itr = 0;
     int tmp = Params::get_N() / Params::get_K(), tmpK = Params::get_K();
     int size = log2(Params::get_N()) + 1;
-    double BER = 0.0, sumBER = 0.0, rate = 0.0, mitr = 0.0;;
+    double BER = 0.0, sumBER = 0.0, rate = 0.0, mitr = 0.0;
+
+    EXP_MODE em = Params::get_exp_mode();
+    MID_MODE mm = Params::get_m_mode();
+    string ename="";
+    string mname="";
+    switch (mm) {
+        case MID_BLUTE: {
+            int bl = 0;
+            if(Params::get_Bloop()){
+                bl = Params::get_Bloop();
+            }
+            mname = "mid_blute" + to_string(bl);
+            break;
+        }
+        case MID_ADOR: mname = "mid_ador"; break;
+        case MID_AOR: mname = "mid_aor"; break;
+        case MID_DOR: mname = "mid_dor"; break;
+        case MID_AOB: mname = "mid_aob"; break;
+        case MID_DOB: mname = "mid_dob"; break;
+        case MID_AOV: mname = "mid_aov"; break;
+        case MID_DOV: mname = "mid_dov"; break;
+    }
+    switch (em) {
+        case NORMAL: ename = ""; break;
+        case PUNC: ename = "punc"; break;
+        case MID:
+            ename = mname;
+            break;
+        case QUP: ename = "qup"; break;
+        case WANG: ename = "wang"; break;
+        case M_QUP: ename = "m_qup_"+mname; break;
+        case M_WANG: ename = "m_wang_"+mname; break;
+        case VALERIO_P: ename = "valerio_p"; break;
+        case VALERIO_S: ename = "valerio_s"; break;
+        case M_VALERIO_P: ename = "m_valerio_p_"+mname; break;
+        case M_VALERIO_S: ename = "m_valerio_s_"+mname; break;
+    }
 
     vector<int> A;
     vector<int> Ac;
@@ -468,10 +510,9 @@ void Analysor::calcBlockErrorRate_BP() {
     vector<vector<int> > xm(size, vector<int>(Params::get_N(), 0));
     vector<vector<double> > ym(size, vector<double>(Params::get_N(), 0.0));
     vector<int> u_est(Params::get_N(), 0);
-    vector<pair<int, double> > cap_map;
 
-    Preseter::makeMutualInfoArray(cap_map);
-    Preseter::preset_A_Ac(A, Ac);
+//    Preseter::makeMutualInfoArray(cap_map);
+//    Preseter::preset_A_Ac(A, Ac);
 
     vector<int> param(2, 0);
     //右ノードのパンクチャorショートン位置を指定
@@ -505,19 +546,18 @@ void Analysor::calcBlockErrorRate_BP() {
     ofstream saveb_file;
     struct stat st;
     if(Params::get_is_calc_bloop()){
-        string dir = "save_b/N_"+to_string(Params::get_N());
+        string dir = "save_b/"+ename+"_N_"+to_string(Params::get_N());
         int ret = stat(dir.data(), &st);
         if (ret == -1) {
             mkdir(dir.data(), S_IRUSR | S_IWUSR | S_IXUSR);
             cout <<dir.data()<<endl;
         }
-        string saveb_fn = "save_b/N_"
+        string saveb_fn = "save_b/"+ename+"_N_"
                           + to_string(Params::get_N())
                           + "/Bloop_" + to_string(bloop);
         saveb_file.open(saveb_fn, ios::out);
     }
 
-    EXP_MODE em = Params::get_exp_mode();
     vector<int> saveb;
 
     //AWWGNの場合
@@ -533,17 +573,29 @@ void Analysor::calcBlockErrorRate_BP() {
         performance.startTimer();
 
         double h = 0.0;
+        int be=0;
+        double ber=0.0;
+        vector<pair<int, double> > cap_map;
         //AWWGNの場合
         if(Params::get_is_exp_awgn()){
             double sig = 0.0;
             double rate = awgn_p[0];
             h = awgn_p[1] + interval_x*i;
-            sig = sqrt(1.0/(2.0*rate*pow(10,(1.0*h/10))));
+            sig = 1.0/(2.0*2.0*rate*pow(10,(1.0*h/10)));
+            sig = sqrt(sig);
+//            sig = 0.8;
+
             Params::set_e(sig);
             Params::set_K(get_eachK(rate));
-            cout << "Rate " <<  rate << ", K " <<  get_eachK(rate) << ", Eb/N0 " << h << ", interval " << interval_x << ", sig " << sig <<   endl;
-        } else{
+            cout << "Rate " <<  rate << ", K " <<  get_eachK(rate) << ", Eb/N0 " << h << ", interval " << interval_x << ", s " << sig <<   endl;
+//            cout << "Rate " <<  rate << ", K " <<  get_eachK(rate) << ", Eb/N0 " << h << ", interval " << interval_x << endl;
+            //sigを設定してからやる必要がある
+            Preseter::makeMutualInfoArray(cap_map);
+        } else {
+//            double rate = point[0];
+            Preseter::makeMutualInfoArray(cap_map);
             Params::set_K(startK + i * interval);
+            cout << "Rate " <<  rate << ", K " <<  get_eachK(rate) << ", Eb/N0 " << h << ", interval " << interval_x << ", s " << Params::get_s() <<   endl;
         }
 
         //実質TPS設定
@@ -553,19 +605,25 @@ void Analysor::calcBlockErrorRate_BP() {
         Common::bar();
 
         if(Params::get_is_outlog()) {
-            cout << "T";
             int size = log2(Params::get_N())+2;
             int n = Params::get_N();
             vector<vector<bool>> T(2*log2(Params::get_N())+2, vector<bool>(n, false));
             Params::get_T(T);
+            int count = 0;
+            cout << "T";
             for (int j = 0; j < T.size(); ++j) {
+                for(int k = 0; k < T[0].size(); ++k){
+                    if(T[j][k] == 1 ) count++;
+                }
                 Common::pp(T[j]);
             }
-            cout << "A";
+            cout << "T.size" << count;
+            Common::bar();
+            cout << "A" << A.size();
             Common::pp(A);
-            cout << "Ac";
+            cout << "Ac" << Ac.size();
             Common::pp(Ac);
-            cout << "punc pattern";
+            cout << "punc pattern" << p.size();
             Common::pp(p);
             vector<int> table = Preseter::makeTable(Params::get_N());
             cout << "dBN";
@@ -578,34 +636,8 @@ void Analysor::calcBlockErrorRate_BP() {
             Common::rpp(table);
         }
 
-        //decode
-        while (block_error_count < Params::get_upperBlockErrorNum() && loopi < Params::get_blockNum()) {
-            //encode
-            Preseter::preset_u(RAND, u);
-            if( Common::is_mid_send() ){
-                tmp_x[log2(Params::get_N()) - 1] = encoder.encode_m(Params::get_N(), 0, 0, u, tmp_x);
-                //uとxをまとめて送る
-                for (int i = 0; i < log2(Params::get_N()) + 1; i++) {
-                    for (int j = 0; j < Params::get_N(); j++) {
-                        if (i == 0) {
-                            xm[i][j] = u[j];
-                        } else {
-                            xm[i][j] = tmp_x[i - 1][j];
-                        }
-                    }
-                }
-            } else {
-                x = encoder.encode(Params::get_N(), u);
-            }
-            loopi++;
-            u_est.assign(Params::get_N(), 0);
-
-            if( Common::is_mid_send() ){
-                Channel::channel_output_m(xm, ym);
-            } else {
-                y = Channel::channel_output(x);
-            }
-
+        bool flag = true;
+        while (block_error_count < Params::get_upperBlockErrorNum() && loopi < Params::get_blockNum() && flag) {
             if(loopi % bloop == 0 && Params::get_is_calc_bloop()){
                 //1. error_countを一次元化
                 int size = log2(Params::get_N())+1;
@@ -641,26 +673,54 @@ void Analysor::calcBlockErrorRate_BP() {
 
                 //3. 一次元データを多次元に変換し, 上から送信フラグつけていく [][] = 順位
                 //[i] => [i/N][i%N]として変換可能なはず
-                sorted_i = temp_i[0];
-                saveb.push_back(sorted_i);
-                //Bに高いindexを入れていく
-                B[(sorted_i/N)*2][sorted_i%N] = 1;
-                vector<vector<int> > temp(2*log2(Params::get_N())+2, vector<int>(Params::get_N(),0));
-                node_error_count = temp;
+                if(temp_i.size() > 0){
+                    sorted_i = temp_i[0];
+                    saveb.push_back(sorted_i);
+                    //Bに高いindexを入れていく
+                    B[(sorted_i/N)*2][sorted_i%N] = 1;
+                    vector<vector<int> > temp(2*log2(Params::get_N())+2, vector<int>(Params::get_N(),0));
+                    node_error_count = temp;
+                }
                 Analysor::printDecodeProgress(loopi/bloop, B, b_file);
             }
-
+            //encode
+            Preseter::preset_u(RAND, u, A);
+            if( Common::is_mid_send() ){
+                tmp_x[log2(Params::get_N()) - 1] = encoder.encode_m(Params::get_N(), 0, 0, u, tmp_x);
+                //uとxをまとめて送る
+                for (int i = 0; i < log2(Params::get_N()) + 1; i++) {
+                    for (int j = 0; j < Params::get_N(); j++) {
+                        if (i == 0) {
+                            xm[i][j] = u[j];
+                        } else {
+                            xm[i][j] = tmp_x[i - 1][j];
+                        }
+                    }
+                }
+            } else {
+                x = encoder.encode(Params::get_N(), u);
+            }
+            u_est.assign(Params::get_N(), 0);
+            if( Common::is_mid_send() ){
+                Channel::channel_output_m(xm, ym);
+            } else {
+                y = Channel::channel_output(x);
+            }
+            loopi++;
+            //decode
             u_est = decoder.calcBP(loopi, param, u, x, y, xm, ym, node_error_count, val_error_file, B);
             itr = param[0];
             Analysor::errorCount(u, u_est, &error_count);
             if (error_count > 0) {
                 block_error_count++;
             }
-            if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count  << " " << itr << " " << (double)block_error_count/loopi << endl;
+            be += error_count;
+            ber = (double)be/(loopi*Params::get_N());
+            if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count  << " " << itr << " " << (double)block_error_count/loopi << " " << ename << " " << h << " " << Params::get_MN() << " " << ber << endl;
 
+            if(block_error_count > 0 && Params::get_is_outlog()) flag = false;
             error_count = 0;
             mitr += itr; // 0:itr, 1:nochecked
-
 //            break;
         }
         val_error_file << "\t}" << endl;
@@ -668,7 +728,7 @@ void Analysor::calcBlockErrorRate_BP() {
         b_file << "\t}" << endl;
         b_file << "}" << endl;
 
-        mitr = (mitr/loopi) >= 70 ? 70 : mitr/loopi;
+        mitr = (mitr/loopi) >= Params::get_rp() ? Params::get_rp() : mitr/loopi;
         itrfile << rate << " " << mitr << endl;
 
         if(Params::get_is_exp_awgn()) {

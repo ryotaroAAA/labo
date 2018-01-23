@@ -3,30 +3,38 @@
 vector<double> Channel::channel_output(vector<int> &input){
     vector<double> y;
     int temp = 0;
+    int count = 0;
+    double n = 0.0;
 
     for (auto val : input) {
         if( Params::get_s() == AWGN ){
-            random_device seed_gen;
-            default_random_engine engine(seed_gen());
-            normal_distribution<> dist(0.0, Params::get_e());
+            random_device seed;
+            mt19937 engine(seed());
+            normal_distribution<double> dist(0.0, Params::get_e());
 //            cout << dist(engine) << endl;
-            temp = (val) ? 1:send_0;
+            temp = (val==1) ? 1 : send_0;
 //            y.push_back(val + dist(engine));
-            y.push_back(temp + dist(engine));
-
+            n = dist(engine);
+            if(n > 1.0 || n < -1.0){
+                count++;
+            }
+            y.push_back(temp + n);
+//            cout << Params::get_e() << endl;
 //            cout << val << " " << temp << " " << val + temp << endl;
         } else {
             if(genrand_real1() < Params::get_e()){
                 if( Params::get_s() == BEC){
                     y.push_back(2);
                 } else if (Params::get_s() == BSC) {
-                    y.push_back(val?0:1);
+                    temp = (val==1) ? send_0 : 1;
+                    y.push_back(temp);
                 }
             } else {
                 y.push_back(val);
             }
         }
     }
+//    cout << "count" << count << endl;
     return y;
 }
 
@@ -35,10 +43,10 @@ void Channel::channel_output_m(vector<vector<int> > &input, vector<vector<double
     for (int i=0; i<log2(Params::get_N())+1; i++) {
         for (int j=0; j < Params::get_N(); j++) {
             if( Params::get_s() == AWGN ){
-                random_device seed_gen;
-                default_random_engine engine(seed_gen());
+                random_device seed;
+                mt19937 engine(seed());
                 normal_distribution<> dist(0.0, Params::get_e());
-                temp = (input[i][j]) ? 1:send_0;
+                temp = (input[i][j]==1) ? 1:send_0;
 //                cout << dist(engine) << endl;
                 y[i][j] = (temp + dist(engine));
             } else {
@@ -46,7 +54,8 @@ void Channel::channel_output_m(vector<vector<int> > &input, vector<vector<double
                     if( Params::get_s() == BEC){
                         y[i][j] = 2;
                     } else if (Params::get_s() == BSC) {
-                        y[i][j] = (input[i][j])?0:1;
+                        temp = (input[i][j]==1) ? send_0 : 1;
+                        y[i][j] = temp;
                     }
                 } else {
                     y[i][j] = input[i][j];
@@ -64,7 +73,6 @@ double Channel::calcW(double y, int x) {
         } else {
             retVal = Common::gauss_dist(y, 1.0, Params::get_e());
         }
-
     } else {
         if (y == x) {
             retVal = 1 - Params::get_e();

@@ -4,8 +4,8 @@ void Preseter::preset_A_Ac(vector<int> &free, vector<int> &fixed){
     Preseter::defineFixedAndFree(free,fixed);
 }
 
-void Preseter::preset_u(SOURCE_TYPE mode, vector<int> &u){
-    u = Preseter::generateUi(mode, u);
+void Preseter::preset_u(SOURCE_TYPE mode, vector<int> &u, vector<int> &A){
+    u = Preseter::generateUi(mode, u, A);
 }
 
 void Preseter::represet_A(vector<int> &free, vector<int> &fixed_0, vector<pair<int,double> > &cap_map){
@@ -49,8 +49,8 @@ void Preseter::makeMutualInfoArray(vector<pair<int, double> > &cap_map){
     vector<double> cap(Params::get_N());
 
     if(Params::get_s() == BEC) {
-        Analysor::makeArrayCapacity(cap);
-//        Analysor::makeArrayBhat(cap);
+        Analysor::makeArrayBhat(cap);
+//        Analysor::makeArrayCapacity(cap);
     } else {
         Analysor::makeArrayBhat(cap);
     }
@@ -61,15 +61,18 @@ void Preseter::makeMutualInfoArray(vector<pair<int, double> > &cap_map){
     //昇順ソート
     if(Params::get_s() == BEC) {
         sort(begin(cap_map), end(cap_map), Common::sort_greater);
+        cout << "CAP" << endl;
     } else {
         sort(begin(cap_map), end(cap_map), Common::sort_less);
+        cout << "BHAT" << endl;
     }
 }
 
 void Preseter::makeManyValTableAs(bool sortflg, vector<int> &table){
     vector<int> u(Params::get_N());
     vector<int> x(Params::get_N());
-    Preseter::preset_u(ALL1, u);
+    vector<int> A = {};
+    Preseter::preset_u(ALL1, u, A);
 
     Encoder encoder;
     x = encoder.enc(Params::get_N(),u);
@@ -93,7 +96,7 @@ void Preseter::makeManyValTableAs(bool sortflg, vector<int> &table){
     }
 }
 
-vector<int> Preseter::generateUi(SOURCE_TYPE set, vector<int> &x){
+vector<int> Preseter::generateUi(SOURCE_TYPE set, vector<int> &x, vector<int> &A){
     vector<int> ret;
 //    srand(0);
     for (int i = 0; i < Params::get_N(); i++) {
@@ -102,7 +105,11 @@ vector<int> Preseter::generateUi(SOURCE_TYPE set, vector<int> &x){
         } else if (set == ALL1) {
             ret.push_back(1);
         } else if (set == RAND){
-            ret.push_back(genrand_int32() % 2);
+            if(Common::containVal(i,A)){
+                ret.push_back(genrand_int32() % 2);
+            } else {
+                ret.push_back(0);
+            }
         }
     }
     return ret;
@@ -142,7 +149,7 @@ vector<int> Preseter::get_bitReversal(vector<int> p_0){
     vector<int> p;
     vector<int> table = makeTable(Params::get_N());
     for (int i = 0; i < p_0.size(); i++) {
-        p.push_back(table[p_0[i]-1]-1);
+        p.push_back(table[p_0[i]]-1);
     }
     return p;
 }
@@ -212,6 +219,7 @@ void Preseter::set_params(vector<pair<int, double> > &cap_map, vector<int> &A, v
     A.resize(Params::get_K(), -1);
 //    Ac_0.resize(Params::get_N()-Params::get_K(), -1);
     Ac_0 = {};
+    p = {};
     EXP_MODE em = Params::get_exp_mode();
 
     //Aとして使いたくないものはAc_0にいれる
@@ -237,7 +245,7 @@ void Preseter::set_params(vector<pair<int, double> > &cap_map, vector<int> &A, v
         case WANG:
         case M_WANG:
             for (int i = 0; i < Params::get_M(); i++) {
-                p_0[i] = Params::get_N() - i;
+                p_0[i] = Params::get_N() - 1 - i;
                 Ac_0.push_back(Params::get_N() - i - 1);
             }
             p = Preseter::get_bitReversal(p_0);
@@ -246,19 +254,20 @@ void Preseter::set_params(vector<pair<int, double> > &cap_map, vector<int> &A, v
         case VALERIO_P:
         case M_VALERIO_P:
             for (int i = 0; i < Params::get_M(); i++) {
-                p_0[i] = i+1;
+                p_0[i] = i;
             }
-            p = Preseter::get_bitReversal(p_0);
-            Ac_0 = p;
+            p = p_0;
+            Ac_0 = Preseter::get_bitReversal(p_0);
             Preseter::represet_A(A, Ac_0, cap_map);
             break;
         case VALERIO_S:
         case M_VALERIO_S:
             for (int i = 0; i < Params::get_M(); i++) {
-                p_0[i] = Params::get_N() - i;
+                p_0[i] = Params::get_N() - 1 - i;
             }
-            p = Preseter::get_bitReversal(p_0);
-            Ac_0 = p;
+//            p = Preseter::get_bitReversal(p_0);
+            p = p_0;
+            Ac_0 = Preseter::get_bitReversal(p_0);
             Preseter::represet_A(A, Ac_0, cap_map);
             break;
         default:
@@ -294,8 +303,43 @@ void Preseter::set_params(vector<pair<int, double> > &cap_map, vector<int> &A, v
         int tmpSize = log2(Params::get_N())+1;
         vector<vector<int> > sortedZn(zsize, vector<int>(Params::get_N(), 0));
 
+        string ename;
+        string mname;
+        switch (mm) {
+            case MID_BLUTE: {
+                int bl = 0;
+                if(Params::get_Bloop()){
+                    bl = Params::get_Bloop();
+                }
+                mname = "mid_blute" + to_string(bl);
+                break;
+            }
+            case MID_ADOR: mname = "mid_ador"; break;
+            case MID_AOR: mname = "mid_aor"; break;
+            case MID_DOR: mname = "mid_dor"; break;
+            case MID_AOB: mname = "mid_aob"; break;
+            case MID_DOB: mname = "mid_dob"; break;
+            case MID_AOV: mname = "mid_aov"; break;
+            case MID_DOV: mname = "mid_dov"; break;
+        }
+        switch (em) {
+            case NORMAL: ename = ""; break;
+            case PUNC: ename = "punc"; break;
+            case MID:
+                ename = mname;
+                break;
+            case QUP: ename = "qup"; break;
+            case WANG: ename = "wang"; break;
+            case M_QUP: ename = "m_qup_"+mname; break;
+            case M_WANG: ename = "m_wang_"+mname; break;
+            case VALERIO_P: ename = "valerio_p"; break;
+            case VALERIO_S: ename = "valerio_s"; break;
+            case M_VALERIO_P: ename = "m_valerio_p_"+mname; break;
+            case M_VALERIO_S: ename = "m_valerio_s_"+mname; break;
+        }
+
         vector<int> bl;
-        string bloop_fn = "save_b/N_"
+        string bloop_fn = "save_b/"+ename+"_N_"
                           + to_string(Params::get_N())
                           + "/Bloop_" + to_string(Params::get_Bloop());
         ifstream ifs(bloop_fn);
@@ -308,7 +352,7 @@ void Preseter::set_params(vector<pair<int, double> > &cap_map, vector<int> &A, v
             case MID_BLUTE:{
                 int t = 0;
                 for (int i = 0; i < bl.size(); i++) {
-                    if(t <= Params::get_MN() && bl.size()>0){
+                    if(t < Params::get_MN() && bl.size()>0){
                         //if(Common::containVal(bl[t],Ac) && Common::containVal(bl[t],p)){ ?　左ノードならAに含まれるもののみ
                         if((bl[i] < n && bl[i] && Common::containVal(bl[i],A)) || n <= bl[i]){
                             T[(bl[i]/n)*2][bl[i]%n] = true;
@@ -332,11 +376,13 @@ void Preseter::set_params(vector<pair<int, double> > &cap_map, vector<int> &A, v
                     T[0][A[k-1-i]] = true;
                 }
                 break;
-            case MID_DOB:
+            case MID_DOB: {
+                int bn_size = Bn.size();
                 for (int i = 0; i < Params::get_MN(); i++) {
-                    T[0][Bn[k-1-i]-1] = true;
+                    T[0][Bn[bn_size - 1 - i] - 1] = true;
                 }
                 break;
+            }
             case MID_AOB:
                 for (int i = 0; i < Params::get_MN(); i++) {
                     T[0][Bn[i]-1] = true;
@@ -347,11 +393,13 @@ void Preseter::set_params(vector<pair<int, double> > &cap_map, vector<int> &A, v
                     T[0][v_table[i]] = true;
                 }
                 break;
-            case MID_AOV:
+            case MID_AOV: {
+                int vn_size = v_table.size();
                 for (int i = 0; i < Params::get_MN(); i++) {
-                    T[0][v_table[k-1-i]] = true;
+                    T[0][v_table[vn_size - 1 - i]] = true;
                 }
                 break;
+            }
             default:
                 break;
         }
