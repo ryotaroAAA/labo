@@ -15,9 +15,9 @@ vector<double> Channel::channel_output(vector<int> &input){
             temp = (val==1) ? 1 : send_0;
 //            y.push_back(val + dist(engine));
             n = dist(engine);
-            if(n > 1.0 || n < -1.0){
-                count++;
-            }
+//            if(n > 1.0 || n < -1.0){
+//                count++;
+//            }
             y.push_back(temp + n);
 //            cout << Params::get_e() << endl;
 //            cout << val << " " << temp << " " << val + temp << endl;

@@ -19,7 +19,7 @@ public:
     void calcSConBP(int itr, int count, ofstream &val_file, ofstream &check_file, vector<int> &u, vector<double> &y , vector<int> &u_n_est, vector<double> &tmp_u, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked);
 
     //main BP
-    vector<int> calcBP(int loop_num, vector<int> &param, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<vector<int> > &node_error_count, ofstream &val_error_file, vector<vector<int> > &B);
+    vector<int> calcBP(vector<double> &test_u, int loop_num, vector<int> &param, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<vector<int> > &node_error_count, ofstream &val_error_file, vector<vector<int> > &B);
 
     //BP init
     void init_message(vector<bool> &puncFlag, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<double> &y, vector<vector<double> > &ym);
@@ -31,11 +31,17 @@ public:
     void calc_marge(vector<vector<double> > &node_value, vector<vector<vector<message> >> &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym);
     void calc_check_to_val(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym);
     void calc_val_to_check(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym);
+    void calc_right_to_left(int &itr, ofstream &check_file, ofstream &val_file, int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym);
+    void calc_left_to_right(int &itr, ofstream &check_file, ofstream &val_file, int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym);
     void send_message(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym);
-    void calc_mp(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym);
+    void reset_message(vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked, vector<vector<vector<message> >> &message_list);
+    void sc_decision(vector<double> &test_u, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked, vector<vector<vector<message> >> &message_list);
+    void calc_mp(int &itr, ofstream &check_file, ofstream &val_file, int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym);
 
     //calc terminal condition
     bool isTerminate(int &no_checked, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked);
+    bool isScTerminate(int &no_checked, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked);
+    bool isScTerminateG(int &no_checked, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked);
     void confirmIsCheck(vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked);
     bool isChanged(vector<vector<bool> > &old_node_isChecked, vector<vector<bool> > &new_node_isChecked2);
 
@@ -55,7 +61,7 @@ public:
 //    void set_val(bool val, vector<int> &locate, vector<vector<bool> > &node_val);
 
     //sc
-    vector<int> decode(vector<double> &y, vector<int> &u);
+    vector<int> decode(vector<double> &test_u, vector<double> &y, vector<int> &u);
     double calcL_i(int i, int n ,int cache_i, int lefvel ,vector<double> &y ,vector<int> &u, vector<vector<bool> > &isCache , vector<vector<double> > &cache);
 };
 

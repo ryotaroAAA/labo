@@ -8,6 +8,10 @@ void Preseter::preset_u(SOURCE_TYPE mode, vector<int> &u, vector<int> &A){
     u = Preseter::generateUi(mode, u, A);
 }
 
+//void Preseter::de(){
+//
+//}
+
 void Preseter::represet_A(vector<int> &free, vector<int> &fixed_0, vector<pair<int,double> > &cap_map){
     int count = 0;
     int i = 0;
@@ -49,8 +53,8 @@ void Preseter::makeMutualInfoArray(vector<pair<int, double> > &cap_map){
     vector<double> cap(Params::get_N());
 
     if(Params::get_s() == BEC) {
-        Analysor::makeArrayBhat(cap);
-//        Analysor::makeArrayCapacity(cap);
+//        Analysor::makeArrayBhat(cap);
+        Analysor::makeArrayCapacity(cap);
     } else {
         Analysor::makeArrayBhat(cap);
     }

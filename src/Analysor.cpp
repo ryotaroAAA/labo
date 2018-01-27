@@ -119,9 +119,15 @@ double Analysor::calc_m_in(int i, int n){
     double ret = 0.0;
     double temp1 = 0.0;
     double temp2 = 0.0;
-    int temp_i = (i/2 == 0)? 1 : i/2;
+    int temp_i = 0;
+    if(i % 2 == 0){
+        temp_i = i/2;
+    } else {
+        temp_i = i/2+1;
+    }
+    double sig_2 = Params::get_e()*Params::get_e();
     if (n == 1){
-        ret = 2.0 / Params::get_e();
+        ret = 2.0 / (sig_2);
     } else {
         temp1 = Analysor::calc_m_in(temp_i, n/2);
         if (i % 2 == 0){
@@ -131,12 +137,12 @@ double Analysor::calc_m_in(int i, int n){
             ret = Analysor::inv_m_func(temp2);
         }
     }
-//    cout << "[" << temp_i << "][" << n  << "] "  << ret << endl;
+//    cout << "[" << i << "][" << n  << "] "  << ret << endl;
     return ret;
 }
 void Analysor::makeArrayBhat(vector<double> &array) {
-//    if ( Params::get_s() == BSC) {
-    if ( 1 ) {
+    if ( Params::get_s() == BSC) {
+//    if ( Params::get_s() ) {
         Performance performance;
         Decoder decoder;
         Encoder encoder;
@@ -208,7 +214,7 @@ void Analysor::makeArrayBhat(vector<double> &array) {
         }
     }
 
-    if(Params::get_m_mode() != MID_ADOR){
+    if(!Params::get_is_exp_awgn()){
 //        string filename = Params::get_rvbDir() + " Bhat";
 //        ofstream w_file;
 //        w_file.open(filename, ios::out);
@@ -349,6 +355,7 @@ void Analysor::calcBlockErrorRate() {
     int startK = get_eachK(from);
     int endK = get_eachK(to);
     double interval = (double)(endK-startK)/pointNum;
+    vector<double> test(Params::get_N(),0.0);
 
     EXP_MODE em = Params::get_exp_mode();
     cout << "startK::" << startK << " interval::" << interval << endl;
@@ -378,7 +385,7 @@ void Analysor::calcBlockErrorRate() {
             y_n.assign(Params::get_N(), 0);
             u_est.assign(Params::get_N(), 0);
             y_n = Channel::channel_output(x_n);
-            u_est = decoder.decode(y_n, u_n);
+            u_est = decoder.decode(test, y_n, u_n);
 
 //            Common::pp(u_est);
             Analysor::errorCount(u_n, u_est, &error_count);
@@ -510,6 +517,7 @@ void Analysor::calcBlockErrorRate_BP() {
     vector<vector<int> > xm(size, vector<int>(Params::get_N(), 0));
     vector<vector<double> > ym(size, vector<double>(Params::get_N(), 0.0));
     vector<int> u_est(Params::get_N(), 0);
+    vector<double> test(Params::get_N(),0.0);
 
 //    Preseter::makeMutualInfoArray(cap_map);
 //    Preseter::preset_A_Ac(A, Ac);
@@ -519,8 +527,8 @@ void Analysor::calcBlockErrorRate_BP() {
     vector<int> p_0(Params::get_M(), -1);
     vector<int> p(Params::get_M(), -1);
 
-    ofstream itrfile;
-    itrfile.open(get_itrfn(), ios::out);
+//    ofstream itrfile;
+//    itrfile.open(get_itrfn(), ios::out);
 
     int bloop = Params::get_Bloop();
     double point[3];
@@ -581,7 +589,7 @@ void Analysor::calcBlockErrorRate_BP() {
             double sig = 0.0;
             double rate = awgn_p[0];
             h = awgn_p[1] + interval_x*i;
-            sig = 1.0/(2.0*2.0*rate*pow(10,(1.0*h/10)));
+            sig = 1.0/(2.0*rate*pow(10,(1.0*h/10)));
             sig = sqrt(sig);
 //            sig = 0.8;
 
@@ -708,7 +716,7 @@ void Analysor::calcBlockErrorRate_BP() {
             }
             loopi++;
             //decode
-            u_est = decoder.calcBP(loopi, param, u, x, y, xm, ym, node_error_count, val_error_file, B);
+            u_est = decoder.calcBP(test, loopi, param, u, x, y, xm, ym, node_error_count, val_error_file, B);
             itr = param[0];
             Analysor::errorCount(u, u_est, &error_count);
             if (error_count > 0) {
@@ -729,7 +737,7 @@ void Analysor::calcBlockErrorRate_BP() {
         b_file << "}" << endl;
 
         mitr = (mitr/loopi) >= Params::get_rp() ? Params::get_rp() : mitr/loopi;
-        itrfile << rate << " " << mitr << endl;
+//        itrfile << rate << " " << mitr << endl;
 
         if(Params::get_is_exp_awgn()) {
             cout << "mitr : " << mitr << endl;

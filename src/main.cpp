@@ -196,6 +196,100 @@ void test_edge(){
         cout << endl;
     }
 }
+void test_dec(){
+    Performance performance;
+    Analysor analysor;
+    Decoder decoder;
+    Encoder encoder;
+    Logger logger;
+    logger.setRvbDir(Params::get_rvbDir());
+
+    int n = Params::get_N(), error_count = 0, block_error_count = 0, loopi = 1, itr = 0;
+    int size = log2(Params::get_N()) + 1;
+    double BER = 0.0, sumBER = 0.0, rate = 0.0, mitr = 0.0;
+
+    vector<int> A;
+    vector<int> Ac;
+    vector<vector<int> > B(2*log2(Params::get_N())+2, vector<int>(Params::get_N(),0));
+    vector<int> u(Params::get_N(), 0);
+    vector<int> x(Params::get_N(), 0);
+    vector<double> y(Params::get_N(), 0);
+    vector<vector<int> > tmp_x(log2(Params::get_N()), vector<int>(Params::get_N(), 0));
+    vector<vector<int> > xm(size, vector<int>(Params::get_N(), 0));
+    vector<vector<double> > ym(size, vector<double>(Params::get_N(), 0.0));
+    vector<int> u_ests(Params::get_N(), 0);
+    vector<int> u_estb(Params::get_N(), 0);
+    vector<double> tests(Params::get_N(), 0);
+    vector<double> testb(Params::get_N(), 0);
+
+//    Preseter::makeMutualInfoArray(cap_map);
+//    Preseter::preset_A_Ac(A, Ac);
+
+    vector<int> param(2, 0);
+    //右ノードのパンクチャorショートン位置を指定
+    vector<int> p_0(Params::get_M(), -1);
+    vector<int> p(Params::get_M(), -1);
+
+    vector<pair<int, double> > cap_map;
+    vector<vector<int> > node_error_count(2*log2(Params::get_N())+2, vector<int>(Params::get_N(),0));
+    ofstream val_error_file;
+    string val_error_fn = "/Users/ryotaro/Dropbox/labo/graph_js/val_error.json";
+    val_error_file.open(val_error_fn, ios::out);
+    val_error_file << "{" << endl;
+
+    ofstream b_file;
+    string b_fn = "/Users/ryotaro/Dropbox/labo/graph_js/b.json";
+    b_file.open(b_fn, ios::out);
+    b_file << "{" << endl;
+
+    Preseter::makeMutualInfoArray(cap_map);
+    Preseter::set_params(cap_map, A, Ac, p_0, p);
+
+    rate = Common::get_rate();
+//    cout << "Rate " <<  rate << ", K " <<  Analysor::get_eachK(rate) << ", Eb/N0 " << h << ", interval " << interval_x << ", s " << Params::get_s() <<   endl;
+
+    //encode
+    Preseter::preset_u(RAND, u, A);
+    x = encoder.encode(Params::get_N(), u);
+    y = Channel::channel_output(x);
+
+//    u={0,0,1,1};
+//    y={-1.64065,0.257906,1.84493,0.278905};
+
+    //SC decode
+    Common::bar();
+    u_ests = decoder.decode(tests, y, u);
+    Analysor::errorCount(u, u_ests, &error_count);
+    if(error_count > 0) block_error_count++;
+    Common::bar();
+    if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count << " " << (double)block_error_count/loopi << endl;
+    Common::bar();
+    error_count = 0;
+    //BP decode
+    u_estb = decoder.calcBP(testb, loopi, param, u, x, y, xm, ym, node_error_count, val_error_file, B);
+    Common::bar();
+    Analysor::errorCount(u, u_estb, &error_count);
+    block_error_count = 0;
+    if (error_count > 0) {
+        block_error_count++;
+    }
+    if (loopi % 1 == 0 ) cout << loopi << " " << error_count << " " << block_error_count  << " " << (double)block_error_count/loopi << endl;
+    Common::bar();
+    val_error_file << "\t}" << endl;
+    val_error_file << "}" << endl;
+    int count = 0;
+    for (int i = 0; i < Params::get_N(); i++) {
+        if(testb[i] != tests[i]){
+            count++;
+            cout << i+1 << " " << testb[i] << " " << tests[i] << endl;
+        } else {
+            cout << i+1 << " " << testb[i] << " " << tests[i] << endl;
+        }
+    }
+    Common::bar();
+    cout << "no match: " << count << endl;
+}
+
 //mid>normal
 //awgn なら e=0.8
 //enum EXP_MODE{NORMAL, PUNC, QUP, WANG, MID, M_WANG, M_QUP, VALERIO_P, VALERIO_S, M_VALERIO_P, M_VALERIO_S};
@@ -207,55 +301,44 @@ int main(void) {
     init_genrand(tv.tv_sec + tv.tv_usec);
 
     Params::set_e(0.9);
-    Params::set_N(64);
+    Params::set_N(256);
     Params::set_K(1);
+    cout << "memo::" << endl;
 
-    //パンクチャ, ショートン
-//    Params::set_M(96);
-//    Params::set_M(96);
+//    パンクチャ, ショートン
+    Params::set_M(96);
+//    Params::set_M(4);
 //    Params::set_M(56);
 //    Params::set_M(16);
-
-    //中間ノード
-//    Params::set_MN(40);
+    int bp = 1;
+    Params::set_MN(40);
     Params::set_s(AWGN);
     //calc_bloopを計算したいときにtrue, それ以外は必ずコメントアウト
-//    Params::set_is_calc_bloop(true);
+    Params::set_is_calc_bloop(true);
 //    Params::set_is_outlog(true);
     Params::set_decode_mode(BP);
-//    Params::set_is_exp_awgn(true);
+    Params::set_is_exp_awgn(true);
     //50で十分
-    Params::set_monteNum(50);
-    Params::set_rp(100);
+    Params::set_monteNum(100);
+    Params::set_rp(10);
     Params::set_Bloop(100);
-    Params::set_blockNum(1000);
-    Params::set_upperBlockErrorNum(100);
-
+    Params::set_blockNum(4100);
+    Params::set_upperBlockErrorNum(4100);
     //point設定
     double p[3] = {1,0.25,0.25};
-//    double p[3] = {1,0.27,0.27};
-//    double p[3] = {1,1,1};
     Params::set_point(p);
 
     //awgn_p設定
     //{0.25,1.5,3.0},{0.5,1.5,3.0},{0.75,2.5,4.5}
-//    double awgn_p[3] = {0.25,4.0,4.0};
-//    double awgn_p[3] = {0.5,1.0,3.0};
-//    double awgn_p[3] = {0.75,1.0,3.0};
-//    double awgn_p[3] = {0.75,2,4};
-//    double awgn_p[3] = {0.75,3.5,3.5};
-    double awgn_p[3] = {0.75,2.0,2.0};
+//    double awgn_p[3] = {0.5,1,7};
+//    double awgn_p[3] = {0.75,1.0,1.0};
+    double awgn_p[3] = {0.75,2.5,4};
     Params::set_awgn_p(awgn_p);
 
 //    Params::set_m_mode(MID_BLUTE);
 //    Params::set_m_mode(MID_DOR);
 //    Params::set_m_mode(MID_DOB);
-//    Params::set_m_mode(MID_DOV);
-
-//    Params::set_m_mode(MID_ADOR);
-//    Params::set_m_mode(MID_AOR);
-//    Params::set_m_mode(MID_AOB);
-//    Params::set_m_mode(MID_AOV);
+    Params::set_m_mode(MID_DOV);
 
     Params::set_exp_mode(NORMAL);
 //    Params::set_exp_mode(QUP);
@@ -268,14 +351,20 @@ int main(void) {
 //    Params::set_exp_mode(M_VALERIO_P);
 //    Params::set_exp_mode(M_VALERIO_S);
 
-    calcBER(0);
-//    vector<double> val = {12.2192,-11.6025};
-//    double llr = 1.0;
-//    for (int i = 0; i < val.size(); i++) {
-//        llr *= tanh((double)val[i]/2.0);
-//    }
-//    llr = (double)2.0*atanh(llr);
-//    cout << llr << endl;
+//    test_edge();
+//    test_dec();
+    calcBER(bp);
+
+    double llr = 1.0;
+
+    vector<double> val = {0.0 , 1.0/0};
+    for (int i = 0; i < val.size(); i++) {
+        llr *= tanh((double)val[i]/2.0);
+    }
+    llr = (double)2.0*atanh(llr);
+//    llr = (double)abs(min(val[0],val[1])) * (val[0]*val[1])/(abs(val[0]*val[1]));
+//    llr = (val[0]*val[1])/(abs(val[0]*val[1]));
+    cout << llr << endl;
 
     return 0;
 }

@@ -7,7 +7,7 @@ Decoder::Decoder(){
 Decoder::~Decoder(){
 
 }
-void Decoder::SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_est, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<vector<message> > > &save_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &save_isChecked){
+void Decoder::SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_est, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<vector<message> > > &save_list, vector<vector<bool> > &node_isChecked, vector<vector<bool> > &save_isChecked) {
     double wc, wp, llr = 0.0, val = 0.0;
     int size = 2*log2(Params::get_N())+2;
     bool databit_flag = false;
@@ -72,7 +72,6 @@ void Decoder::SCinit(int n, vector<double> &y, vector<int> &u, vector<int> &u_es
         }
     }
 }
-
 void Decoder::calcSConBP(int itr, int count, ofstream &val_file, ofstream &check_file, vector<int> &u, vector<double> &y , vector<int> &u_n_est, vector<double> &tmp_u, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked) {
     int size = 2 * log2(Params::get_N()) + 2;
 
@@ -127,7 +126,7 @@ void Decoder::calcSConBP(int itr, int count, ofstream &val_file, ofstream &check
 //                if(count < count_limit) {
             if(is_check_changed_left) {
                 //左から
-                calc_mp(tmpSize, node_value, save_list, save_isChecked, ym);
+//                calc_mp(tmpSize, node_value, save_list, save_isChecked, ym);
                 confirmIsCheck(node_value, save_isChecked);
                 is_check_changed_left = isChanged(tmp_isChecked, save_isChecked);
                 tmp_isChecked = save_isChecked;
@@ -143,7 +142,7 @@ void Decoder::calcSConBP(int itr, int count, ofstream &val_file, ofstream &check
                     node_isChecked = save_isChecked;
                     tmpflg = false;
                 }
-                calc_mp(tmpSize, node_value, message_list, node_isChecked, ym);
+//                calc_mp(tmpSize, node_value, message_list, node_isChecked, ym);
                 confirmIsCheck(node_value, node_isChecked);
 
                 is_check_changed_right = isChanged(tmp_isChecked, node_isChecked);
@@ -187,8 +186,6 @@ void Decoder::calcSConBP(int itr, int count, ofstream &val_file, ofstream &check
     }
 }
 
-
-
 bool Decoder::isChanged(vector<vector<bool> > &old_node_isChecked, vector<vector<bool> > &new_node_isChecked) {
     int size = 2*log2(Params::get_N())+2;
     vector<vector<int> > adjacent;
@@ -214,11 +211,13 @@ void Decoder::printDecodeProgress(int count, vector<vector<int> > &node_value, o
         for (int j = 0; j < Params::get_N(); j++) {
             double temp = node_value[i][j];
             if(isinf(temp) && temp > 0){
-                temp = inf_p;
-                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+//                temp = inf_p;
+//                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+                w_file << "\t\t\t\"" << j << "\"" << ":" << "\"inf\"";
             } else if(isinf(temp) && temp < 0){
-                temp = inf_m;
-                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+//                temp = inf_m;
+//                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+                w_file << "\t\t\t\"" << j << "\"" << ":" << "\"-inf\"";
             } else if(isnan(temp)){
                 w_file << "\t\t\t\"" << j << "\"" << ":" << "\"NAN\"";
             } else {
@@ -247,11 +246,13 @@ void Decoder::printDecodeProgress(int count, vector<vector<bool> > &node_value, 
         for (int j = 0; j < Params::get_N(); j++) {
             double temp = node_value[i][j];
             if(isinf(temp) && temp > 0){
-                temp = inf_p;
-                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+//                temp = inf_p;
+//                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+                w_file << "\t\t\t\"" << j << "\"" << ":" << "\"inf\"";
             } else if(isinf(temp) && temp < 0){
-                temp = inf_m;
-                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+//                temp = inf_m;
+//                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+                w_file << "\t\t\t\"" << j << "\"" << ":" << "\"-inf\"";
             } else if(isnan(temp)){
                 w_file << "\t\t\t\"" << j << "\"" << ":" << "\"NAN\"";
             } else {
@@ -280,11 +281,13 @@ void Decoder::printDecodeProgress(int count, vector<vector<double> > &node_value
         for (int j = 0; j < Params::get_N(); j++) {
             double temp = node_value[i][j];
             if(isinf(temp) && temp > 0){
-                temp = inf_p;
-                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+//                temp = inf_p;
+//                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+                w_file << "\t\t\t\"" << j << "\"" << ":" << "\"inf\"";
             } else if(isinf(temp) && temp < 0){
-                temp = inf_m;
-                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+//                temp = inf_m;
+//                w_file << "\t\t\t\"" << j << "\"" << ":" << temp;
+                w_file << "\t\t\t\"" << j << "\"" << ":" << "\"-inf\"";
             } else if(isnan(temp)){
                 w_file << "\t\t\t\"" << j << "\"" << ":" << "\"NAN\"";
             } else {
@@ -302,8 +305,12 @@ void Decoder::printDecodeProgress(int count, vector<vector<double> > &node_value
         }
     }
 }
-
 //level, indexは(1,2,3,4,...)の並びで
+double Decoder::take_val(vector<int> &locate, vector<vector<double> > &node_val){
+    int level = locate[0];
+    int index = locate[1];
+    return node_val[level-1][index-1];
+}
 vector<vector<int> > Decoder::adjacentIndex(int level, int index){
     vector<vector<int> > adjacent;
     vector<int> temp;
@@ -313,14 +320,14 @@ vector<vector<int> > Decoder::adjacentIndex(int level, int index){
     int size = 2*log2(Params::get_N())+2;
 
     //一番右のチャンネルファクター
-    if( level ==  size ){
+    if( level ==  size){
         adjacent = {{level - 1, index}};
     }
     //一番右の変数ノード
     else if( level ==  size-1 ) {
         adjacent = {{level - 1, index}, {level + 1, index}};
+//        adjacent = {{level - 1, index}};
     }
-
 
     //それ以外
     else {
@@ -412,8 +419,105 @@ vector<vector<int> > Decoder::adjacentIndex(int level, int index){
     }
     return adjacent;
 }
+void Decoder::BPinit(vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<int> > &B){
+    vector<bool> puncFlag(Params::get_N(),false);
+    vector<int> p;
+    Params::get_p(p);
+    //init node frozen punc etc pattern
+    for (int i = 0; i < p.size(); i++) {
+        puncFlag[p[i]] = true;
+    }
 
-// 1
+    init_params(puncFlag, u, x, y, xm, ym, node_val, node_isChecked, B);
+    init_message(puncFlag, node_val, message_list, y, ym);
+}
+
+void Decoder::init_params(vector<bool> &puncFlag, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked, vector<vector<int> > &B){
+    double wc, wp, llr = 0.0, val = 0.0;
+    int size = 2*log2(Params::get_N())+2;
+    int ysize = log2(Params::get_N())+1;
+    bool databit_flag = false;
+    vector<int> A;
+    vector<int> Ac;
+    vector<int> p;
+    Params::get_A(A);
+    Params::get_Ac(Ac);
+    Params::get_p(p);
+
+    //実験モード
+    EXP_MODE em = Params::get_exp_mode();
+
+    //arikan bp setting
+//    vector<int> init_r_m;
+//    for (int i = 0; i < Params::get_N(); i++) {
+//        if(!Common::containVal(i,A)){
+//            init_r_m.push_back(i);
+//        }
+//    }
+//    init_r_m = Preseter::get_bitReversal(init_r_m);
+
+    //punc(shorten)flg設定
+    for (int i = 0; i < Params::get_N(); i++) {
+        if( em == QUP || em == M_QUP || em == WANG || em == M_WANG ||
+            em == VALERIO_P || em == VALERIO_S || em == M_VALERIO_P || em == M_VALERIO_S ){
+            if(Common::containVal(i,p)){
+                puncFlag[i] = true;
+            }
+        }
+        else if(em == PUNC) {
+            puncFlag[Ac[i]] = true;
+        }
+    }
+
+    //val_node frozen shorten設定
+    for (int i = 0; i < Params::get_N(); i++) {
+        //channelファクターノード
+        if(!puncFlag[i]){
+//            if( Common::is_mid_send() ){
+//                wc = Channel::calcW(ym[ysize-1][i],send_0);
+//                wp = Channel::calcW(ym[ysize-1][i],1);
+//            } else {
+//                wc = Channel::calcW(y[i],send_0);
+//                wp = Channel::calcW(y[i],1);
+//            }
+//            llr = 1.0 * log(wc / wp);
+//            node_val[size-2][i] = llr;
+//            cout << "llr" << i << " = log(" << wc << "/" << wp << ") = " << llr<< endl;
+        } else {
+            if( em == WANG || em == VALERIO_S){
+                llr = (x[i]==0)? inf_p : inf_m;
+                node_val[size-2][i] = llr;
+                node_isChecked[size-2][i] = true;
+            } else if( em == M_WANG || em == M_VALERIO_S){
+                llr = (xm[ysize-1][i]==0)? inf_p : inf_m;
+                node_val[size-2][i] = llr;
+                node_isChecked[size-2][i] = true;
+            }
+        }
+        node_isChecked[size-1][i] = true;
+        //frozen_bitのllr設定
+        if(!Common::containVal(i,A)){
+            node_val[0][i] = (u[i] == 0) ? inf_p : inf_m;
+            node_isChecked[0][i] = true;
+        }
+    }
+
+
+    if(Params::get_is_calc_bloop()){
+        //任意の位置をショートン、送信
+        vector<vector<bool> > T(size, vector<bool>(Params::get_N(), false));
+        Params::get_T(T);
+        for (int i = 0; i < B.size(); i=i+2) {
+            for (int j = 0; j < B[0].size(); j++) {
+                if(B[i][j]){
+                    //send_messageで送る処理はやってる
+                    T[i][j] = true;
+                }
+            }
+        }
+        Params::set_T(T);
+    }
+}
 void Decoder::init_message(vector<bool> &puncFlag, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list , vector<double> &y, vector<vector<double> > &ym){
     double val = 0.0;
     vector<vector<int> > adjacent;
@@ -422,9 +526,9 @@ void Decoder::init_message(vector<bool> &puncFlag, vector<vector<double> > &node
     int size = 2*log2(Params::get_N())+2;
     message temp = {0,0,0.0};
     int adjacent_count=0, level=0, index=0;
+    //グラフ構造を定義
     for (int i = 0; i < size; i++) {
         for (int j = 0; j < Params::get_N(); j++) {
-            //隣接ノードの位置
             if(i != size-1){
 //                if(!puncFlag[j] || i != size-1){
                 adjacent = adjacentIndex(i + 1, j + 1);
@@ -437,11 +541,9 @@ void Decoder::init_message(vector<bool> &puncFlag, vector<vector<double> > &node
                     temp.val = val;
                     message_list[i][j].push_back(temp);
                 }
-//            } else if(i == size-1) {
-
             }
-                //チャンネルファクターノード
-            else if(i == size-1 && !puncFlag[j]) {
+                //右ノード受信語によるメッセージ
+            else if(i == size-1) {
                 adjacent = adjacentIndex(i + 1, j + 1);
                 for (int k = 0; k < adjacent.size(); k++) {
                     level = adjacent[k][0];
@@ -464,203 +566,78 @@ void Decoder::init_message(vector<bool> &puncFlag, vector<vector<double> > &node
             }
         }
     }
+//    cout << " " << endl;
 }
 
-void Decoder::init_params(vector<bool> &puncFlag, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<vector<double> > &node_val, vector<vector<bool> > &node_isChecked, vector<vector<int> > &B){
-    double wc, wp, llr = 0.0, val = 0.0;
-    int size = 2*log2(Params::get_N())+2;
-    int ysize = log2(Params::get_N())+1;
-    bool databit_flag = false;
-    vector<int> A;
-    vector<int> Ac;
-    vector<int> p;
-    Params::get_A(A);
-    Params::get_Ac(Ac);
-    Params::get_p(p);
-
-    //実験モード
-    EXP_MODE em = Params::get_exp_mode();
-
-    //punc(shorten)flg設定
-    for (int i = 0; i < Params::get_N(); i++) {
-        if( em == QUP || em == M_QUP || em == WANG || em == M_WANG ||
-            em == VALERIO_P || em == VALERIO_S || em == M_VALERIO_P || em == M_VALERIO_S ){
-            if(Common::containVal(i,p)){
-                puncFlag[i] = true;
+void Decoder::calc_mp(int &itr, ofstream &check_file, ofstream &val_file, int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked ,vector<vector<double> > &ym){
+//    calc_val_to_check(size, node_value, message_list, node_isChecked, ym);
+//    calc_check_to_val(size, node_value, message_list, node_isChecked, ym);
+    calc_left_to_right(itr, check_file, val_file, size, node_value, message_list, node_isChecked, ym);
+    calc_right_to_left(itr, check_file, val_file, size, node_value, message_list, node_isChecked, ym);
+    calc_marge(node_value, message_list, node_isChecked, ym);
+}
+void Decoder::calc_val_to_check(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym){
+    vector<vector<int> > adjacent;
+    bool bpflag = Params::get_decode_mode() == BP;
+    for (int i = 0; i < size; i=i+2) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            if( (!node_isChecked[i][j] || bpflag)  ) {
+                send_message(i,j,message_list, node_isChecked, ym);
             }
-        }
-        else if(em == PUNC) {
-            puncFlag[Ac[i]] = true;
         }
     }
-
-    //val_node frozen shorten設定
-    for (int i = 0; i < Params::get_N(); i++) {
-        if(!puncFlag[i]){
-            //puncなし
-            if( Common::is_mid_send() ){
-                wc = Channel::calcW(ym[ysize-1][i],send_0);
-                wp = Channel::calcW(ym[ysize-1][i],1);
-            } else {
-                wc = Channel::calcW(y[i],send_0);
-                wp = Channel::calcW(y[i],1);
-            }
-            llr = 1.0 * log(wc / wp);
-            node_val[size-2][i] = llr;
-//            cout << "llr" << i << " = log(" << wc << "/" << wp << ") = " << llr<< endl;
-        } else {
-            //punc(shorten)あり
-            if( em == WANG || em == VALERIO_S){
-                llr = (x[i]==0)? inf_p : inf_m;
-                node_val[size-2][i] = llr;
-                node_isChecked[size-2][i] = true;
-            } else if( em == M_WANG || em == M_VALERIO_S){
-                llr = (xm[ysize-1][i]==0)? inf_p : inf_m;
-                node_val[size-2][i] = llr;
-                node_isChecked[size-2][i] = true;
+}
+void Decoder::calc_check_to_val(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym){
+    vector<vector<int> > adjacent;
+    bool bpflag = Params::get_decode_mode() == BP;
+    for (int i = 1; i < size; i=i+2) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            if( (!node_isChecked[i][j] || bpflag)  ) {
+                send_message(i, j, message_list, node_isChecked, ym);
             }
         }
-        //channelファクターノード
-        node_isChecked[size-1][i] = true;
-
-        //frozen_bitのllr設定
-        databit_flag = false;
-//            for (int j = 0; j < Params::get_K(); j++) {
-//                if(i == A[j]){
-//                    databit_flag = true;
-//                }
-//            }
-        if(Common::containVal(i,A)){
-            databit_flag = true;
-        }
-        if(!databit_flag){
-            node_val[0][i] = (u[i] == 0) ? inf_p : inf_m;
-            node_isChecked[0][i] = true;
-        }
-    }
-
-
-    if(Params::get_is_calc_bloop()){
-        //任意の位置をショートン、送信
-        vector<vector<bool> > T(size, vector<bool>(Params::get_N(), false));
-        Params::get_T(T);
-        for (int i = 0; i < B.size(); i=i+2) {
-            for (int j = 0; j < B[0].size(); j++) {
-//                 if(B[i][j]){
-//                     llr = (xm[i/2][j]==0)? inf_p : inf_m;
-//                     node_val[i][j] = llr;
-//                     node_isChecked[i][j] = true;
-//                 }
-                if(B[i][j]){
-                    //send_messageで送る処理はやってる
-                    T[i][j] = true;
-                }
-            }
-        }
-        Params::set_T(T);
     }
 }
 
-double Decoder::take_val(vector<int> &locate, vector<vector<double> > &node_val){
-    int level = locate[0];
-    int index = locate[1];
-    return node_val[level-1][index-1];
-}
-
-void Decoder::send_message(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym){
-    int size = 2*log2(Params::get_N())+2;
-    double wc,wp,llr = 0.0,val = 0.0;
-    bool is_send = false;
-    int n = Params::get_N();
-    vector<vector<bool>> T(size, vector<bool>(n, false));
-    Params::get_T(T);
-
-    //中間ノードはここでおくる
-    if(Common::is_mid_send()){
-        if (T[i][j]) {
-            wc = Channel::calcW(ym[i/2][j],send_0);
-            wp = Channel::calcW(ym[i/2][j],1);
-            llr = 1.0 * log(wc / wp);
+void Decoder::calc_left_to_right(int &itr, ofstream &check_file, ofstream &val_file, int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym){
+    vector<vector<int> > adjacent;
+    //left_to_right_stage
+    for (int i = 0; i < size-1; i=i+2) {
+        for (int j = 0; j < Params::get_N()-1; j=j+2) {
+            send_message(i,   j, message_list, node_isChecked, ym);//1
+            send_message(i+1, j, message_list, node_isChecked, ym);//3
+            send_message(i,   j+1, message_list, node_isChecked, ym);//2
+            send_message(i+1, j+1, message_list, node_isChecked, ym);//4
+            send_message(i,   j+1, message_list, node_isChecked, ym);//2
+            send_message(i+1, j, message_list, node_isChecked, ym);//3
+            send_message(i,   j, message_list, node_isChecked, ym);//1
+        }
+        if(Params::get_is_outlog()) {
+            calc_marge(node_value, message_list, node_isChecked, ym);
+            printDecodeProgress(itr, node_value, val_file);
+            printDecodeProgress(itr, node_isChecked, check_file);
+            itr++;
         }
     }
-
-    //i,j番目のノードが送信するメッセージをすべて計算
-    for (int k = 0; k < message_list[i][j].size(); k++) {
-        vector<double> temp;
-        if(message_list[i][j].size() == 1){
-            //次数1のval nodeはメッセージをそのまま返す, channel factor nodeは計算済み
-            if (!node_isChecked[i][j] && i < size-1 ) {
-                //frozen bitはメッセージ固定なのでそれ以外を計算
-                int fromLevel = message_list[i][j][0].toLevel-1;
-                int fromIndex = message_list[i][j][0].toIndex-1;
-                for (int m = 0; m < message_list[fromLevel][fromIndex].size(); m++) {
-                    if( message_list[fromLevel][fromIndex][m].toLevel == i+1
-                        && message_list[fromLevel][fromIndex][m].toIndex == j+1){
-                        //今いる場所に向かってるメッセージ(1つ)
-                        val = message_list[fromLevel][fromIndex][m].val + llr;
-                        if(val != 0.0) {
-                            message_list[i][j][k].val = val;
-                            is_send = true;
-                        }
-                        break;
-                    }
-                }
-            }
-        } else {
-            //送りたい場所以外のメッセージを集めてtempに入れる
-            for (int l = 0; l < message_list[i][j].size(); l++) {
-                if(k != l){
-                    int fromLevel = message_list[i][j][l].toLevel-1;
-                    int fromIndex = message_list[i][j][l].toIndex-1;
-                    for (int m = 0; m < message_list[fromLevel][fromIndex].size(); m++) {
-                        if( message_list[fromLevel][fromIndex][m].toLevel == i+1
-                            && message_list[fromLevel][fromIndex][m].toIndex == j+1){
-                            //今いる場所に向かってるメッセージをあつめる
-                            temp.push_back(message_list[fromLevel][fromIndex][m].val);
-                        }
-                    }
-                }
-            }
-            int tol = message_list[i][j][k].toLevel;
-            int toi = message_list[i][j][k].toIndex;
-
-            int zero_count = 0;
-            bool isCalcable = true;
-            for (int l = 0; l < temp.size(); ++l) {
-                if ((isinf(temp[l]) || temp[l] > inf_p) && temp[l] > 0) {
-//                    cout << "+inf" << endl;
-//                    temp[l] = inf_p;
-                } else if ((isinf(temp[l]) || temp[l] < inf_m) && temp[l] < 0) {
-//                    cout << "-inf" << endl;
-//                    temp[l] = inf_m;
-                } else {
-//                    cout << "noinf" << endl;
-                }
-            }
-
-            //送信元がcheckかvalか
-            if(i%2 == 1){
-                //check node
-                for (int l = 0; l < temp.size(); l++) {
-                    if(temp[l] == 0.0){
-                        zero_count++;
-                    }
-                }
-                //0のノードがあると計算しない
-                if(zero_count > 0) isCalcable = false;
-            } else {
-                //val node
-//                if(node_isChecked[i][j]) isCalcable = false;
-            }
-
-            //メッセージを送りたい場所
-            if(isCalcable){
-                val = calc_message(i%2, temp) + llr;
-                if(val != 0.0){
-                    message_list[i][j][k].val = val;
-                    is_send = true;
-                }
-            }
+}
+void Decoder::calc_right_to_left(int &itr, ofstream &check_file, ofstream &val_file, int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym){
+    vector<vector<int> > adjacent;
+    //right_to_left_stage
+    for (int i = size-2; i >= 0; i=i-2) {
+        for (int j = 0; j < Params::get_N()-1; j=j+2) {
+            send_message(i,   j, message_list, node_isChecked, ym);//1
+            send_message(i+1, j, message_list, node_isChecked, ym);//3
+            send_message(i,   j+1, message_list, node_isChecked, ym);//2
+            send_message(i+1, j+1, message_list, node_isChecked, ym);//4
+            send_message(i,   j+1, message_list, node_isChecked, ym);//2
+            send_message(i+1, j, message_list, node_isChecked, ym);//3
+            send_message(i,   j, message_list, node_isChecked, ym);//1
+        }
+        if(Params::get_is_outlog()) {
+            calc_marge(node_value, message_list, node_isChecked, ym);
+            printDecodeProgress(itr, node_value, val_file);
+            printDecodeProgress(itr, node_isChecked, check_file);
+            itr++;
         }
     }
 }
@@ -669,7 +646,6 @@ double Decoder::calc_message(int mode, vector<double> val) {
     double llr = 0.0;
     if (mode == 0){
         //val
-        llr = 0.0;
         for (int i = 0; i < val.size(); i++) {
             llr += val[i];
         }
@@ -688,102 +664,80 @@ double Decoder::calc_message(int mode, vector<double> val) {
                 llr *= tanh((double)val[i]/2.0);
             }
             llr = (double)2.0*atanh(llr);
+//            if(val[0] != 0 && val[1] != 0){
+//                llr = (double)abs(min(val[0],val[1])) * (val[0]*val[1])/(abs(val[0]*val[1]));
+//            } else {
+//                llr = 0.0;
+//            }
+
         }
-        if (isnan(llr)) {
+//        if (isnan(llr)) {
 //            Common::pp(val);
 //            cout << "check" << endl;
-        }
+//        }
     }
     return llr;
 }
-
-void Decoder::confirmIsCheck(vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked) {
+//ijノードが送る値を計算
+void Decoder::send_message(int i, int j, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym){
     int size = 2*log2(Params::get_N())+2;
-    int level = 0, index = 0, tempCheck = 0, tempVal = 0;
-    double val = 0.0;
-    bool zero_flag = false;
-    vector<vector<int> > adjacent;
+    double wc,wp,llr = 0.0,val = 0.0;
+    int n = Params::get_N();
+    vector<vector<bool>> T(size, vector<bool>(n, false));
+    Params::get_T(T);
 
-    //val nodeからのメッセージをあつめる
-    //check nodeを回して隣接のval nodeをみる
-    //channel factor nodeは見ない
-    for (int i = 1; i < size-1; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            zero_flag = false;
-            tempCheck = 0;
-            adjacent = adjacentIndex(i + 1, j + 1);
-            for (int k = 0; k < adjacent.size(); k++) {
-                val = take_val(adjacent[k], node_value);
-                if(val == 0.0) {
-                    zero_flag = true;
-                } else {
-                    tempVal = (val >= 0.0) ? 0:1;
-                    tempCheck += tempVal;
+    //中間ノードはここでおくる
+    if(Common::is_mid_send()){
+        if (T[i][j]) {
+            wc = Channel::calcW(ym[i/2][j],send_0);
+            wp = Channel::calcW(ym[i/2][j],1);
+            llr = 1.0 * log(wc / wp);
+        }
+    }
+
+    //次数1は無視
+    if(message_list[i][j].size() == 1) return;
+    //i,j番目のノードが送信するメッセージをすべて計算
+    for (int k = 0; k < message_list[i][j].size(); k++) {
+        vector<double> temp;
+
+        int zero_count = 0;
+        //送信元がcheckかvalか
+        if(i%2 == 1){
+            //check node
+            for (int l = 0; l < temp.size(); l++) {
+                if(temp[l] == 0.0){
+                    zero_count++;
                 }
             }
-            if(tempCheck%2 == 0 && !zero_flag) {
-                //足して0ならtrue
-                node_isChecked[i][j] = true;
-            } else if(i != size-1) {
-                //チャンネルファクター以外で上の条件満たしていない場合
-                node_isChecked[i][j] = false;
-            }
-//            else if(zero_flag){
-//                //ゼロがあると終わらない
-//                node_isChecked[i][j] = false;
-//            }
+            //0のノードがあると計算しない
+//                if(zero_count > 0) return;
+        } else {
+            //val node
+            //frozenが出すメッセージは固定
+            if(node_isChecked[i][j]) return;
         }
-    }
-}
 
-bool Decoder::isTerminate(int &no_checked, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked) {
-    bool flag = true;
-    int size = 2*log2(Params::get_N())+2;
-    vector<vector<int> > adjacent;
-
-    no_checked = 0;
-    //checkノードで回していく
-    for (int i = 1; i < size; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            if(!node_isChecked[i][j]){
-                no_checked++;
+        //送りたい場所以外のメッセージを集めてtempに入れる
+        for (int l = 0; l < message_list[i][j].size(); l++) {
+            if(k != l){
+                int fromLevel = message_list[i][j][l].toLevel-1;
+                int fromIndex = message_list[i][j][l].toIndex-1;
+                for (int m = 0; m < message_list[fromLevel][fromIndex].size(); m++) {
+                    if( message_list[fromLevel][fromIndex][m].toLevel == i+1
+                        && message_list[fromLevel][fromIndex][m].toIndex == j+1){
+                        //今いる場所に向かってるメッセージをあつめる
+                        temp.push_back(message_list[fromLevel][fromIndex][m].val);
+                    }
+                }
             }
         }
-    }
-    flag = (no_checked == 0);
-    return flag;
-}
-void Decoder::BPinit(vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<vector<double> > &node_val, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<int> > &B){
-    vector<bool> puncFlag(Params::get_N(),false);
-    vector<int> p;
-    Params::get_p(p);
-    //init node frozen punc etc pattern
-    for (int i = 0; i < p.size(); i++) {
-        puncFlag[p[i]] = true;
-    }
+        int tol = message_list[i][j][k].toLevel;
+        int toi = message_list[i][j][k].toIndex;
 
-    init_params(puncFlag, u, x, y, xm, ym, node_val, node_isChecked, B);
-    init_message(puncFlag, node_val, message_list, y, ym);
-}
-void Decoder::calc_mp(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked ,vector<vector<double> > &ym){
-    calc_val_to_check(size, node_value, message_list, node_isChecked, ym);
-    calc_check_to_val(size, node_value, message_list, node_isChecked, ym);
-    calc_marge(node_value, message_list, node_isChecked, ym);
-}
-void Decoder::calc_val_to_check(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym){
-    vector<vector<int> > adjacent;
-    for (int i = 0; i < size; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            send_message(i,j,message_list, node_isChecked, ym);
-        }
-    }
-}
-void Decoder::calc_check_to_val(int size, vector<vector<double> > &node_value, vector<vector<vector<message> > > &message_list, vector<vector<bool> > &node_isChecked, vector<vector<double> > &ym){
-    vector<vector<int> > adjacent;
-    for (int i = 1; i < size; i=i+2) {
-        for (int j = 0; j < Params::get_N(); j++) {
-            send_message(i,j,message_list, node_isChecked, ym);
-        }
+        //メッセージを送りたい場所
+        val = calc_message(i%2, temp) + llr;
+        message_list[i][j][k].val = val;
     }
 }
 //val nodeへメッセージを集める　　
@@ -792,17 +746,15 @@ void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vect
     int ysize = log2(Params::get_N())+1;
     int level = 0, index = 0;
     vector<vector<double> > temp(size, vector<double>(Params::get_N(),0.0));
-
     int n = Params::get_N();
 
-    //check nodeからのメッセージをあつめる
     //check nodeが出力したメッセージをtempに集めておく
     for (int i = 1; i < size; i=i+2) {
         for (int j = 0; j < Params::get_N(); j++) {
             for (int k = 0; k < message_list[i][j].size(); k++) {
-                level = message_list[i][j][k].toLevel-1;
-                index = message_list[i][j][k].toIndex-1;
-                temp[level][index] += message_list[i][j][k].val;
+                level = message_list[i][j][k].toLevel;
+                index = message_list[i][j][k].toIndex;
+                temp[level-1][index-1] += (double)message_list[i][j][k].val;
             }
         }
     }
@@ -828,20 +780,184 @@ void Decoder::calc_marge(vector<vector<double> > &node_value, vector<vector<vect
     for (int i = 0; i < size; i=i+2) {
         for (int j = 0; j < Params::get_N(); j++) {
             //ショートンビットは変更しない
-            if(temp[i][j] != 0.0 && !node_isChecked[i][j]){
+            if(!node_isChecked[i][j]){
+//            if(temp[i][j] != 0.0 && !node_isChecked[i][j]){
                 node_value[i][j] = temp[i][j];
             }
         }
     }
 }
+void Decoder::confirmIsCheck(vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked) {
+    int size = 2*log2(Params::get_N())+2;
+    int level = 0, index = 0, tempCheck = 0, tempVal = 0;
+    double val = 0.0;
+    bool zero_flag = false;
+    vector<vector<int> > adjacent;
 
-vector<int> Decoder::calcBP(int loop_num, vector<int> &param, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<vector<int> > &node_error_count, ofstream &val_error_file, vector<vector<int> > &B) {
+    //チェックが通るかみる
+    //channel factor nodeでやる必要はない
+    for (int i = 1; i < size-1; i=i+2) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            zero_flag = false;
+            tempCheck = 0;
+            adjacent = adjacentIndex(i + 1, j + 1);
+            for (int k = 0; k < adjacent.size(); k++) {
+                val = take_val(adjacent[k], node_value);
+                if(val == 0.0) {
+                    zero_flag = true;
+                } else {
+                    tempVal = (val >= 0.0) ? 0:1;
+                    tempCheck += tempVal;
+                }
+            }
+
+            if(tempCheck%2 == 0 && !zero_flag) {
+                //足して0ならtrue
+                node_isChecked[i][j] = true;
+            } else if(i != size-1) {
+                //チャンネルファクター以外で上の条件満たしていない場合
+                node_isChecked[i][j] = false;
+            }
+//            else if(zero_flag){
+//                //ゼロがあると終わらない
+//                node_isChecked[i][j] = false;
+//            }
+        }
+    }
+}
+bool Decoder::isTerminate(int &no_checked, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked) {
+    bool flag = true;
+    int size = 2*log2(Params::get_N())+2;
+    vector<vector<int> > adjacent;
+
+    no_checked = 0;
+    //checkノードで回していく
+    for (int i = 1; i < size; i=i+2) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            if(!node_isChecked[i][j]){
+                no_checked++;
+            }
+        }
+    }
+    flag = (no_checked == 0);
+    return flag;
+}
+bool Decoder::isScTerminate(int &no_checked, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked) {
+    for (int i = 0; i < Params::get_N(); i++) {
+        if(!node_isChecked[0][i]){
+            return false;
+        }
+    }
+    return true;
+}
+bool Decoder::isScTerminateG(int &no_checked, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked) {
+    Encoder e;
+    int size = 2*log2(Params::get_N())+2;
+    vector<int>temp_u(Params::get_N(),0);
+    vector<int>temp_x(Params::get_N(),0);
+    vector<int>calc_x(Params::get_N(),0);
+    for (int i = 0; i < Params::get_N(); i++) {
+        temp_u[i] = (node_value[0][i] >= 0.0)?0:1;
+        temp_x[i] = (node_value[size-2][i] >= 0.0)?0:1;
+    }
+    calc_x = e.encode(Params::get_N(), temp_u);
+    for (int i = 0; i < Params::get_N(); i++) {
+        if(calc_x[i] != temp_x[i]){
+            return false;
+        }
+    }
+    return true;
+}
+void Decoder::reset_message(vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked, vector<vector<vector<message> >> &message_list){
+    int level, index;
+    int size = 2*log2(Params::get_N())+2;
+    vector<vector<int> > adjacent;
+    for (int j = 1; j < size; j=j+2) {
+        for (int k = 0; k < Params::get_N(); k++) {
+            //チャンネルファクター以外のチェックノードをfalse
+            if(j != size-1){
+                node_isChecked[j][k] = false;
+            }
+        }
+    }
+    for (int i = 0; i < size; i++) {
+        for (int j = 0; j < Params::get_N(); j++) {
+            if(!node_isChecked[i][j]){
+                node_value[i][j] = 0.0;
+                adjacent = adjacentIndex(i+1, j+1);
+                for (int k = 0; k < adjacent.size(); k++) {
+                    level = adjacent[k][0];
+                    index = adjacent[k][1];
+                    message_list[i][j][k].val = 0.0;
+                }
+            }
+        }
+    }
+}
+void Decoder::sc_decision(vector<double> &test_u, vector<vector<double> > &node_value, vector<vector<bool> > &node_isChecked, vector<vector<vector<message> >> &message_list){
+    vector<int> A;
+    vector<int> Ac;
+    vector<int> p;
+    Params::get_A(A);
+    Params::get_Ac(Ac);
+    Params::get_p(p);
+    for (int i = 0; i < Params::get_N(); i++) {
+        if(!Common::containVal(i,A)){
+            test_u[i] = (node_value[0][i] >= 0) ? inf_p : inf_m;
+        }
+        if(Common::containVal(i,A) && !node_isChecked[0][i]){
+            if(node_value[0][i] != 0.0) {
+                //無限大で確定させる, 対応するメッセージを送信する
+                test_u[i] = node_value[0][i];
+                node_value[0][i] = (node_value[0][i] >= 0) ? inf_p : inf_m;
+                node_isChecked[0][i] = true;
+
+                vector<vector<int> > adjacent;
+                double val = 0.0;
+                int size = 2 * log2(Params::get_N()) + 2;
+                int level = 0, index = 0;
+                adjacent = adjacentIndex(1, i + 1);
+                for (int k = 0; k < adjacent.size(); k++) {
+                    level = adjacent[k][0];
+                    index = adjacent[k][1];
+                    val = node_value[0][i];
+                    message_list[0][i][k].val = val;
+                }
+                //2n番目にあるノードを2n-1番目のノードを元に確定させる
+                if(i%2 == 0){
+                    vector<vector<double> > ym;
+                    send_message(1, i, message_list, node_isChecked, ym);
+                    calc_marge(node_value, message_list, node_isChecked, ym);
+                    test_u[i+1] = node_value[0][i+1];
+                    node_value[0][i+1] = (node_value[0][i+1] >= 0) ? inf_p : inf_m;
+                    node_isChecked[0][i+1] = true;
+
+                    adjacent = adjacentIndex(1, i + 2);
+                    for (int k = 0; k < adjacent.size(); k++) {
+                        level = adjacent[k][0];
+                        index = adjacent[k][1];
+                        val = node_value[0][i+1];
+                        message_list[0][i+1][k].val = val;
+                    }
+                }
+                reset_message(node_value, node_isChecked, message_list);
+            }
+            return;
+        }
+    }
+}
+vector<int> Decoder::calcBP(vector<double> &test_u, int loop_num, vector<int> &param, vector<int> &u, vector<int> &x, vector<double> &y, vector<vector<int> > &xm, vector<vector<double> > &ym, vector<vector<int> > &node_error_count, ofstream &val_error_file, vector<vector<int> > &B) {
     vector<double> tmp_u(Params::get_N(),0.0);
     vector<int> u_n_est(Params::get_N());
     vector<vector<int> > adjacent;
 
     //node初期化、奇数が変数ノード（1,3,5...）、偶数がチェックノード（2,4,6...）
     int size = 2*log2(Params::get_N())+2;
+    int ysize = log2(Params::get_N())+1;
+
+//    for (int l = 0; l < Params::get_N(); l++) {
+//        ym[ysize-1][l] = y[l];
+//    }
 
     vector<vector<vector<message> >> message_list(size, vector<vector<message> >(Params::get_N(), vector<message>()));
     vector<vector<double> > node_value(size, vector<double>(Params::get_N(),0.0));
@@ -851,29 +967,45 @@ vector<int> Decoder::calcBP(int loop_num, vector<int> &param, vector<int> &u, ve
     int count = 0;
     int itr = 0;
     int no_checked = 0;
-
     ofstream val_file;
     ofstream check_file;
 
     init_outLog(val_file, check_file, val_error_file);
-    if (Params::get_decode_mode() == BP) {
-        BPinit(u, x, y, xm, ym, node_value, message_list, node_isChecked, B);
+    BPinit(u, x, y, xm, ym, node_value, message_list, node_isChecked, B);
 
-        for (int i = 0; i < Params::get_rp(); i++) {
+    for (int i = 0; i < Params::get_rp(); i++) {
+        if(Params::get_decode_mode() == SC){
+            if(isScTerminate(no_checked, node_value, node_isChecked)) break;
+        } else {
             if(isTerminate(no_checked, node_value, node_isChecked)) break;
-            if(Params::get_is_outlog()) {
-                printDecodeProgress(itr, node_value, val_file);
-                printDecodeProgress(itr, node_isChecked, check_file);
-            }
-            itr++;
-            calc_mp(size, node_value, message_list, node_isChecked, ym);
-
-            confirmIsCheck(node_value, node_isChecked);
-            count++;
+//            if(itr > 0){
+//                if(isScTerminateG(no_checked, node_value, node_isChecked)) break;
+//            }
         }
-    } else {
-        calcSConBP(itr, count, val_file, check_file, u, y, u_n_est, tmp_u, node_value, node_isChecked);
+        if(Params::get_is_outlog()) {
+            printDecodeProgress(itr, node_value, val_file);
+            printDecodeProgress(itr, node_isChecked, check_file);
+        }
+        itr++;
+        for (int j = 1; j < size; j=j+2) {
+            for (int k = 0; k < Params::get_N(); k++) {
+                //チャンネルファクター以外のチェックノードをfalse
+                if(j != size-1){
+                    node_isChecked[j][k] = false;
+                }
+            }
+        }
+        calc_mp(itr, check_file, val_file, size, node_value, message_list, node_isChecked, ym);
+        confirmIsCheck(node_value, node_isChecked);
+
+        if(Params::get_decode_mode() == SC){
+            sc_decision(test_u, node_value, node_isChecked, message_list);
+        }
+        count++;
     }
+//    else {
+//        calcSConBP(itr, count, val_file, check_file, u, y, u_n_est, tmp_u, node_value, node_isChecked);
+//    }
 
     int error_count = 0;
     Analysor::errorCount(u, u_n_est, &error_count);
@@ -882,8 +1014,9 @@ vector<int> Decoder::calcBP(int loop_num, vector<int> &param, vector<int> &u, ve
 
     for (int i = 0; i < Params::get_N(); i++) {
         if(Params::get_is_outlog()) {
-//            cout << "BP: " << i + 1 << " " << node_value[0][i] << endl;
+//            cout << "BP: " << i + 1 << " " << (double)test_u[i] << endl;
         }
+        test_u[i] = node_value[0][i];
         u_n_est[i] = (node_value[0][i] >= 0.0)?0:1;
     }
 
@@ -1022,7 +1155,7 @@ inline vector<int>Decoder::makeTreeIndex(int n){
     }
     return ret;
 }
-vector<int> Decoder::decode(vector<double> &y, vector<int> &u){
+vector<int> Decoder::decode(vector<double> &test_u, vector<double> &y, vector<int> &u){
     vector<double> h_i(Params::get_N());
     vector<int> u_n_est(Params::get_N());
     int size = log2(Params::get_N());
@@ -1040,6 +1173,7 @@ vector<int> Decoder::decode(vector<double> &y, vector<int> &u){
         // Aに含まれないindexなら既知
         if (Common::containNumInArray(i, Params::get_N()-Params::get_K(), A) == false) {
             u_n_est[i] = u[i];
+            test_u[i] = (u[i] == 1)?(inf_m):(inf_p);
             if(Params::get_is_outlog()) {
                 cout << "SC: " << i+1 << " " << ((u[i] == 1)?(inf_m):(inf_p)) << endl;
             }
@@ -1059,6 +1193,7 @@ vector<int> Decoder::decode(vector<double> &y, vector<int> &u){
                 h_i[i] = 1;
             }
             u_n_est[i] = h_i[i];
+            test_u[i] = llr;
             if(Params::get_is_outlog()) {
                 cout << "SC: " << i + 1 << " " << llr << endl;
             }
